@@ -11,3 +11,8 @@ base_name = os.path.basename(path_dir)
 
 sys.path.append(path_dir)
 
+Intel_Case = 'Intel_Case'
+GPU_Case = 'GPU_Case'
+AMD_Case = 'AMD_Case'
+
+

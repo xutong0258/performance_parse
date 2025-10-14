@@ -577,7 +577,7 @@ def check_rule_18(fail_dir, pass_dir=None):
 
     col = '1:GPC Clock (MHz)'
     col_data = get_csv_file_col_data_by_file(new_file, col)
-    col_data = remove_list_na(col_data)
+    # col_data = remove_list_na(col_data)
 
     correlation = get_two_list_correlation(col_data, tat_col_data)
     logger.info(correlation)
@@ -586,7 +586,7 @@ def check_rule_18(fail_dir, pass_dir=None):
 
     col = '1:TGP (W)'
     col_data = get_csv_file_col_data_by_file(new_file, col)
-    col_data = remove_list_na(col_data)
+    # col_data = remove_list_na(col_data)
 
     correlation = get_two_list_correlation(col_data, tat_col_data)
     logger.info(correlation)
@@ -625,7 +625,8 @@ def check_rule_19(fail_dir, pass_dir=None):
             return_dict = check_result_dict
             break
         else:
-            logger.info(f'{col_2_data}, {item}')
+            # logger.info(f'{col_2_data}, {item}')
+            pass
     return return_dict
 
 def check_rule_20(fail_dir, pass_dir=None):

@@ -13,6 +13,34 @@ from base.contants import *
 from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
 
+def get_log_case(input_dir):
+    case_type = None
+    is_intel_case = False
+    tat_file = get_tat_file_with_dir(input_dir)
+    if tat_file:
+        case_type = Intel_Case
+
+    is_gpu_case = check_gpu_case(input_dir)
+    if is_gpu_case:
+        case_type = GPU_Case
+    return case_type
+
+def check_gpu_case(input_dir):
+    is_gpu_case = False
+    gpu_file = get_gpu_file_with_dir(input_dir)
+    if gpu_file is None:
+        gpu_file = get_performance_file_with_dir(input_dir)
+    if gpu_file:
+        is_gpu_case = True
+    return is_gpu_case
+
+def is_amd_case(input_dir):
+    is_amd_case = False
+    amd_file = get_performance_file_with_dir(input_dir)
+    if gpu_file:
+        is_amd_case = True
+    return is_amd_case
+
 def get_tat_file_col_data_by_dir(input_dir, col_name):
     col_data = []
     tat_file = get_tat_file_with_dir(input_dir)
