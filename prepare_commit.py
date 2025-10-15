@@ -37,8 +37,8 @@ def clean_dir(folder_path):
     # os.mkdir(folder_path)
 
 if __name__ == '__main__':
-    file_walk()
-   # remove_cache(BASEDIR, dst_dir='cache__')
+    # file_walk()
+    remove_cache(BASEDIR, dst_dir='cache__')
    # remove_cache(BASEDIR, dst_dir='report')
    # remove_cache(BASEDIR, dst_dir='.pytest_cache')
    # clean_dir(folder_path='../auto_test_log')
