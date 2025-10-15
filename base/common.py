@@ -123,6 +123,20 @@ def get_two_data_frame_col_average(data_frame_1, data_frame_2, col_name):
 
     return fail_average_data, pass_average_data
 
+def get_col_idle_average(input_list):
+    col_average = get_list_average(input_list, False)
+    logger.info(f"col_average: {col_average}")
+    idle_list = []
+    for idx, line in enumerate(input_list):
+        is_delta_larger_than_stand = is_two_data_delta_larger_than_threshold(line, col_average, 0.5)
+        if is_delta_larger_than_stand:
+            # logger.info(f"line: {line}")
+            idle_list.append(line)
+
+    idle_average = get_list_average(idle_list, False)
+    logger.info(f"idle_average: {idle_average}")
+    return idle_average
+
 if __name__ == '__main__':
     logger.info('common hello')
     pass

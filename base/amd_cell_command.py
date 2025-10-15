@@ -145,7 +145,6 @@ def amd_check_rule_5(fail_dir, pass_dir):
             break
     return return_dict
 
-
 def amd_check_rule_6(fail_dir, pass_dir):
     return_dict = None
     check_result_dict = {
@@ -156,26 +155,257 @@ def amd_check_rule_6(fail_dir, pass_dir):
         '修复及验证': '',
     }
 
-    df_amd_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
-
-    amd_pass_file = get_SystemDeckPM_file_with_dir(pass_dir)
-    df_amd_pass = read_csv_with_pandas(amd_pass_file)
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
     content_list = ['CPU0 MISC STAPM Time Constant',
-                    'CPU0 MISC Slow PPT Time Constant',
-                    'CPU0 INFRASTRUCTURE Limit STAPM',
-                    'CPU0 INFRASTRUCTURE Limit PPT FAST',
-                    'CPU0 INFRASTRUCTURE Limit PPT SLOW',
-                    'CPU0 MISC STAPM Time Constant',
                     'CPU0 MISC Slow PPT Time Constant',]
 
     for col in content_list:
-        fail_average_data, pass_average_data = get_two_data_frame_col_average(df_amd_fail, df_amd_pass, col)
+        fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col)
         is_delta_larger = is_two_data_delta_larger_than_threshold(fail_average_data, pass_average_data, 0.02)
         if is_delta_larger:
             return_dict = check_result_dict
             logger.info(f"return_dict: {return_dict}")
             break
+    return return_dict
+
+def amd_check_rule_7(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_7',
+        'Root cause': 'Idle  Power 高',
+        'Component': 'EE',
+        'Solution': 'check idle场景',
+        '修复及验证': '',
+    }
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
+
+    col = 'CPU0 Power Correlation SOCKET Power'
+
+    col_data_fail = data_frame_fail[col]
+    # logger.info(f"col_data: {col_data}")
+
+    idle_average_fail = get_col_idle_average(col_data_fail)
+    logger.info(f"idle_average_fail: {idle_average_fail}")
+
+    col_data_pass = data_frame_pass[col]
+    # logger.info(f"col_data: {col_data}")
+
+    idle_average_pass = get_col_idle_average(col_data_pass)
+    logger.info(f"idle_average_pass: {idle_average_pass}")
+
+    is_delta_larger_than_stand = is_two_data_delta_larger_than_threshold(idle_average_fail, idle_average_pass, 2)
+    if is_delta_larger_than_stand:
+        return_dict = check_result_dict
+        logger.info(f"return_dict: {return_dict}")
+    return return_dict
+
+def amd_check_rule_8(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_8',
+        'Root cause': 'TDC/EDC异常',
+        'Component': 'Power',
+        'Solution': '',
+        '修复及验证': '',
+    }
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
+
+    content_list = ['CPU0 INFRASTRUCTURE Limit TDC VDD',
+                    'CPU0 INFRASTRUCTURE Value TDC VDD',
+                    'CPU0 INFRASTRUCTURE Limit TDC SOC',
+                    'CPU0 INFRASTRUCTURE Value TDC SOC',
+                    'CPU0 INFRASTRUCTURE Limit EDC VDD',
+                    'CPU0 INFRASTRUCTURE Limit EDC SOC',]
+
+    for col in content_list:
+        fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col)
+        if fail_average_data != pass_average_data:
+            return_dict = check_result_dict
+            logger.info(f"return_dict: {return_dict}")
+            break
+    return return_dict
+
+def amd_check_rule_9(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_9',
+        'Root cause': '环温高',
+        'Component': 'TESTER',
+        'Solution': '降低环境温度/增加Idle时间/出风口是否被阻挡',
+        '修复及验证': '',
+    }
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col = 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+    col_data_fail = data_frame_fail[col]
+    average_data_fail_1 = get_list_average(col_data_fail)
+    check_point_1 = False
+    if average_data_fail_1 != 0:
+        check_point_1 = True
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col = 'CPU0 INFRASTRUCTURE2 Value STT APU'
+    col_data_fail = data_frame_fail[col]
+    average_data_fail_2 = get_list_average(col_data_fail)
+    check_point_2 = False
+    if average_data_fail_2 >= average_data_fail_1 :
+        check_point_2 = True
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_3 = False
+    if average_data_fail_1 < average_data_fail_2 :
+        check_point_3 = True
+
+    # check_point_4
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM GFX'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_4 = False
+    if average_data_fail_1 < average_data_fail_2 :
+        check_point_4 = True
+
+    # check_point_5
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM SOC'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_5 = False
+    if average_data_fail_1 < average_data_fail_2 :
+        check_point_5 = True
+
+    # sensor part
+    col = 'Environment Sensor Temp'
+    col_data, file_data = get_performance_file_col_data_by_dir(fail_dir, col)
+    Sensor_Temp = get_list_average(col_data)
+    logger.info(f'Sensor_Temp:{Sensor_Temp}')
+
+    if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >30:
+        return_dict = check_result_dict
+        logger.info(f"return_dict: {return_dict}")
+
+    return return_dict
+
+def amd_check_rule_10(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_10',
+        'Root cause': 'CPU本体可能异常',
+        'Component': 'EE',
+        'Solution': '',
+        '修复及验证': '使用相同sku机台复制验证',
+    }
+    return return_dict
+def amd_check_rule_11(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_11',
+        'Root cause': 'CPU Ttie.lmt被触发(触发Tdie,lmt)',
+        'Component': 'Thermal',
+        'Solution': '',
+        '修复及验证': '使用相同sku机台复制验证',
+    }
+    return return_dict
+
+def amd_check_rule_12(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_12',
+        'Root cause': 'thermal module（STT）',
+        'Component': 'Thermal',
+        'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常',
+        '修复及验证': '',
+    }
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col = 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+    col_data_fail = data_frame_fail[col]
+    average_data_fail_1 = get_list_average(col_data_fail)
+    check_point_1 = False
+    if average_data_fail_1 != 0:
+        check_point_1 = True
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col = 'CPU0 INFRASTRUCTURE2 Value STT APU'
+    col_data_fail = data_frame_fail[col]
+    average_data_fail_2 = get_list_average(col_data_fail)
+    check_point_2 = False
+    if average_data_fail_2 >= average_data_fail_1 :
+        check_point_2 = True
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_3 = False
+    if average_data_fail_1 > average_data_fail_2 :
+        check_point_3 = True
+
+    # check_point_4
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM GFX'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_4 = False
+    if average_data_fail_1 > average_data_fail_2 :
+        check_point_4 = True
+
+    # check_point_5
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM SOC'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_5 = False
+    if average_data_fail_1 > average_data_fail_2 :
+        check_point_5 = True
+
+    # sensor part
+    col = 'Environment Sensor Temp'
+    col_data, file_data = get_performance_file_col_data_by_dir(fail_dir, col)
+    Sensor_Temp = get_list_average(col_data)
+    logger.info(f'Sensor_Temp:{Sensor_Temp}')
+
+    if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >= 20 and Sensor_Temp <= 30:
+        return_dict = check_result_dict
+        logger.info(f"return_dict: {return_dict}")
+
     return return_dict
 if __name__ == '__main__':
     pass

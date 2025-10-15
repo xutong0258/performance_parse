@@ -125,7 +125,7 @@ def get_list_text_count(result, text):
             count = count + 1
     return count
 
-def get_list_text_count_bool(result, text):
+def get_list_equal_count(result, text):
     text_line = None
     count = 0
     if result is None:
@@ -207,7 +207,7 @@ def is_two_list_delta_larger_than_threshold(col_fail, col_pass, threshold, df_fa
     df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
     # logger.info(f'df_fail:{df_fail}')
 
-    count = get_list_text_count_bool(df_fail['exceed_threshold'], True)
+    count = get_list_equal_count(df_fail['exceed_threshold'], True)
     if count:
         is_larger_than_threshold = True
     return is_larger_than_threshold
@@ -224,12 +224,12 @@ def is_two_col_data_delta_larger_than_threshold(col_1_data, col_2_data, threshol
 
 def is_two_data_delta_larger_than_threshold(data_1, data_2, threshold):
     is_delta_larger_than_stand = False
-    logger.info(f'data_1:{data_1}, data_2:{data_2}')
+    # logger.info(f'data_1:{data_1}, data_2:{data_2}')
 
     delta = abs(data_1 - data_2)
-    logger.info(f'delta:{delta}')
+    # logger.info(f'delta:{delta}')
     delta_ratio = delta/data_1
-    logger.info(f'delta_ratio:{delta_ratio}')
+    # logger.info(f'delta_ratio:{delta_ratio}')
     if delta_ratio > threshold:
         is_delta_larger_than_stand = True
     return is_delta_larger_than_stand

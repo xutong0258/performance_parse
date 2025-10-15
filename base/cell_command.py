@@ -233,7 +233,7 @@ def check_rule_7(fail_dir, pass_dir):
         threshold = 3
         df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
         logger.info(df_fail)
-        count = get_list_text_count_bool(df_fail['exceed_threshold'], True)
+        count = get_list_equal_count(df_fail['exceed_threshold'], True)
 
         if is_larger and count:
             return_dict = check_result_dict
@@ -442,8 +442,6 @@ def check_rule_15(fail_dir, pass_dir):
     count = get_list_text_count(data_list, 'Thermal event')
     delta = 0
     if count or True:
-        return_dict = check_result_dict
-
         fail_PerformanceLog_file = get_performance_file_with_dir(fail_dir)
         pass_PerformanceLog_file = get_performance_file_with_dir(pass_dir)
 
