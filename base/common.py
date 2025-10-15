@@ -15,14 +15,18 @@ from base.read_csv_with_csv import *
 
 def get_log_case(input_dir):
     case_type = None
-    is_intel_case = False
     tat_file = get_tat_file_with_dir(input_dir)
     if tat_file:
         case_type = Intel_Case
 
+    SystemDeckPM_file = get_SystemDeckPM_file_with_dir(input_dir)
+    if SystemDeckPM_file:
+        case_type = AMD_Case
+
     is_gpu_case = check_gpu_case(input_dir)
     if is_gpu_case:
         case_type = GPU_Case
+
     return case_type
 
 def check_gpu_case(input_dir):
@@ -40,6 +44,11 @@ def is_amd_case(input_dir):
     if gpu_file:
         is_amd_case = True
     return is_amd_case
+
+def get_amd_performance_file_data_frame_by_dir(input_dir):
+    amd_fail_file = get_SystemDeckPM_file_with_dir(input_dir)
+    data_frame = read_csv_with_pandas(amd_fail_file)
+    return data_frame
 
 def get_tat_file_col_data_by_dir(input_dir, col_name):
     col_data = []
@@ -102,18 +111,17 @@ def get_two_list_correlation(col_1, col_2):
         logger.info(f"皮尔逊相关系数: {correlation:.4f}")
     return correlation
 
-def is_two_list_delta_larger_than_threshold(col_fail, col_pass, threshold, df_fail):
-    is_larger_than_threshold = False
 
-    df_fail['deviation_%'] = calculate_deviation(col_fail, col_pass, base='col_pass')
+def get_two_data_frame_col_average(data_frame_1, data_frame_2, col_name):
+    col_amd_fail = data_frame_1[col_name]
+    fail_average_data = get_list_average(col_amd_fail)
+    logger.info(f"fail_average_data: {fail_average_data}")
 
-    df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
-    # logger.info(f'df_fail:{df_fail}')
+    col_amd_pass = data_frame_2[col_name]
+    pass_average_data = get_list_average(col_amd_pass)
+    logger.info(f"pass_average_data: {pass_average_data}")
 
-    count = get_list_text_count_bool(df_fail['exceed_threshold'], True)
-    if count:
-        is_larger_than_threshold = True
-    return is_larger_than_threshold
+    return fail_average_data, pass_average_data
 
 if __name__ == '__main__':
     logger.info('common hello')

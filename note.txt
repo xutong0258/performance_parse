@@ -1,0 +1,16 @@
+import pandas as pd
+
+# 创建原始 Series
+s = pd.Series([10, 20, 30, 40, 50])
+print("原始 Series：")
+print(s)
+
+# 1. 向量化运算（每个元素乘以 2）
+s_new1 = s * 2
+print("\n向量化运算后的新 Series：")
+print(s_new1)
+
+# 2. 条件修改（大于 30 的元素改为 0）
+s_new2 = s.where(s <= 30, 0)  # 满足条件保留原值，不满足则替换为 0
+print("\n条件修改后的新 Series：")
+print(s_new2)

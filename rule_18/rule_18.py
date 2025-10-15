@@ -13,7 +13,7 @@ if __name__ == '__main__':
     # check_rule_18(file_dir)
 
     fail_dir = r'D:\小拉\0_peformance\GPU_FAIL'
-    fail_dir = r'D:\小拉\0_peformance\GPU_FAIL'
-    pass_dir = r'D:\小拉\0_peformance\GPU_PASS'
+    fail_dir = r'D:\GPU_FAIL'
+    pass_dir = r'D:\GPU_PASS'
     check_rule_18(fail_dir)
     pass

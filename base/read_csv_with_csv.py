@@ -2,6 +2,35 @@ import csv
 import os
 from base.helper import *
 
+
+def read_data_with_csv(file_path):
+    """使用内置csv模块读取CSV文件"""
+    try:
+        # 检查文件是否存在
+        if not os.path.exists(file_path):
+            logger.info(f"错误：文件 '{file_path}' 不存在")
+            return
+
+        # 打开CSV文件并读取
+        with open(file_path, 'r', encoding='utf-8') as file:
+            # 创建CSV读取器
+            csv_reader = csv.reader(file)
+
+            new_list = []
+            # 读取并打印行数据
+            row_count = 0
+            for row in csv_reader:
+                new_list.append(row)
+
+            # logger.info("\n读取完成，共", row_count, "行数据")
+            return new_list
+    except PermissionError:
+        logger.info(f"错误：没有权限读取文件 '{file_path}'")
+    except UnicodeDecodeError:
+        logger.info(f"错误：文件编码不是utf-8，请尝试其他编码格式")
+    except Exception as e:
+        logger.info(f"读取文件时发生错误：{e}")
+
 def write_to_csv(filename, data, headers=None):
     try:
         # 使用with语句打开文件，确保文件正确关闭

@@ -216,7 +216,7 @@ def check_rule_7(fail_dir, pass_dir):
 
     is_larger = False
     if average_pass != 0.0 and average_fail:
-        is_larger = is_delta_larger_than_stand(average_fail, average_pass, 0.03)
+        is_larger = is_two_data_delta_larger_than_threshold(average_fail, average_pass, 0.03)
         logger.info(f"is_larger: {is_larger}")
 
     # Power-EWMA Power(Watts)
@@ -256,7 +256,7 @@ def check_rule_8(fail_dir, pass_dir):
     fail_average = average(fail_col_data)
     pass_average = average(pass_col_data)
 
-    is_larger = is_delta_larger_than_stand(fail_average, pass_average, 0.03)
+    is_larger = is_two_data_delta_larger_than_threshold(fail_average, pass_average, 0.03)
 
     if is_larger:
         return_dict = check_result_dict
@@ -564,31 +564,21 @@ def check_rule_18(fail_dir, pass_dir=None):
         'Solution': 'Please EE check ,if the gap is acceptable by Sample difference',
         '修复及验证': 'change to pass EPP value to verify, furhter check PPM version',
     }
-
-    gpu_log_file = get_gpu_file_with_dir(fail_dir)
-
-    headers, new_list = get_gpu_data_with_csv(gpu_log_file)
-    new_file = os.path.join(fail_dir, 'GPU_New.csv')
-    write_to_csv(new_file, new_list, headers)
-
-    # tat file
-    tat_file = get_tat_file_with_dir(fail_dir)
-    tat_col_data = get_csv_file_col_data_by_file(tat_file, 'Power-Package Power(Watts)')
+    col = 'Power-Package Power(Watts)'
+    fail_col_data_tat, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
 
     col = '1:GPC Clock (MHz)'
-    col_data = get_csv_file_col_data_by_file(new_file, col)
-    # col_data = remove_list_na(col_data)
+    fail_col_data_gpu, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
 
-    correlation = get_two_list_correlation(col_data, tat_col_data)
+    correlation = get_two_list_correlation(fail_col_data_gpu, fail_col_data_tat)
     logger.info(correlation)
     if correlation > 0.03:
         return_dict = check_result_dict
 
     col = '1:TGP (W)'
-    col_data = get_csv_file_col_data_by_file(new_file, col)
-    # col_data = remove_list_na(col_data)
+    fail_col_data_gpu, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
 
-    correlation = get_two_list_correlation(col_data, tat_col_data)
+    correlation = get_two_list_correlation(fail_col_data_gpu, fail_col_data_tat)
     logger.info(correlation)
     if correlation > 0.03:
         return_dict = check_result_dict
@@ -962,6 +952,9 @@ def check_rule_30(fail_dir, pass_dir):
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
     logger.info(f'fail_col_data: {fail_col_data}')
+    which_type = type(fail_col_data)
+    # logger.info(f'which_type: {which_type}')
+
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
     logger.info(f'fail_col_data: {fail_col_data}')
 

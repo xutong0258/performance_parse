@@ -36,6 +36,18 @@ def remove_list_na(input_list, target_str='NA'):
             out_list.append(item)
     return out_list
 
+def get_SystemDeckPM_file_with_dir(dir_name):
+    if not os.path.isdir(dir_name):
+        return None
+    SystemDeckPM_file = None
+    file_list = os.listdir(dir_name)
+    for filename in file_list:
+        if 'SystemDeckPM' in filename and '.csv' in filename:
+            SystemDeckPM_file = os.path.join(dir_name, filename)
+            logger.info(f'SystemDeckPM_file:{SystemDeckPM_file}')
+            break
+    return SystemDeckPM_file
+
 def get_tat_file_with_dir(dir_name):
     if not os.path.isdir(dir_name):
         return None
@@ -139,14 +151,21 @@ def get_list_lower_than_stand_average(input_list, stand, debug = False):
     average = sum(output_list) / len(output_list)
     return average
 
-def is_delta_larger_than_stand(fail_data, pass_data, threshold):
-    is_larger = False
-    delta = abs(fail_data - pass_data)
-    ratio = delta / pass_data
-    logger.info(f'ratio:{ratio}')
-    if ratio > threshold:
-        is_larger = True
-    return is_larger
+def get_list_average(input_list, debug = False):
+    output_list = []
+    average = None
+    total = 0
+    if input_list is None:
+        return average
+
+    for item in input_list:
+        if item:
+            output_list.append(item)
+            if debug:
+                logger.info(f"item:{item}")
+    average = sum(output_list) / len(output_list)
+    return average
+
 
 def is_col_data_all_same_with_target(col_data, target_str):
     is_match_target = False
@@ -180,6 +199,19 @@ def is_col_data_has_data_match_range(col_data, target_min, target_max):
 
     return has_match
 
+def is_two_list_delta_larger_than_threshold(col_fail, col_pass, threshold, df_fail):
+    is_larger_than_threshold = False
+
+    df_fail['deviation_%'] = calculate_deviation(col_fail, col_pass, base='col_pass')
+
+    df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
+    # logger.info(f'df_fail:{df_fail}')
+
+    count = get_list_text_count_bool(df_fail['exceed_threshold'], True)
+    if count:
+        is_larger_than_threshold = True
+    return is_larger_than_threshold
+
 def is_two_col_data_delta_larger_than_threshold(col_1_data, col_2_data, threshold):
     is_delta_larger_than_stand = False
     if col_1_data is not None and col_2_data is not None:
@@ -193,7 +225,7 @@ def is_two_col_data_delta_larger_than_threshold(col_1_data, col_2_data, threshol
 def is_two_data_delta_larger_than_threshold(data_1, data_2, threshold):
     is_delta_larger_than_stand = False
     logger.info(f'data_1:{data_1}, data_2:{data_2}')
-    is_delta_larger_than_stand = False
+
     delta = abs(data_1 - data_2)
     logger.info(f'delta:{delta}')
     delta_ratio = delta/data_1

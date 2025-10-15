@@ -2,6 +2,7 @@ import json
 from base import common
 from base.helper import *
 from base.cell_command import *
+from base.amd_cell_command import *
 
 def intel_check_run(fail_dir, pass_dir):
     rule_count = 18
@@ -23,6 +24,16 @@ def gpu_check_run(fail_dir, pass_dir):
             # break
     return
 
+def amd_check_run(fail_dir, pass_dir):
+    rule_count = 2
+    for idx in range(1, rule_count):
+        function_name = f'amd_check_rule_{idx}'
+        return_dict = eval(function_name)(fail_dir, pass_dir)
+        if return_dict:
+            pass
+            # break
+    return
+
 def one_process_run(fail_dir, pass_dir):
     case_type = get_log_case(fail_dir)
     if case_type == Intel_Case:
@@ -31,4 +42,6 @@ def one_process_run(fail_dir, pass_dir):
     if case_type == GPU_Case:
         gpu_check_run(fail_dir, pass_dir)
 
+    if case_type == AMD_Case:
+        amd_check_run(fail_dir, pass_dir)
     return
