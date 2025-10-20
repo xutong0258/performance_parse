@@ -14,6 +14,7 @@ import numpy as np
 from base.contants import *
 from base.helper import *
 from base.common import *
+from base.fileOP import *
 from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
 
@@ -1046,6 +1047,19 @@ def check_rule_32(fail_dir, pass_dir=None):
     if cell_data_platform != 'No' and cell_data_driver != 'No':
         return_dict = check_result_dict
         logger.info(f'cell_data_platform: {cell_data_platform}')
+
+    return return_dict
+
+def check_rule_33(fail_dir, pass_dir=None):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_33',
+        'Root cause': '从AMDZlog中取',
+        'Component': 'EE',
+        'Solution': '',
+        '修复及验证': '',
+    }
+    get_cpu_log_content(fail_dir)
 
     return return_dict
 

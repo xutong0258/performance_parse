@@ -407,5 +407,189 @@ def amd_check_rule_12(fail_dir, pass_dir):
         logger.info(f"return_dict: {return_dict}")
 
     return return_dict
+
+def amd_check_rule_13(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_13',
+        'Root cause': 'thermal module（STT）',
+        'Component': 'Thermal',
+        'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常',
+        '修复及验证': '',
+    }
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col = 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+    col_data_fail = data_frame_fail[col]
+    average_data_fail_1 = get_list_average(col_data_fail)
+    check_point_1 = False
+    if average_data_fail_1 != 0:
+        check_point_1 = True
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col = 'CPU0 INFRASTRUCTURE2 Value STT APU'
+    col_data_fail = data_frame_fail[col]
+    average_data_fail_2 = get_list_average(col_data_fail)
+    check_point_2 = False
+    if average_data_fail_2 >= average_data_fail_1 :
+        check_point_2 = True
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_3 = False
+    if average_data_fail_1 < average_data_fail_2 :
+        check_point_3 = True
+
+    # check_point_4
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM GFX'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_4 = False
+    if average_data_fail_1 < average_data_fail_2 :
+        check_point_4 = True
+
+    # check_point_5
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM SOC'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_5 = False
+    if average_data_fail_1 < average_data_fail_2 :
+        check_point_5 = True
+
+    # sensor part
+    col = 'Environment Sensor Temp'
+    col_data, file_data = get_performance_file_col_data_by_dir(fail_dir, col)
+    Sensor_Temp = get_list_average(col_data)
+    logger.info(f'Sensor_Temp:{Sensor_Temp}')
+
+    if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >= 20 and Sensor_Temp <= 30:
+        return_dict = check_result_dict
+        logger.info(f"return_dict: {return_dict}")
+    return return_dict
+
+def amd_check_rule_14(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_14',
+        'Root cause': 'thermal module（STAPM）',
+        'Component': 'Thermal',
+        'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常',
+        '修复及验证': '',
+    }
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col = 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+    col_data_fail = data_frame_fail[col]
+    average_data_fail_1 = get_list_average(col_data_fail)
+    check_point_1 = False
+    if average_data_fail_1 == 0:
+        check_point_1 = True
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col = 'CPU0 INFRASTRUCTURE2 Value STT APU'
+    col_data_fail = data_frame_fail[col]
+    average_data_fail_1 = get_list_average(col_data_fail)
+    check_point_2 = False
+    if average_data_fail_1 == 0:
+        check_point_2 = True
+
+    # CPU0 INFRASTRUCTURE2 Limit STT APU
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_3 = False
+    if average_data_fail_1 > average_data_fail_2 :
+        check_point_3 = True
+
+    # check_point_4
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM GFX'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_4 = False
+    if average_data_fail_1 > average_data_fail_2 :
+        check_point_4 = True
+
+    # check_point_5
+    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM SOC'
+    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
+    col_data_fail_1 = data_frame_fail[col_1]
+    average_data_fail_1 = get_list_average(col_data_fail_1)
+
+    col_data_fail_2 = data_frame_fail[col_2]
+    average_data_fail_2 = get_list_average(col_data_fail_2)
+
+    check_point_5 = False
+    if average_data_fail_1 > average_data_fail_2 :
+        check_point_5 = True
+
+    # sensor part
+    col = 'Environment Sensor Temp'
+    col_data, file_data = get_performance_file_col_data_by_dir(fail_dir, col)
+    Sensor_Temp = get_list_average(col_data)
+    logger.info(f'Sensor_Temp:{Sensor_Temp}')
+
+    if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >= 20 and Sensor_Temp <= 30:
+        return_dict = check_result_dict
+        logger.info(f"return_dict: {return_dict}")
+    return return_dict
+
+def amd_check_rule_15(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_15',
+        'Root cause': 'Al Chip issue',
+        'Component': 'SDE',
+        'Solution': '',
+        '修复及验证': '分别Disable/Enable AI chip功能验证结果',
+    }
+
+    CPU0_CORES_CORE0_CPPC_EPP = 'CPU0 INFRASTRUCTURE Limit STAPM'
+
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
+
+    col_list = ['CPU0 INFRASTRUCTURE Limit STAPM',
+                'CPU0 INFRASTRUCTURE Limit PPT FAST',
+                'CPU0 INFRASTRUCTURE Limit PPT SLOW']
+    for col in col_list:
+        col_fail = data_frame_fail[col]
+        col_pass = data_frame_pass[col]
+        is_two_coloum_same = is_two_col_same(col_fail, col_pass)
+        if is_two_coloum_same == False:
+            return_dict = check_result_dict
+            break
+    return return_dict
+
 if __name__ == '__main__':
     pass

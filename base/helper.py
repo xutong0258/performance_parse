@@ -72,6 +72,18 @@ def get_gpu_file_with_dir(dir_name):
             break
     return gpu_log_file
 
+def get_CPUZ_log_file_with_dir(dir_name):
+    if not os.path.isdir(dir_name):
+        return None
+    CPUZ_log_file = None
+    file_list = os.listdir(dir_name)
+    for filename in file_list:
+        if '.txt' in filename:
+            CPUZ_log_file = os.path.join(dir_name, filename)
+            logger.info(f'CPUZ_log_file:{CPUZ_log_file}')
+            break
+    return CPUZ_log_file
+
 def get_performance_file_with_dir(dir_name):
     if not os.path.isdir(dir_name):
         return None
@@ -233,6 +245,56 @@ def is_two_data_delta_larger_than_threshold(data_1, data_2, threshold):
     if delta_ratio > threshold:
         is_delta_larger_than_stand = True
     return is_delta_larger_than_stand
+
+def is_two_col_same(col_fail, col_pass):
+    is_two_coloum_same = True
+
+    for idx, value in enumerate(col_fail):
+        if value != col_pass[idx]:
+            is_two_coloum_same = False
+            break
+
+    return is_two_coloum_same
+
+def get_list_text_line_first_index(input_list, text):
+    index = None
+    if input_list is None:
+        return index
+
+    for idx, line in enumerate(input_list):
+        if text in line:
+            index = idx
+            break
+    return index
+
+def get_list_text_line_last_index(input_list, text):
+    index = None
+    if input_list is None:
+        return index
+
+    for idx, line in enumerate(input_list):
+        if text in line:
+            index = idx
+    return index
+
+def remove_list_emptpy(input_list):
+    new_list = []
+    index = None
+    if input_list is None:
+        return index
+    # logger.info(f'input_list:{input_list}')
+
+
+    for line in input_list:
+        # logger.info(f'xutong:{line}')
+        line = line.replace('\n', '')
+        # line = line.replace('\t', '')
+        new_line = line.strip()
+        length = len(new_line)
+        # logger.info(f'line:{line}, new_line:{new_line}, length:{length}')
+        if length > 0:
+            new_list.append(new_line)
+    return new_list
 
 if __name__ == '__main__':
     pass

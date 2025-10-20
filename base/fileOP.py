@@ -58,18 +58,6 @@ def read_json_dict(file_name: str) -> dict:
         data_dic = json.load(wf)
     return data_dic
 
-def read_file_str(file_name):
-    """
-    读取文本用例数据
-    :param file_name: 文件路径
-    :return: list
-    """
-    # 打开文件，返回一个文件对象
-    with open(file_name, 'r', encoding='gbk') as file:
-        # 读取文件的全部内容
-        content = file.read ()
-        # my_log.info(content)
-    return content
 
 def wrtie_file(file_name, content) -> None:
     # 打开文件，如果文件不存在，会创建文件；'a' 表示追加模式，如果文件已存在，则会在文件末尾追加内容

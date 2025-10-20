@@ -12,6 +12,7 @@ from base.helper import *
 from base.contants import *
 from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
+from base.fileOP import *
 
 def get_log_case(input_dir):
     case_type = None
@@ -136,6 +137,48 @@ def get_col_idle_average(input_list):
     idle_average = get_list_average(idle_list, False)
     logger.info(f"idle_average: {idle_average}")
     return idle_average
+
+def get_cpu_log_content(log_dir):
+    result_dict = {}
+    log_file = get_CPUZ_log_file_with_dir(log_dir)
+    log_lines = get_file_content_list(log_file)
+    target_str = 'Controller0-ChannelA-DIMM1'
+    index = get_list_text_line_first_index(log_lines, target_str)
+    #
+    type_index = index + 2
+    type_line = log_lines[type_index]
+    logger.info(f'type_line:{type_line}')
+    tmp_list = type_line.split('\t')
+    # logger.info(f'tmp_list:{tmp_list}')
+
+    new_list = remove_list_emptpy(tmp_list)
+    # logger.info(f'new_list:{new_list}')
+    result_dict['type'] = new_list[1]
+
+    # size
+    type_index = index + 5
+    line = log_lines[type_index]
+    logger.info(f'line:{line}')
+    tmp_list = line.split('\t')
+    logger.info(f'tmp_list:{tmp_list}')
+
+    new_list = remove_list_emptpy(tmp_list)
+    logger.info(f'new_list:{new_list}')
+    result_dict['size'] = new_list[1]
+
+    # speed
+    type_index = index + 5
+    line = log_lines[type_index]
+    logger.info(f'line:{line}')
+    tmp_list = line.split('\t')
+    logger.info(f'tmp_list:{tmp_list}')
+
+    new_list = remove_list_emptpy(tmp_list)
+    logger.info(f'new_list:{new_list}')
+    result_dict['speed'] = new_list[1]
+
+    logger.info(f'result_dict:{result_dict}')
+    return result_dict
 
 if __name__ == '__main__':
     logger.info('common hello')
