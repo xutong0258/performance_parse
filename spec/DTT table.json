@@ -1,0 +1,289 @@
+{
+  "info": {
+    "Source": "厂家",
+    "Platform": "Intel",
+    "Components": "CPU"
+  },
+  "data": {
+    "IC Mode": {
+      "BSM": [
+        {
+          "IC Function": "MMC",
+          "IC Mode": "  BSM ",
+          "OEM Variable": "ODV9",
+          "Test Case": "/",
+          "CPU PL1 Max (W)": 35,
+          "CPU PL1 Min (W)": 35,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥45",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 60,
+          "CPU PL4 (W)": "Default",
+          "TCC Offset (℃)": 12,
+          "Tau s": 56,
+          "GPS (℃)": "Default"
+        }
+      ],
+      "AQM": [
+        {
+          "IC Function": "MMC",
+          "IC Mode": "AQM",
+          "OEM Variable": "ODV17",
+          "Test Case": "CPU",
+          "CPU PL1 Max (W)": 35,
+          "CPU PL1 Min (W)": 35,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥45",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 60,
+          "CPU PL4 (W)": "Default",
+          "TCC Offset (℃)": 12,
+          "Tau s": 56,
+          "GPS (℃)": "Default"
+        }
+      ],
+      "AQM DC": [
+        {
+          "IC Function": "MMC",
+          "IC Mode": "AQM DC",
+          "OEM Variable": "ODV17",
+          "Test Case": "CPU",
+          "CPU PL1 Max (W)": 35,
+          "CPU PL1 Min (W)": 35,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥42",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 55,
+          "CPU PL4 (W)": 100,
+          "TCC Offset (℃)": 16,
+          "Tau s": 56,
+          "GPS (℃)": "Default"
+        }
+      ],
+      "BSM DC": [
+        {
+          "IC Function": "MMC",
+          "IC Mode": "BSM DC",
+          "OEM Variable": "ODV9",
+          "Test Case": "CPU",
+          "CPU PL1 Max (W)": 30,
+          "CPU PL1 Min (W)": 30,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥42",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 45,
+          "CPU PL4 (W)": 80,
+          "TCC Offset (℃)": 16,
+          "Tau s": 56,
+          "GPS (℃)": "Default"
+        }
+      ],
+      "EPM  AC": {
+        "CPU 单烤": {
+          "IC Function": "MMC",
+          "OEM Variable": "ODV8",
+          "CPU PL1 Max (W)": 125,
+          "CPU PL1 Min (W)": 115,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥53",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 180,
+          "CPU PL4 (W)": 310,
+          "TCC Offset (℃)": 5,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        },
+        "CPU+GPU 双烤": {
+          "IC Function": "MMC",
+          "OEM Variable": "ODV8",
+          "CPU PL1 Max (W)": 75,
+          "CPU PL1 Min (W)": 65,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥61",
+          "切换单双烤 (℃)": "GPU sensor≥65& GPU DTS≥65",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 120,
+          "CPU PL4 (W)": "Default",
+          "TCC Offset (℃)": 5,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        }
+      },
+      "EPM DC": [
+        {
+          "IC Function": "MMC",
+          "IC Mode": "EPM DC",
+          "OEM Variable": "ODV8",
+          "Test Case": "CPU",
+          "CPU PL1 Max (W)": 50,
+          "CPU PL1 Min (W)": 50,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥48",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 60,
+          "CPU PL4 (W)": 120,
+          "TCC Offset (℃)": 6,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        }
+      ],
+      "Geek Mode": {
+        "CPU 单烤": {
+          "IC Function": "MMC",
+          "OEM Variable": "ODV18",
+          "CPU PL1 Max (W)": 130,
+          "CPU PL1 Min (W)": 120,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥53",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 185,
+          "CPU PL4 (W)": 310,
+          "TCC Offset (℃)": 5,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        },
+        "CPU+GPU 双烤": {
+          "IC Function": "MMC",
+          "OEM Variable": "ODV18",
+          "CPU PL1 Max (W)": 95,
+          "CPU PL1 Min (W)": 85,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥61",
+          "切换单双烤 (℃)": "GPU sensor≥65& GPU DTS≥68",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 130,
+          "CPU PL4 (W)": "Default",
+          "TCC Offset (℃)": 5,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        }
+      },
+      "Intelligent APM AC": {
+        "CPU 单烤": {
+          "IC Function": "MMC",
+          "OEM Variable": "ODV16",
+          "CPU PL1 Max (W)": 90,
+          "CPU PL1 Min (W)": 90,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥51",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 125,
+          "CPU PL4 (W)": "Default",
+          "TCC Offset (℃)": 5,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        },
+        "CPU+GPU 双烤": {
+          "IC Function": "MMC",
+          "OEM Variable": "ODV16",
+          "CPU PL1 Max (W)": 35,
+          "CPU PL1 Min (W)": 35,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥54",
+          "切换单双烤 (℃)": "GPU sensor≥61& GPU DTS≥62",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 90,
+          "CPU PL4 (W)": "Default",
+          "TCC Offset (℃)": 5,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        }
+      },
+      "NA": [
+        {
+          "IC Function": " STP",
+          "IC Mode": "NA",
+          "OEM Variable": "ODV4",
+          "CPU PL1 Max (W)": 25,
+          "CPU PL1 Min (W)": 25,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥39",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 32,
+          "CPU PL4 (W)": 45,
+          "TCC Offset (℃)": 30,
+          "Tau s": 56,
+          "GPS (℃)": "Default"
+        }
+      ],
+      "intelligent APM DC": [
+        {
+          "IC Function": "MMC",
+          "IC Mode": "intelligent APM DC",
+          "OEM Variable": "ODV16",
+          "Test Case": "CPU",
+          "CPU PL1 Max (W)": 45,
+          "CPU PL1 Min (W)": 45,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥46",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 60,
+          "CPU PL4 (W)": 120,
+          "TCC Offset (℃)": 6,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        }
+      ],
+      "intelligent STD": {
+        "CPU 单烤": {
+          "IC Function": "MMC",
+          "OEM Variable": "ODV0",
+          "CPU PL1 Max (W)": 65,
+          "CPU PL1 Min (W)": 65,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥43",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 105,
+          "CPU PL4 (W)": "Default",
+          "TCC Offset (℃)": 12,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        },
+        "CPU+GPU 双烤": {
+          "IC Function": "MMC",
+          "OEM Variable": "ODV0",
+          "CPU PL1 Max (W)": 35,
+          "CPU PL1 Min (W)": 35,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥51",
+          "切换单双烤 (℃)": "GPU sensor≥58& GPU DTS≥59",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 80,
+          "CPU PL4 (W)": "Default",
+          "TCC Offset (℃)": 12,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        }
+      },
+      "intelligent STD DC": [
+        {
+          "IC Function": "MMC",
+          "IC Mode": "intelligent STD DC",
+          "OEM Variable": "ODV0",
+          "CPU PL1 Max (W)": 40,
+          "CPU PL1 Min (W)": 40,
+          "PL1max-PL1min切换CPU Sensor (℃)": "≥43",
+          "切换单双烤 (℃)": "NA",
+          "Sample Period(s) (s)": 10,
+          "Step Size (W)": 1,
+          "CPU PL2 (W)": 55,
+          "CPU PL4 (W)": 110,
+          "TCC Offset (℃)": 12,
+          "Tau s": 56,
+          "GPS (℃)": 87
+        }
+      ]
+    }
+  }
+}

@@ -1,13 +1,16 @@
-import pandas as pd
+import subprocess
 
-missing_values = ["n/a", "na", "--"]
-df = pd.read_csv('property-data.csv', na_values = missing_values)
+def get_cpu_model_powershell():
+    try:
+        result = subprocess.run(
+            ["powershell", "-Command", "Get-WmiObject Win32_Processor | Select-Object -ExpandProperty Name"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        return result.stdout.strip()
+    except Exception as e:
+        return f"获取失败: {e}"
 
-print(df.to_string())
-
-new_df = df.dropna()
-
-print(new_df.to_string())
-
-# print (df['NUM_BEDROOMS'])
-# print (df['NUM_BEDROOMS'].isnull())
+cpu_model = get_cpu_model_powershell()
+print("CPU 型号:", cpu_model)

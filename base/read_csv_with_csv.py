@@ -19,10 +19,18 @@ def read_data_with_csv(file_path):
             new_list = []
             # 读取并打印行数据
             row_count = 0
+            header_count = 0
+            new_row = []
             for row in csv_reader:
-                new_list.append(row)
+                # logger.info(f"{row}")
+                if row_count == 0:
+                    header_count = len(row)
+                new_row = row[:header_count]
+                # logger.info(f"{new_row}")
+                new_list.append(new_row)
+                row_count += 1
 
-            # logger.info("\n读取完成，共", row_count, "行数据")
+            # logger.info(f"读取完成，共{row_count}")
             return new_list
     except PermissionError:
         logger.info(f"错误：没有权限读取文件 '{file_path}'")
@@ -128,10 +136,9 @@ def get_gpu_head_data_with_csv(file_path, header_str='VRAM Strap'):
 
 if __name__ == "__main__":
     # 示例文件路径（Windows系统）
-    csv_file_path = "4-GPUMonLog_NvGPUMon.csv"  # 可以替换为实际的CSV文件路径，如 "C:\\data\\example.csv"
-    # get_gpu_data_with_csv(csv_file_path)
+    src_dir = r'D:\小拉\0_peformance_验收\intel+nv_case-1021\CPU_case-环温sensor\Fail_环温sensor_CinebenchR23_2025-05-15_034755'
+    src_file = "1747280791196_iPTAT_15-05-2025_11H-46-41S275.csv"  # 可以替换为实际的CSV文件路径，如 "C:\\data\\example.csv"
+    full_path = os.path.join(src_dir, src_file)
+    new_list = read_data_with_csv(full_path)
 
-    headers, new_list = get_gpu_data_with_csv(csv_file_path)
-
-    write_to_csv("new.csv", new_list, headers)
     

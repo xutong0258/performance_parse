@@ -591,5 +591,33 @@ def amd_check_rule_15(fail_dir, pass_dir):
             break
     return return_dict
 
+def amd_check_rule_16(fail_dir, pass_dir):
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_33',
+        'Root cause': '从AMDZlog中取',
+        'Component': 'EE',
+        'Solution': '',
+        '修复及验证': '',
+    }
+    channel_str = 'Controller0-ChannelA-DIMM1'
+    channel_dict_fail = get_cpu_log_content(fail_dir, channel_str)
+    channel_dict_pass = get_cpu_log_content(pass_dir, channel_str)
+
+    for key, value in channel_dict_fail.items():
+        if key not in channel_dict_pass or value not in channel_dict_fail[key]:
+            return_dict = check_result_dict
+            logger.info(f'return_dict: {return_dict}')
+
+    channel_str = 'Controller0-ChannelB-DIMM1'
+    channel_dict_fail = get_cpu_log_content(fail_dir, channel_str)
+    channel_dict_pass = get_cpu_log_content(pass_dir, channel_str)
+
+    for key, value in channel_dict_fail.items():
+        if key not in channel_dict_pass or value not in channel_dict_fail[key]:
+            return_dict = check_result_dict
+            logger.info(f'return_dict: {return_dict}')
+
+    return return_dict
 if __name__ == '__main__':
     pass

@@ -66,7 +66,7 @@ def get_gpu_file_with_dir(dir_name):
     gpu_log_file = None
     file_list = os.listdir(dir_name)
     for filename in file_list:
-        if 'GPUMon' in filename and '.csv' in filename:
+        if 'PerformanceLog' in filename and '.csv' in filename:
             gpu_log_file = os.path.join(dir_name, filename)
             logger.info(f'gpu_log_file:{gpu_log_file}')
             break
@@ -171,10 +171,9 @@ def get_list_average(input_list, debug = False):
         return average
 
     for item in input_list:
-        if item:
-            output_list.append(item)
-            if debug:
-                logger.info(f"item:{item}")
+        output_list.append(item)
+        if debug:
+            logger.info(f"item:{item}")
     average = sum(output_list) / len(output_list)
     return average
 

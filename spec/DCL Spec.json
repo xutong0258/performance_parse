@@ -1,0 +1,114 @@
+{
+    "info": {
+        "Source": "厂家",
+        "Platform": "Intel",
+        "Components": "CPU"
+    },
+    "data": {
+        "Q07L": {
+            "Processor Number": "I7-1280P",
+            "Host Device ID": "4641h",
+            "Processor Minimum Core Frequency [GHz]": "0.4",
+            "Processor Base Core Frequency [GHz]": "1.8",
+            "P-core Turbo Frequency [GHz] (1- Core)": "4.8",
+            "P-core Turbo Frequency [GHz] (2- Core)": "4.8",
+            "P-core Turbo Frequency [GHz] (4- Core)": "3.8",
+            "P-core Turbo Frequency [GHz] (6- Core)": "3.5"
+        },
+        "Q07M": {
+            "Processor Number": "I7-1260P",
+            "Host Device ID": "4621h",
+            "Processor Minimum Core Frequency [GHz]": "0.4",
+            "Processor Base Core Frequency [GHz]": "2.1",
+            "P-core Turbo Frequency [GHz] (1- Core)": "4.7",
+            "P-core Turbo Frequency [GHz] (2- Core)": "4.7",
+            "P-core Turbo Frequency [GHz] (4- Core)": "3.8",
+            "P-core Turbo Frequency [GHz] (6- Core)": "N/A"
+        },
+        "Q07N": {
+            "Processor Number": "I7-1270P",
+            "Host Device ID": "4621h",
+            "Processor Minimum Core Frequency [GHz]": "0.4",
+            "Processor Base Core Frequency [GHz]": "2.2",
+            "P-core Turbo Frequency [GHz] (1- Core)": "4.8",
+            "P-core Turbo Frequency [GHz] (2- Core)": "4.8",
+            "P-core Turbo Frequency [GHz] (4- Core)": "3.9",
+            "P-core Turbo Frequency [GHz] (6- Core)": "N/A"
+        },
+        "Q07Q": {
+            "Processor Number": "I5-1240P",
+            "Host Device ID": "4621h",
+            "Processor Minimum Core Frequency [GHz]": "0.4",
+            "Processor Base Core Frequency [GHz]": "1.7",
+            "P-core Turbo Frequency [GHz] (1- Core)": "4.4",
+            "P-core Turbo Frequency [GHz] (2- Core)": "4.4",
+            "P-core Turbo Frequency [GHz] (4- Core)": "3.5",
+            "P-core Turbo Frequency [GHz] (6- Core)": "N/A"
+        },
+        "Q07P": {
+            "Processor Number": "I5-1250P",
+            "Host Device ID": "4621h",
+            "Processor Minimum Core Frequency [GHz]": "0.4",
+            "Processor Base Core Frequency [GHz]": "1.7",
+            "P-core Core Turbo Frequency [GHz] (1-Core)": "4.4",
+            "P-core Core Turbo Frequency [GHz] (2-Core)": "4.4",
+            "P-core Core Turbo Frequency [GHz] (4-Core)": "3.8",
+            "P-core Core Turbo Frequency [GHz] (6-Core)": "N/0"
+        },
+        "Q39J": {
+            "Processor Number": "I9-14900HX",
+            "Host Device ID": "A702h",
+            "Processor Minimum Core Frequency [GHz]": "0.8",
+            "Processor Base Core Frequency [GHz]": "2.2",
+            "P-core Turbo Frequency [GHz] (1- Core)": "5.8",
+            "P-core Turbo Frequency [GHz] (2- Core)": "5.8",
+            "P-core Turbo Frequency [GHz] (4- Core)": "5.2",
+            "P-core Turbo Frequency [GHz] (6- Core)": "5.2",
+            "P-core Turbo Frequency [GHz] (8- Core)": "5.2"
+        },
+        "Q3G9": {
+            "Processor Number": "I7-14700HX",
+            "Host Device ID": "A729h",
+            "Processor Minimum Core Frequency [GHz]": "0.8",
+            "Processor Base Core Frequency [GHz]": "2.1",
+            "P-core Turbo Frequency [GHz] (1- Core)": "5.5",
+            "P-core Turbo Frequency [GHz] (2- Core)": "5.5",
+            "P-core Turbo Frequency [GHz] (4- Core)": "5.1",
+            "P-core Turbo Frequency [GHz] (6- Core)": "5.1",
+            "P-core Turbo Frequency [GHz] (8- Core)": "5.1"
+        },
+        "Q3AD": {
+            "Processor Number": "I7-14650HX",
+            "Host Device ID": "0XA728",
+            "Processor Minimum Core Frequency [GHz]": "0.8",
+            "Processor Base Core Frequency [GHz]": "2.2",
+            "P-core Turbo Frequency [GHz] (1- Core)": "5.2",
+            "P-core Turbo Frequency [GHz] (2- Core)": "5.2",
+            "P-core Turbo Frequency [GHz] (4- Core)": "4.8",
+            "P-core Turbo Frequency [GHz] (6- Core)": "4.8",
+            "P-core Turbo Frequency [GHz] (8- Core)": "4.8"
+        },
+        "Q3AG": {
+            "Processor Number": "I5-14450HX",
+            "Host Device ID": "A719h",
+            "Processor Minimum Core Frequency [GHz]": "0.8",
+            "Processor Base Core Frequency [GHz]": "2.4",
+            "P-core Turbo Frequency [GHz] (1-Core)": "4.8",
+            "P-core Turbo Frequency [GHz] (2-Core)": "4.8",
+            "P-core Turbo Frequency [GHz] (4-Core)": "4.6",
+            "P-core Turbo Frequency [GHz] (6-Core)": "4.6",
+            "P-core Turbo Frequency [GHz] (8-Core)": "0"
+        },
+        "Q3AH": {
+            "Processor Number": "I5-14500HX",
+            "Host Device ID": "A72Ah",
+            "Processor Minimum Core Frequency [GHz]": "0.8",
+            "Processor Base Core Frequency [GHz]": "2.6",
+            "P-core Turbo Frequency [GHz] (1-Core)": "4.9",
+            "P-core Turbo Frequency [GHz] (2-Core)": "4.9",
+            "P-core Turbo Frequency [GHz] (4-Core)": "4.6",
+            "P-core Turbo Frequency [GHz] (6-Core)": "4.6",
+            "P-core Turbo Frequency [GHz] (8-Core)": "0"
+        }
+    }
+}

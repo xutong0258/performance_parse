@@ -40,7 +40,6 @@ header = {
 
 def hello():
     logger.info(f'Enter hello')
-    url = f"{WEB_IP}/scp-data/openApi/receive/uploadZIP"
     url = f"{WEB_IP}/mbxApi/utp/queryReportdList? current=1&size=10"
 
     try:

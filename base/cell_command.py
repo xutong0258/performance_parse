@@ -254,8 +254,8 @@ def check_rule_8(fail_dir, pass_dir):
     fail_col_data = get_tat_file_col_data_by_dir(fail_dir, col)
     pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
 
-    fail_average = average(fail_col_data)
-    pass_average = average(pass_col_data)
+    fail_average = get_list_average(fail_col_data)
+    pass_average = get_list_average(pass_col_data)
 
     is_larger = is_two_data_delta_larger_than_threshold(fail_average, pass_average, 0.03)
 
@@ -340,6 +340,7 @@ def check_rule_11(fail_dir, pass_dir=None):
     return return_dict
 
 def check_rule_12(fail_dir, pass_dir):
+    return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_12',
         'Root cause': 'TCC offset abnormal',
@@ -370,15 +371,15 @@ def check_rule_12(fail_dir, pass_dir):
         threshold = 3
         df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
         logger.info(df_fail)
-        count = get_list_text_count(df_fail['exceed_threshold'], 'True')
+        count = get_list_equal_count(df_fail['exceed_threshold'], True)
         if count:
             return_dict = check_result_dict
-
-    logger.info(return_dict)
+            logger.info(return_dict)
 
     return return_dict
 
 def check_rule_13(fail_dir, pass_dir):
+    return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_13',
         'Root cause': 'PL1/PL2 abnormal',
@@ -396,12 +397,13 @@ def check_rule_13(fail_dir, pass_dir):
     # data_list = df_fail[col]
     # logger.info(f'data_list[0]:{data_list[0]}')
 
-    logger.info(return_dict)
+    # logger.info(return_dict)
 
     return return_dict
 
 
 def check_rule_14(fail_dir, pass_dir):
+    return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_14',
         'Root cause': 'Al Chip issue',
@@ -419,7 +421,7 @@ def check_rule_14(fail_dir, pass_dir):
     # data_list = df_fail[col]
     # logger.info(f'data_list[0]:{data_list[0]}')
 
-    logger.info(return_dict)
+    # logger.info(return_dict)
 
     return return_dict
 
@@ -535,8 +537,11 @@ def check_rule_17(fail_dir, pass_dir):
     fail_data_list = df_fail.get(col, None)
     pass_data_list = df_pass.get(col, None)
 
-    fail_average = average(fail_data_list)
-    pass_average = average(pass_data_list)
+    # logger.info(f'fail_data_list:{fail_data_list}')
+    fail_average = get_list_average(fail_data_list)
+
+    # logger.info(f'pass_data_list:{pass_data_list}')
+    pass_average = get_list_average(pass_data_list, debug=False)
     if fail_average != pass_average:
         return_dict = check_result_dict
         logger.info(return_dict)
@@ -546,8 +551,8 @@ def check_rule_17(fail_dir, pass_dir):
     fail_data_list = df_fail.get(col, None)
     pass_data_list = df_pass.get(col, None)
 
-    fail_average = average(fail_data_list)
-    pass_average = average(pass_data_list)
+    fail_average = get_list_average(fail_data_list)
+    pass_average = get_list_average(pass_data_list)
     if fail_average != pass_average:
         return_dict = check_result_dict
         logger.info(return_dict)
@@ -556,6 +561,7 @@ def check_rule_17(fail_dir, pass_dir):
     return return_dict
 
 def check_rule_18(fail_dir, pass_dir=None):
+    return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_18',
         'Root cause': 'GPU sample difference',
@@ -571,7 +577,7 @@ def check_rule_18(fail_dir, pass_dir=None):
 
     correlation = get_two_list_correlation(fail_col_data_gpu, fail_col_data_tat)
     logger.info(correlation)
-    if correlation > 0.03:
+    if correlation and correlation > 0.03:
         return_dict = check_result_dict
 
     col = '1:TGP (W)'
@@ -579,7 +585,7 @@ def check_rule_18(fail_dir, pass_dir=None):
 
     correlation = get_two_list_correlation(fail_col_data_gpu, fail_col_data_tat)
     logger.info(correlation)
-    if correlation > 0.03:
+    if correlation and correlation > 0.03:
         return_dict = check_result_dict
 
     return return_dict
@@ -596,15 +602,18 @@ def check_rule_19(fail_dir, pass_dir=None):
 
     gpu_log_file = get_gpu_file_with_dir(fail_dir)
 
-    headers, new_list = get_gpu_data_with_csv(gpu_log_file)
-    new_file = os.path.join(fail_dir, 'GPU_New.csv')
-    write_to_csv(new_file, new_list, headers)
+    # headers, new_list = get_gpu_data_with_csv(gpu_log_file)
+    # new_file = os.path.join(fail_dir, 'GPU_New.csv')
+    # write_to_csv(new_file, new_list, headers)
 
     col = '1:GPC Clock (MHz)'
-    col_data_1 = get_csv_file_col_data_by_file(new_file, col)
+    col_data_1 = get_csv_file_col_data_by_file(gpu_log_file, col)
 
     col = '1:GPC Slowdown Factor (%)'
-    col_data_2 = get_csv_file_col_data_by_file(new_file, col)
+    col_data_2 = get_csv_file_col_data_by_file(gpu_log_file, col)
+
+    if col_data_1 is None:
+        return return_dict
 
     for idx, item in enumerate(col_data_1):
         item = int(item)
@@ -630,13 +639,16 @@ def check_rule_20(fail_dir, pass_dir=None):
 
     gpu_log_file = get_gpu_file_with_dir(fail_dir)
 
-    headers, new_list = get_gpu_data_with_csv(gpu_log_file)
-    new_file = os.path.join(fail_dir, 'GPU_New.csv')
-    write_to_csv(new_file, new_list, headers)
+    # headers, new_list = get_gpu_data_with_csv(gpu_log_file)
+    # new_file = os.path.join(fail_dir, 'GPU_New.csv')
+    # write_to_csv(new_file, new_list, headers)
 
     col = '1:GPC Clock (MHz)'
-    col_data_1 = get_csv_file_col_data_by_file(new_file, col)
+    col_data_1 = get_csv_file_col_data_by_file(gpu_log_file, col)
     logger.info(f'col_data_1:{col_data_1}')
+
+    if col_data_1 is None:
+        return return_dict
 
     min_value = min(col_data_1)
     logger.info(f'min_value:{min_value}')
@@ -1050,7 +1062,7 @@ def check_rule_32(fail_dir, pass_dir=None):
 
     return return_dict
 
-def check_rule_33(fail_dir, pass_dir=None):
+def check_rule_33(fail_dir, pass_dir):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_33',
@@ -1059,7 +1071,23 @@ def check_rule_33(fail_dir, pass_dir=None):
         'Solution': '',
         '修复及验证': '',
     }
-    get_cpu_log_content(fail_dir)
+    channel_str = 'Controller0-ChannelA-DIMM1'
+    channel_dict_fail = get_cpu_log_content(fail_dir, channel_str)
+    channel_dict_pass = get_cpu_log_content(pass_dir, channel_str)
+
+    for key, value in channel_dict_fail.items():
+        if key not in channel_dict_pass or value not in channel_dict_fail[key]:
+            return_dict = check_result_dict
+            logger.info(f'return_dict: {return_dict}')
+
+    channel_str = 'Controller0-ChannelB-DIMM1'
+    channel_dict_fail = get_cpu_log_content(fail_dir, channel_str)
+    channel_dict_pass = get_cpu_log_content(pass_dir, channel_str)
+
+    for key, value in channel_dict_fail.items():
+        if key not in channel_dict_pass or value not in channel_dict_fail[key]:
+            return_dict = check_result_dict
+            logger.info(f'return_dict: {return_dict}')
 
     return return_dict
 
