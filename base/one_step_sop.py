@@ -6,53 +6,53 @@ from base.amd_cell_command import *
 from base.fileOP import *
 
 
-def intel_check_run(fail_dir, pass_dir):
+def intel_check_run(parent_dir,fail_dir=None, pass_dir=None):
     rule_count = 18
     check_result_list = []
     for idx in range(1, rule_count):
         function_name = f'check_rule_{idx}'
-        return_dict = eval(function_name)(fail_dir, pass_dir)
+        return_dict = eval(function_name)(parent_dir, fail_dir, pass_dir)
         if return_dict:
             check_result_list.append(return_dict)
             pass
             # break
-    dir_name = './'
+    # dir_name = './'
     result_yaml_file = 'result.yaml'
-    result_yaml_file = os.path.join(dir_name, result_yaml_file)
+    result_yaml_file = os.path.join(parent_dir, result_yaml_file)
     dump_file(result_yaml_file, check_result_list)
     logger.info(f'check_result_list:{check_result_list}')
     return
 
-def gpu_check_run(fail_dir, pass_dir):
+def gpu_check_run(parent_dir,fail_dir=None, pass_dir=None):
     rule_count = 33
     check_result_list = []
     for idx in range(18, rule_count):
         function_name = f'check_rule_{idx}'
-        return_dict = eval(function_name)(fail_dir, pass_dir)
+        return_dict = eval(function_name)(parent_dir, fail_dir, pass_dir)
         if return_dict:
             check_result_list.append(return_dict)
             pass
             # break
     dir_name = './'
     result_yaml_file = 'result.yaml'
-    result_yaml_file = os.path.join(dir_name, result_yaml_file)
+    result_yaml_file = os.path.join(parent_dir, result_yaml_file)
     dump_file(result_yaml_file, check_result_list)
     logger.info(f'check_result_list:{check_result_list}')
     return
 
-def amd_check_run(fail_dir, pass_dir):
+def amd_check_run(parent_dir,fail_dir=None, pass_dir=None):
     rule_count = 16
     check_result_list = []
     for idx in range(1, rule_count):
         function_name = f'amd_check_rule_{idx}'
-        return_dict = eval(function_name)(fail_dir, pass_dir)
+        return_dict = eval(function_name)(parent_dir, fail_dir, pass_dir)
         if return_dict:
             check_result_list.append(return_dict)
             pass
             # break
     dir_name = './'
     result_yaml_file = 'result.yaml'
-    result_yaml_file = os.path.join(dir_name, result_yaml_file)
+    result_yaml_file = os.path.join(parent_dir, result_yaml_file)
     dump_file(result_yaml_file, check_result_list)
     logger.info(f'check_result_list:{check_result_list}')
     return

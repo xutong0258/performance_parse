@@ -57,6 +57,12 @@ def get_tat_file_with_dir(dir_name):
         if 'PTAT' in filename and '.csv' in filename:
             tat_file = os.path.join(dir_name, filename)
             logger.info(f'tat_file:{tat_file}')
+            return tat_file
+
+    for filename in file_list:
+        if '.csv' in filename:
+            tat_file = os.path.join(dir_name, filename)
+            logger.info(f'tat_file:{tat_file}')
             break
     return tat_file
 
@@ -132,8 +138,12 @@ def get_list_text_count(result, text):
     if result is None:
         return count
 
-    for item in result:
-        if text in item:
+    data_list = remove_list_na(result, target_str='nan')
+    logger.info(f"data_list: {data_list}")
+
+    for item in data_list:
+        # logger.info(f'item:{item}')
+        if item and text in item:
             count = count + 1
     return count
 
@@ -160,7 +170,8 @@ def get_list_lower_than_stand_average(input_list, stand, debug = False):
             output_list.append(item)
             if debug:
                 logger.info(f"item:{item}")
-    average = sum(output_list) / len(output_list)
+    if len(output_list):
+        average = sum(output_list) / len(output_list)
     return average
 
 def get_list_average(input_list, debug = False):

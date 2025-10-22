@@ -1,21 +1,24 @@
 import os
 from base import common
 from base.one_step_sop import *
+from base.fileOP import *
 
 path_dir = os.path.dirname(__file__)
 
+file = r'D:\input_p.yaml'
+src_dir_list = get_file_content_list(file)
+logger.info(f'src_dir_list: {src_dir_list}')
 
 if __name__ == '__main__':
-    fail_dir = r'D:\小拉\0_peformance\GPU_FAIL'
-    pass_dir = r'D:\小拉\0_peformance\GPU_PASS'
+    parent_dir = r'D:\0_intel+nv_case-1021\cpu_PL4'
+    # intel_check_run(parent_dir=parent_dir)
 
-    fail_dir = r'D:\0_intel+nv_case-1021\CPU_case-环温sensor\Fail_环温sensor_CinebenchR23_2025-05-15_034755'
-    pass_dir = r'D:\0_intel+nv_case-1021\CPU_case-环温sensor\pass_环温sensor'
+    for src_dir in src_dir_list:
+        src_dir = src_dir.strip()
+        if src_dir == '':
+            continue
 
-    # one_process_run(fail_dir, pass_dir)
-    intel_check_run(fail_dir, pass_dir)
-
-    # fail_dir = r'D:\0_intel+nv_case-1021\CPU_Max_Frequency\fail'
-    # pass_dir = r'D:\0_intel+nv_case-1021\CPU_Max_Frequency\pass'
-    # intel_check_run(fail_dir, pass_dir)
+        # one_process_run(fail_dir, pass_dir)
+        # parent_dir = r'D:\0_intel+nv_case-1021\cpu_PL1'
+        intel_check_run(parent_dir=src_dir)
     pass

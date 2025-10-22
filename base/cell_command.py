@@ -19,7 +19,7 @@ from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
 
 
-def check_rule_1(fail_dir, pass_dir=None):
+def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_1')
     return_dict = None
     check_result_dict = {
@@ -29,8 +29,12 @@ def check_rule_1(fail_dir, pass_dir=None):
         'Solution': 'Please EE confirm, if the gap is acceptable by Sample difference',
         '修复及验证': '硬件不需要修复，更换硬件',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
+    logger.info(f'fail_tat_file={fail_tat_file}')
 
     df = read_csv_with_pandas(fail_tat_file)
     head_list = df.head()
@@ -52,7 +56,7 @@ def check_rule_1(fail_dir, pass_dir=None):
     return return_dict
 
 
-def check_rule_2(fail_dir, pass_dir=None):
+def check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_2')
     return_dict = None
     check_result_dict = {
@@ -62,6 +66,10 @@ def check_rule_2(fail_dir, pass_dir=None):
         'Solution': 'Please power check prochot reason further',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
     df = read_csv_with_pandas(fail_tat_file)
@@ -69,8 +77,12 @@ def check_rule_2(fail_dir, pass_dir=None):
     col_2 = 'Turbo Parameters-IA Clip Reason'
 
     bench_mark = 400
-    lower_index = get_list_lower_index(df[col_1], bench_mark)
-    logger.info(f"lower_index: {lower_index}")
+    tmp_list = df.get(col_1, None)
+
+    lower_index = None
+    if tmp_list is not None:
+        lower_index = get_list_lower_index(df[col_1], bench_mark)
+        logger.info(f"lower_index: {lower_index}")
 
     
     if lower_index is not None:
@@ -92,7 +104,7 @@ def check_rule_2(fail_dir, pass_dir=None):
             return_dict = check_result_dict
     return return_dict
 
-def check_rule_3(fail_dir, pass_dir=None):
+def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_3')
     return_dict = None
     check_result_dict = {
@@ -102,6 +114,10 @@ def check_rule_3(fail_dir, pass_dir=None):
         'Solution': 'Please power Thermal prochot reason further.',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     df = read_csv_with_pandas(fail_tat_file)
 
@@ -109,9 +125,11 @@ def check_rule_3(fail_dir, pass_dir=None):
     col_2 = 'Turbo Parameters-IA Clip Reason'
 
     bench_mark = 400
-    lower_index = get_list_lower_index(df[col_1], bench_mark)
-    logger.info(f"lower_index: {lower_index}")
-
+    tmp_list = df.get(col_1, None)
+    lower_index = None
+    if tmp_list is not None:
+        lower_index = get_list_lower_index(df[col_1], bench_mark)
+        logger.info(f"lower_index: {lower_index}")
     
     if lower_index is not None:
         check_list = []
@@ -127,7 +145,7 @@ def check_rule_3(fail_dir, pass_dir=None):
             return_dict = check_result_dict
     return return_dict
 
-def check_rule_4(fail_dir, pass_dir=None):
+def check_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_4',
@@ -136,12 +154,16 @@ def check_rule_4(fail_dir, pass_dir=None):
         'Solution': 'Please power Thermal prochot reason further.',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     df = read_csv_with_pandas(fail_tat_file)
 
     return return_dict
 
-def check_rule_5(fail_dir, pass_dir=None):
+def check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_5',
@@ -150,12 +172,16 @@ def check_rule_5(fail_dir, pass_dir=None):
         'Solution': 'further check Intel code base',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     df = read_csv_with_pandas(fail_tat_file)
 
     return return_dict
 
-def check_rule_6(fail_dir, pass_dir):
+def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_6',
@@ -164,16 +190,23 @@ def check_rule_6(fail_dir, pass_dir):
         'Solution': 'check any other function behvior calls CPU power during benchmark',
         '修复及验证': 'change Tcc offset value to pass, verify',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     col = 'Power-Package Power(Watts)'
     fail_col_data, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
     pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
 
     # 计算偏差百分比（以平均值为基准）
-    is_larger_than_threshold = is_two_list_delta_larger_than_threshold(fail_col_data,
-                                                                       pass_col_data,
-                                                                       0.03,
-                                                                       fail_file_data)
+    # is_larger_than_threshold = is_two_list_delta_larger_than_threshold(fail_col_data,
+    #                                                                    pass_col_data,
+    #                                                                    0.03,
+    #                                                                    fail_file_data)
 
+    is_larger_than_threshold = is_two_col_data_delta_larger_than_threshold(fail_col_data,
+                                                                           pass_col_data,
+                                                                       0.03)
     if is_larger_than_threshold:
         return_dict = check_result_dict
 
@@ -181,16 +214,19 @@ def check_rule_6(fail_dir, pass_dir):
     col = 'Power-Rest of Package Power(Watts)'
     fail_col_data, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
     pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
-    is_larger_than_threshold = is_two_list_delta_larger_than_threshold(fail_col_data,
-                                                                       pass_col_data,
-                                                                       0.03,
-                                                                       fail_file_data)
+    # is_larger_than_threshold = is_two_list_delta_larger_than_threshold(fail_col_data,
+    #                                                                    pass_col_data,
+    #                                                                    0.03,
+    #                                                                    fail_file_data)
+    is_larger_than_threshold = is_two_col_data_delta_larger_than_threshold(fail_col_data,
+                                                                           pass_col_data,
+                                                                       0.03)
     if is_larger_than_threshold:
         return_dict = check_result_dict
     logger.info(return_dict)
     return return_dict
 
-def check_rule_7(fail_dir, pass_dir):
+def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     check_result_dict = {
         'rule name': 'check_rule_7',
         'Root cause': 'Idle power higher',
@@ -198,6 +234,9 @@ def check_rule_7(fail_dir, pass_dir):
         'Solution': 'PHM logs check idle power high reason',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     pass_tat_file = get_tat_file_with_dir(pass_dir)
@@ -228,7 +267,8 @@ def check_rule_7(fail_dir, pass_dir):
 
     return_dict = None
     # 计算偏差百分比（以平均值为基准）
-    col_fail = df_fail[col]
+    # col_fail = df_fail[col]
+    col_fail = df_fail.get(col, None)
     col_pass = df_pass.get(col, None)
     logger.info(f"col_pass: {col_pass}")
 
@@ -247,7 +287,8 @@ def check_rule_7(fail_dir, pass_dir):
     logger.info(return_dict)
     return return_dict
 
-def check_rule_8(fail_dir, pass_dir):
+def check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
+    return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_8',
         'Root cause': 'GT power higher',
@@ -255,6 +296,10 @@ def check_rule_8(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     col = 'Power-Package Power(Watts)'
     fail_col_data = get_tat_file_col_data_by_dir(fail_dir, col)
     pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
@@ -270,7 +315,7 @@ def check_rule_8(fail_dir, pass_dir):
     logger.info(return_dict)
     return return_dict
 
-def check_rule_9(fail_dir, pass_dir=None):
+def check_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
     check_result_dict = {
         'rule name': 'check_rule_9',
         'Root cause': 'VR thermal alert-thermal',
@@ -278,11 +323,18 @@ def check_rule_9(fail_dir, pass_dir=None):
         'Solution': 'Please check if VR temperature over spec during benchmark',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
     df = read_csv_with_pandas(fail_tat_file)
     col = 'Turbo Parameters-IA Clip Reason'
     data_list = df[col].tolist()
+
+    data_list = remove_list_na(data_list, target_str='nan')
+    logger.info(f"data_list: {data_list}")
 
     count = get_list_text_count(data_list, 'VR thermal alert')
 
@@ -293,7 +345,7 @@ def check_rule_9(fail_dir, pass_dir=None):
 
     return return_dict
 
-def check_rule_10(fail_dir, pass_dir=None):
+def check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_10',
@@ -302,10 +354,17 @@ def check_rule_10(fail_dir, pass_dir=None):
         'Solution': 'Please power check  if VR TDC meet sepc',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     df = read_csv_with_pandas(fail_tat_file)
     col = 'Turbo Parameters-IA Clip Reason'
     data_list = df[col].tolist()
+
+    data_list = remove_list_na(data_list, target_str='nan')
+    logger.info(f"data_list: {data_list}")
 
     count = get_list_text_count(data_list, 'VR TDC Clip-Power')
 
@@ -316,7 +375,7 @@ def check_rule_10(fail_dir, pass_dir=None):
     return return_dict
 
 
-def check_rule_11(fail_dir, pass_dir=None):
+def check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     # PL1_value and PL2_value come from spec
     PL1_value = 100
     PL2_value = 200
@@ -328,6 +387,9 @@ def check_rule_11(fail_dir, pass_dir=None):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
@@ -344,7 +406,9 @@ def check_rule_11(fail_dir, pass_dir=None):
     logger.info(f"return_dict: {return_dict}")
     return return_dict
 
-def check_rule_12(fail_dir, pass_dir):
+def check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f"check_rule_12")
+
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_12',
@@ -353,6 +417,9 @@ def check_rule_12(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': 'change Tcc offset value to pass, verify',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     pass_tat_file = get_tat_file_with_dir(pass_dir)
@@ -368,22 +435,23 @@ def check_rule_12(fail_dir, pass_dir):
         col = 'Miscellaneous-TCC Offset Temperature(Degree C)'
 
         # 计算偏差百分比（以平均值为基准）
-        col_fail = df_fail[col]
-        col_pass = df_pass[col]
-        df_fail['deviation_%'] = calculate_deviation(col_fail, col_fail, base='col_pass')
+        col_fail = df_fail.get(col, None)
+        col_pass = df_pass.get(col, None)
+        if col_fail is not None and col_pass is not None:
+            df_fail['deviation_%'] = calculate_deviation(col_fail, col_fail, base='col_pass')
 
-        # 设定阈值（例如：判断是否超过5%）
-        threshold = 3
-        df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
-        logger.info(df_fail)
-        count = get_list_equal_count(df_fail['exceed_threshold'], True)
-        if count:
-            return_dict = check_result_dict
-            logger.info(return_dict)
+            # 设定阈值（例如：判断是否超过5%）
+            threshold = 3
+            df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
+            logger.info(df_fail)
+            count = get_list_equal_count(df_fail['exceed_threshold'], True)
+            if count:
+                return_dict = check_result_dict
+                logger.info(return_dict)
 
     return return_dict
 
-def check_rule_13(fail_dir, pass_dir):
+def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_13',
@@ -392,6 +460,9 @@ def check_rule_13(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     pass_tat_file = get_tat_file_with_dir(pass_dir)
@@ -407,7 +478,7 @@ def check_rule_13(fail_dir, pass_dir):
     return return_dict
 
 
-def check_rule_14(fail_dir, pass_dir):
+def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_14',
@@ -416,6 +487,9 @@ def check_rule_14(fail_dir, pass_dir):
         'Solution': 'Please EE confirm AI FW further',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     pass_tat_file = get_tat_file_with_dir(pass_dir)
@@ -430,7 +504,7 @@ def check_rule_14(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_15(fail_dir, pass_dir):
+def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_15',
@@ -439,6 +513,9 @@ def check_rule_15(fail_dir, pass_dir):
         'Solution': 'Please retest with the same Enviorment',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     pass_tat_file = get_tat_file_with_dir(pass_dir)
@@ -476,7 +553,7 @@ def check_rule_15(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_16(fail_dir, pass_dir):
+def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_16',
@@ -485,6 +562,10 @@ def check_rule_16(fail_dir, pass_dir):
         'Solution': 'Please retest with the same Enviorment',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     col = 'Miscellaneous-MSR Package Temperature(Degree C)'
     fail_col_data = get_tat_file_col_data_by_dir(fail_dir, col)
     pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
@@ -505,7 +586,8 @@ def check_rule_16(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_17(fail_dir, pass_dir):
+def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
+    return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_17',
         'Root cause': 'EPP value abnormal',
@@ -513,6 +595,9 @@ def check_rule_17(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': 'change to pass EPP value to verify, furhter check PPM version',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     pass_tat_file = get_tat_file_with_dir(pass_dir)
@@ -522,6 +607,9 @@ def check_rule_17(fail_dir, pass_dir):
 
     col = 'HWP-pCore OSPM Requested Energy Performance Preference'
     data_list = df_fail.get(col, None)
+    if data_list is None:
+        return return_dict
+
     min_data = min(data_list)
     max_data = max(data_list)
     if min_data != max_data:
@@ -566,7 +654,7 @@ def check_rule_17(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_18(fail_dir, pass_dir=None):
+def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_18',
@@ -575,8 +663,9 @@ def check_rule_18(fail_dir, pass_dir=None):
         'Solution': 'Please EE check ,if the gap is acceptable by Sample difference',
         '修复及验证': 'change to pass EPP value to verify, furhter check PPM version',
     }
-    # col = 'Power-Package Power(Watts)'
-    # fail_col_data_tat, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     col = '1:GPC Clock (MHz)'
     fail_col_data_gpu, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
@@ -598,7 +687,7 @@ def check_rule_18(fail_dir, pass_dir=None):
 
     return return_dict
 
-def check_rule_19(fail_dir, pass_dir=None):
+def check_rule_19(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_19',
@@ -607,6 +696,9 @@ def check_rule_19(fail_dir, pass_dir=None):
         'Solution': 'EC log first check the prochot reason',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     gpu_log_file = get_gpu_file_with_dir(fail_dir)
 
@@ -635,7 +727,7 @@ def check_rule_19(fail_dir, pass_dir=None):
             pass
     return return_dict
 
-def check_rule_20(fail_dir, pass_dir=None):
+def check_rule_20(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_20',
@@ -644,6 +736,9 @@ def check_rule_20(fail_dir, pass_dir=None):
         'Solution': 'need confirm if current driver lock CPU clk',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     gpu_log_file = get_gpu_file_with_dir(fail_dir)
 
@@ -672,7 +767,7 @@ def check_rule_20(fail_dir, pass_dir=None):
                 return_dict = check_result_dict
     return return_dict
 
-def check_rule_21(fail_dir, pass_dir):
+def check_rule_21(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_21',
@@ -681,6 +776,9 @@ def check_rule_21(fail_dir, pass_dir):
         'Solution': 'Retest with the same OC settings',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     col = '1:Memory Clock (MHz)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
@@ -694,7 +792,7 @@ def check_rule_21(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_22(fail_dir, pass_dir=None):
+def check_rule_22(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_22',
@@ -703,9 +801,13 @@ def check_rule_22(fail_dir, pass_dir=None):
         'Solution': 'Please BIOS check if max TGP configuration meet Fn+Q spec',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     return return_dict
 
-def check_rule_23(fail_dir, pass_dir):
+def check_rule_23(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_23',
@@ -714,33 +816,33 @@ def check_rule_23(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     # 1:NVVDD Power (W)
     col = '1:NVVDD Power (W)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
-    is_larger_than_threshold_NVVDD_Power = is_two_list_delta_larger_than_threshold(fail_col_data,
+    is_larger_than_threshold_NVVDD_Power = is_two_col_data_delta_larger_than_threshold(fail_col_data,
                                                                        pass_col_data,
-                                                                       0.1,
-                                                                       fail_file_data)
+                                                                       0.1)
 
     # 1:TGP (W)
     col = '1:TGP (W)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
-    is_larger_than_threshold_TGP = is_two_list_delta_larger_than_threshold(fail_col_data,
+    is_larger_than_threshold_TGP = is_two_col_data_delta_larger_than_threshold(fail_col_data,
                                                                        pass_col_data,
-                                                                       0.1,
-                                                                       fail_file_data)
+                                                                       0.1)
 
     # 1:FBVDD Power (W)
     col = '1:FBVDD Power (W)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
-    is_larger_than_threshold_FBVDD_P = is_two_list_delta_larger_than_threshold(fail_col_data,
+    is_larger_than_threshold_FBVDD_P = is_two_col_data_delta_larger_than_threshold(fail_col_data,
                                                                        pass_col_data,
-                                                                       0.1,
-                                                                       fail_file_data)
+                                                                       0.1)
     # 只有1:NVVDD Power (W)明显差异
     if is_larger_than_threshold_NVVDD_Power and (not is_larger_than_threshold_TGP and not is_larger_than_threshold_FBVDD_P):
         return_dict = check_result_dict
@@ -748,7 +850,7 @@ def check_rule_23(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_24(fail_dir, pass_dir):
+def check_rule_24(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_24',
@@ -757,33 +859,33 @@ def check_rule_24(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     # 1:NVVDD Power (W)
     col = '1:NVVDD Power (W)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
-    is_larger_than_threshold_NVVDD_Power = is_two_list_delta_larger_than_threshold(fail_col_data,
+    is_larger_than_threshold_NVVDD_Power = is_two_col_data_delta_larger_than_threshold(fail_col_data,
                                                                        pass_col_data,
-                                                                       0.1,
-                                                                       fail_file_data)
+                                                                       0.1)
 
     # 1:TGP (W)
     col = '1:TGP (W)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
-    is_larger_than_threshold_TGP = is_two_list_delta_larger_than_threshold(fail_col_data,
+    is_larger_than_threshold_TGP = is_two_col_data_delta_larger_than_threshold(fail_col_data,
                                                                        pass_col_data,
-                                                                       0.1,
-                                                                       fail_file_data)
+                                                                       0.1)
 
     # 1:FBVDD Power (W)
     col = '1:FBVDD Power (W)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
-    is_larger_than_threshold_FBVDD_P = is_two_list_delta_larger_than_threshold(fail_col_data,
+    is_larger_than_threshold_FBVDD_P = is_two_col_data_delta_larger_than_threshold(fail_col_data,
                                                                        pass_col_data,
-                                                                       0.1,
-                                                                       fail_file_data)
+                                                                       0.1)
     # 只有1:NVVDD Power (W)明显差异
     if is_larger_than_threshold_FBVDD_P and (not is_larger_than_threshold_TGP and not is_larger_than_threshold_NVVDD_Power):
         return_dict = check_result_dict
@@ -791,7 +893,7 @@ def check_rule_24(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_25(fail_dir, pass_dir):
+def check_rule_25(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_25',
@@ -800,6 +902,9 @@ def check_rule_25(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     # 1:NVVDD Power (W)
     is_delta_larger_than_stand = False
@@ -829,7 +934,7 @@ def check_rule_25(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_26(fail_dir, pass_dir):
+def check_rule_26(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_26',
@@ -838,6 +943,9 @@ def check_rule_26(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     # 1:NVVDD Power (W)
     is_match_rule = False
@@ -884,7 +992,7 @@ def check_rule_26(fail_dir, pass_dir):
     return return_dict
 
 
-def check_rule_27(fail_dir, pass_dir=None):
+def check_rule_27(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_27',
@@ -893,6 +1001,9 @@ def check_rule_27(fail_dir, pass_dir=None):
         'Solution': 'Please EC check D-notifer first',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     col = 'Power Supply Mode'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
@@ -929,7 +1040,7 @@ def check_rule_27(fail_dir, pass_dir=None):
 
     return return_dict
 
-def check_rule_28(fail_dir, pass_dir=None):
+def check_rule_28(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_28',
@@ -938,6 +1049,9 @@ def check_rule_28(fail_dir, pass_dir=None):
         'Solution': 'Need driver confirm if current PPAB behvior is normal',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     col = '1:PPAB State'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
@@ -973,7 +1087,7 @@ def check_rule_28(fail_dir, pass_dir=None):
 
     return return_dict
 
-def check_rule_29(fail_dir, pass_dir=None):
+def check_rule_29(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_29',
@@ -982,6 +1096,9 @@ def check_rule_29(fail_dir, pass_dir=None):
         'Solution': 'further thermal protect behavior',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
     col = '1:GPC Slowdown Factor (%)'
     col_data, file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
@@ -993,7 +1110,7 @@ def check_rule_29(fail_dir, pass_dir=None):
 
     return return_dict
 
-def check_rule_30(fail_dir, pass_dir):
+def check_rule_30(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_30',
@@ -1002,6 +1119,10 @@ def check_rule_30(fail_dir, pass_dir):
         'Solution': 'please EE check VBIOS version',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     col = '1:TGP (W)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
@@ -1064,7 +1185,7 @@ def check_rule_30(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_31(fail_dir, pass_dir):
+def check_rule_31(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_31',
@@ -1073,6 +1194,10 @@ def check_rule_31(fail_dir, pass_dir):
         'Solution': 'Please EE check Vram vendor difference',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     col = 'VRAM Strap'
     fail_col_data, fail_file_data = get_gpu_file_head_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_head_col_data_by_dir(pass_dir, col)
@@ -1082,7 +1207,7 @@ def check_rule_31(fail_dir, pass_dir):
 
     return return_dict
 
-def check_rule_32(fail_dir, pass_dir=None):
+def check_rule_32(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_32',
@@ -1091,6 +1216,10 @@ def check_rule_32(fail_dir, pass_dir=None):
         'Solution': 'check why non-quiet AC mode, Whisper mode is on',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     col = '1:WM2 Platform Enabled'
     fail_col_data_platform, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     cell_data_platform = fail_col_data_platform[0]
@@ -1105,7 +1234,7 @@ def check_rule_32(fail_dir, pass_dir=None):
 
     return return_dict
 
-def check_rule_33(fail_dir, pass_dir):
+def check_rule_33(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_33',
@@ -1114,6 +1243,10 @@ def check_rule_33(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     channel_str = 'Controller0-ChannelA-DIMM1'
     channel_dict_fail = get_cpu_log_content(fail_dir, channel_str)
     channel_dict_pass = get_cpu_log_content(pass_dir, channel_str)
