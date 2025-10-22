@@ -133,16 +133,19 @@ def calculate_deviation(col_fail, col_pass, base='average'):
     return deviation
 
 def get_list_text_count(result, text):
+    text = text.lower()
+
     text_line = None
     count = 0
     if result is None:
         return count
 
     data_list = remove_list_na(result, target_str='nan')
-    logger.info(f"data_list: {data_list}")
+    # logger.info(f"data_list: {data_list}")
 
     for item in data_list:
-        # logger.info(f'item:{item}')
+        item = item.lower()
+        logger.info(f'item:{item}')
         if item and text in item:
             count = count + 1
     return count

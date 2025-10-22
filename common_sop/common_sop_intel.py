@@ -10,15 +10,12 @@ src_dir_list = get_file_content_list(file)
 logger.info(f'src_dir_list: {src_dir_list}')
 
 if __name__ == '__main__':
-    parent_dir = r'D:\0_intel+nv_case-1021\cpu_PL4'
-    # intel_check_run(parent_dir=parent_dir)
+    parent_dir = r'D:\0_intel+nv_case-1021\15_CPU_case-环温sensor'
+    intel_check_run(parent_dir=parent_dir)
 
-    for src_dir in src_dir_list:
-        src_dir = src_dir.strip()
-        if src_dir == '':
-            continue
-
-        # one_process_run(fail_dir, pass_dir)
-        # parent_dir = r'D:\0_intel+nv_case-1021\cpu_PL1'
-        intel_check_run(parent_dir=src_dir)
+    # for src_dir in src_dir_list:
+    #     src_dir = src_dir.strip()
+    #     if src_dir == '':
+    #         continue
+    #     intel_check_run(parent_dir=src_dir)
     pass

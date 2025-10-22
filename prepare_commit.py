@@ -25,7 +25,7 @@ def file_walk():
         for file in files:
             file_path = os.path.join(root, file)
             # print(file_path)
-            if '.csv' in file_path or '.yaml' in file_path:
+            if '.csv' in file_path:
                 os.remove(file_path)
                 print(f"del: {file_path}")
     return

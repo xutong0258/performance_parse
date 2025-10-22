@@ -1,16 +1,17 @@
-import pandas as pd
+df = read_csv_with_pandas(fail_tat_file)
+head_list = df.head()
+cpu_list = []
+for item in head_list:
+    if 'CPU' in item and '-Frequency(MHz)' in item:
+        cpu_list.append(item)
 
-# 创建原始 Series
-s = pd.Series([10, 20, 30, 40, 50])
-print("原始 Series：")
-print(s)
+for item in cpu_list:
+    # col_1 = 'CPU0-Frequency(MHz)'
+    col_2 = 'Power-Package Power(Watts)'
 
-# 1. 向量化运算（每个元素乘以 2）
-s_new1 = s * 2
-print("\n向量化运算后的新 Series：")
-print(s_new1)
-
-# 2. 条件修改（大于 30 的元素改为 0）
-s_new2 = s.where(s <= 30, 0)  # 满足条件保留原值，不满足则替换为 0
-print("\n条件修改后的新 Series：")
-print(s_new2)
+    pearson_corr = df[item].corr(df[col_2], method='pearson')
+    logger.info(f"皮尔逊相关系数: {pearson_corr:.4f}")
+    if pearson_corr < 0.7:
+        logger.info(f"check_result_dict: {check_result_dict}")
+        return_dict = check_result_dict
+        break

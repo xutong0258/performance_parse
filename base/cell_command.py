@@ -18,7 +18,6 @@ from base.fileOP import *
 from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
 
-
 def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_1')
     return_dict = None
@@ -49,7 +48,7 @@ def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
 
         pearson_corr = df[item].corr(df[col_2], method='pearson')
         logger.info(f"皮尔逊相关系数: {pearson_corr:.4f}")
-        if pearson_corr < 0.7:
+        if pearson_corr < 0.5:
             logger.info(f"check_result_dict: {check_result_dict}")
             return_dict = check_result_dict
             break
@@ -159,7 +158,22 @@ def check_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
         pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
-    df = read_csv_with_pandas(fail_tat_file)
+    df_fail = read_csv_with_pandas(fail_tat_file)
+
+    head_list = df_fail.head()
+    cpu_list = []
+    for item in head_list:
+        if 'CPU' in item and '-Turbo Capability' in item:
+            cpu_list.append(item)
+
+    for item in cpu_list:
+        col_data = df_fail.get(item)
+        count = get_list_text_count(col_data, 'Supported and Disabled')
+        if count:
+            logger.info(f"{item}: CPUx Turbo capability=supported and disabled")
+            return_dict = check_result_dict
+            logger.info(f"check_result_dict: {check_result_dict}")
+            break
 
     return return_dict
 
@@ -518,16 +532,24 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
         pass_dir = os.path.join(parent_dir, 'pass')
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
+    logger.info(f'fail_tat_file:{fail_tat_file}')
+
     pass_tat_file = get_tat_file_with_dir(pass_dir)
 
     df_pass = read_csv_with_pandas(pass_tat_file)
     df_fail = read_csv_with_pandas(fail_tat_file)
     col = 'Turbo Parameters-lA clip Reason'
+    col = 'Turbo Parameters-IA Clip Reason'
     data_list = df_fail.get(col, None)
 
+    logger.info(f'data_list:{data_list}')
     count = get_list_text_count(data_list, 'Thermal event')
+    logger.info(f'count:{count}')
+
     delta = 0
     fail_PerformanceLog_file = get_performance_file_with_dir(fail_dir)
+    logger.info(f'fail_PerformanceLog_file:{fail_PerformanceLog_file}')
+
     pass_PerformanceLog_file = get_performance_file_with_dir(pass_dir)
 
     if count and fail_PerformanceLog_file is not None:

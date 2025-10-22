@@ -1,0 +1,37 @@
+rule name: check_rule_1
+GPU#1 - NVIDIA GeForce XXXX(ex.RTX 4070) Laptop GPU: Brand Name
+VBIOS:	VBIOS Version
+Driver:	Driver Version
+NVPCF Driver:	NVPCF Driver Version
+VRAM Strap:	VRAM Strap
+AC VBIOS Rated TGP:	AC VBIOS Rated TGP (W)
+Base clock:	GPC Base Clock (MHz)
+Memory clock:	Memory Base Clock (MHz)
+gpc_clk	1:GPC Clock (MHz)
+clk_mem	1:Memory Clock (MHz)
+TPP_Momentary	1:TPP Measured (W)
+AC_Target_TPP_Limit	1:AC Target TPP Limit (mW)
+AC Max Rated TGP	1:AC Max GPU Limit (mW)
+pwr_tgp	1:TGP (W)
+pwr_nvvdd	1:NVVDD Power (W)
+pwr_fbvdd	1:FBVDD Power (W)
+Capping reason	1:Capping Reason
+Target Temp	Max Target Temperature (C)
+T_GPU	1:Temperature GPU （C）
+T_mem	1:Temperature Memory (C)
+AC_DC	Power Supply Mode
+PPAB_status	1:PPAB State
+gpu_state	1:GPU State
+gpc_util	1:GPU Utilization (%)
+fb_util	1:FB Utilization (%)
+P_state	1:P-State
+d_notifier_limit	1:D-Notifier Limit
+slowdown	1:GPC Slowdown Factor (%)
+无	1:WM2 Platform Enabled
+无	1:WM2 Driver Enabled
+cpu_clk	CPU Clock (MHz)
+cpu_temp	CPU Temperature (C)
+cpu_tdp	CPU TDP (W)
+cpu_prochot	CPU PROCHOT Asserted
+
+

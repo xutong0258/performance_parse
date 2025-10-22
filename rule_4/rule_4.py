@@ -7,6 +7,6 @@ from base.read_csv_with_pandas import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    fail_dir = r'D:\小拉\0_peformance\GPU_FAIL'
-    check_rule_4(fail_dir)
+    parent_dir = r'D:\0_CPU_turbo_disabled'
+    check_rule_4(parent_dir=parent_dir)
     pass
