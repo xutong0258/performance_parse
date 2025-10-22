@@ -66,7 +66,7 @@ def get_gpu_file_with_dir(dir_name):
     gpu_log_file = None
     file_list = os.listdir(dir_name)
     for filename in file_list:
-        if 'PerformanceLog' in filename and '.csv' in filename:
+        if 'GPUMonLog' in filename and '.csv' in filename:
             gpu_log_file = os.path.join(dir_name, filename)
             logger.info(f'gpu_log_file:{gpu_log_file}')
             break

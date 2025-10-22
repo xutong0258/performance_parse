@@ -71,11 +71,11 @@ def get_gpu_file_col_data_by_dir(input_dir, col_name):
     gpu_log_file = get_gpu_file_with_dir(input_dir)
     logger.info(f'gpu_log_file:{gpu_log_file}')
 
-    # headers, new_list = get_gpu_data_with_csv(gpu_log_file)
-    # new_file = os.path.join(input_dir, 'GPU_New.csv')
-    # write_to_csv(new_file, new_list, headers)
+    headers, new_list = get_gpu_data_with_csv(gpu_log_file)
+    new_file = os.path.join(input_dir, 'GPU_New.csv')
+    write_to_csv(new_file, new_list, headers)
 
-    file_data = read_csv_with_pandas(gpu_log_file)
+    file_data = read_csv_with_pandas(new_file)
     col_data = file_data.get(col_name)
     return col_data, file_data
 

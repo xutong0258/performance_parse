@@ -20,6 +20,7 @@ from base.read_csv_with_csv import *
 
 
 def check_rule_1(fail_dir, pass_dir=None):
+    logger.info(f'check_rule_1')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_1',
@@ -52,6 +53,7 @@ def check_rule_1(fail_dir, pass_dir=None):
 
 
 def check_rule_2(fail_dir, pass_dir=None):
+    logger.info(f'check_rule_2')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_2',
@@ -91,6 +93,7 @@ def check_rule_2(fail_dir, pass_dir=None):
     return return_dict
 
 def check_rule_3(fail_dir, pass_dir=None):
+    logger.info(f'check_rule_3')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_3',
@@ -212,7 +215,7 @@ def check_rule_7(fail_dir, pass_dir):
     average_fail = get_list_lower_than_stand_average(col_fail, idle_stand)
     logger.info(f"average_fail: {average_fail}")
 
-    average_pass = get_list_lower_than_stand_average(col_pass, idle_stand, True)
+    average_pass = get_list_lower_than_stand_average(col_pass, idle_stand, False)
     logger.info(f"average_pass: {average_pass}")
 
     is_larger = False
@@ -227,7 +230,9 @@ def check_rule_7(fail_dir, pass_dir):
     # 计算偏差百分比（以平均值为基准）
     col_fail = df_fail[col]
     col_pass = df_pass.get(col, None)
-    if col_pass:
+    logger.info(f"col_pass: {col_pass}")
+
+    if col_pass is not None:
         df_fail['deviation_%'] = calculate_deviation(col_fail, col_fail, base='col_pass')
 
         # 设定阈值（例如：判断是否超过5%）
@@ -426,6 +431,7 @@ def check_rule_14(fail_dir, pass_dir):
     return return_dict
 
 def check_rule_15(fail_dir, pass_dir):
+    return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_15',
         'Root cause': 'Enviroment issue',
@@ -444,10 +450,10 @@ def check_rule_15(fail_dir, pass_dir):
 
     count = get_list_text_count(data_list, 'Thermal event')
     delta = 0
-    if count or True:
-        fail_PerformanceLog_file = get_performance_file_with_dir(fail_dir)
-        pass_PerformanceLog_file = get_performance_file_with_dir(pass_dir)
+    fail_PerformanceLog_file = get_performance_file_with_dir(fail_dir)
+    pass_PerformanceLog_file = get_performance_file_with_dir(pass_dir)
 
+    if count and fail_PerformanceLog_file is not None:
         df_pass = read_csv_with_pandas(pass_PerformanceLog_file)
         df_fail = read_csv_with_pandas(fail_PerformanceLog_file)
 
@@ -569,21 +575,23 @@ def check_rule_18(fail_dir, pass_dir=None):
         'Solution': 'Please EE check ,if the gap is acceptable by Sample difference',
         '修复及验证': 'change to pass EPP value to verify, furhter check PPM version',
     }
-    col = 'Power-Package Power(Watts)'
-    fail_col_data_tat, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
+    # col = 'Power-Package Power(Watts)'
+    # fail_col_data_tat, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
 
     col = '1:GPC Clock (MHz)'
     fail_col_data_gpu, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    pass_col_data_gpu, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
 
-    correlation = get_two_list_correlation(fail_col_data_gpu, fail_col_data_tat)
+    correlation = get_two_list_correlation(fail_col_data_gpu, pass_col_data_gpu)
     logger.info(correlation)
     if correlation and correlation > 0.03:
         return_dict = check_result_dict
 
     col = '1:TGP (W)'
     fail_col_data_gpu, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    pass_col_data_gpu, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
 
-    correlation = get_two_list_correlation(fail_col_data_gpu, fail_col_data_tat)
+    correlation = get_two_list_correlation(fail_col_data_gpu, pass_col_data_gpu)
     logger.info(correlation)
     if correlation and correlation > 0.03:
         return_dict = check_result_dict
@@ -798,6 +806,13 @@ def check_rule_25(fail_dir, pass_dir):
     col = '1:Capping Reason'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+
+    fail_col_data = remove_list_na(fail_col_data, 'N/A')
+    # logger.info(f'fail_col_data: {fail_col_data}')
+
+    pass_col_data = remove_list_na(pass_col_data, 'N/A')
+    # logger.info(f'pass_col_data: {pass_col_data}')
+
     item_data = fail_col_data[0].strip()
     item_data = item_data.lower()
     if item_data == 'thml' or item_data == 'thml pwr':
@@ -829,6 +844,13 @@ def check_rule_26(fail_dir, pass_dir):
     is_delta_larger_than_stand = False
     col = '1:Capping Reason'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+
+    fail_col_data = remove_list_na(fail_col_data, 'N/A')
+    # logger.info(f'fail_col_data: {fail_col_data}')
+
+    pass_col_data = remove_list_na(pass_col_data, 'N/A')
+    # logger.info(f'pass_col_data: {pass_col_data}')
 
     item_data = fail_col_data[0].strip()
     item_data = item_data.lower()
@@ -873,18 +895,28 @@ def check_rule_27(fail_dir, pass_dir=None):
     }
 
     col = 'Power Supply Mode'
-    col_data, file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
 
-    cell_data = col_data[0].strip()
+    fail_col_data = remove_list_na(fail_col_data, 'N/A')
+    # logger.info(f'fail_col_data: {fail_col_data}')
+
+    pass_col_data = remove_list_na(pass_col_data, 'N/A')
+    # logger.info(f'pass_col_data: {pass_col_data}')
+
+    cell_data = fail_col_data[0].strip()
     is_ac = False
 
     if cell_data == 'AC':
         is_ac = True
 
     col = '1:D-Notifier Limit'
-    col_data, file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
 
-    cell_data = col_data[0].strip()
+    fail_col_data = remove_list_na(fail_col_data, 'N/A')
+    logger.info(f'fail_col_data: {fail_col_data}')
+
+    cell_data = fail_col_data[0].strip()
     is_d2_d5 = False
     logger.info(f'cell_data: {cell_data}')
 
@@ -908,18 +940,29 @@ def check_rule_28(fail_dir, pass_dir=None):
     }
 
     col = '1:PPAB State'
-    col_data, file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-    is_all_enabled = is_col_data_all_same_with_target(col_data, 'enable')
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+
+    fail_col_data = remove_list_na(fail_col_data, 'N/A')
+    # logger.info(f'fail_col_data: {fail_col_data}')
+
+    is_all_enabled = is_col_data_all_same_with_target(fail_col_data, 'enable')
 
     col = '1:Capping Reason'
-    col_data, file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-    is_all_pwr = is_col_data_all_same_with_target(col_data, 'pwr')
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+
+    fail_col_data = remove_list_na(fail_col_data, 'N/A')
+    # logger.info(f'fail_col_data: {fail_col_data}')
+
+    is_all_pwr = is_col_data_all_same_with_target(fail_col_data, 'pwr')
 
     col = '1:AC Target TPP Limit (mW)'
-    col_data, file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
 
-    min_data = min(col_data)
-    max_data = max(col_data)
+    fail_col_data = remove_list_na(fail_col_data, 'N/A')
+    # logger.info(f'fail_col_data: {fail_col_data}')
+
+    min_data = min(fail_col_data)
+    max_data = max(fail_col_data)
     is_data_const = False
     if min_data == max_data:
         is_data_const = True
@@ -962,15 +1005,15 @@ def check_rule_30(fail_dir, pass_dir):
     col = '1:TGP (W)'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
-    logger.info(f'fail_col_data: {fail_col_data}')
+    # logger.info(f'fail_col_data: {fail_col_data}')
     which_type = type(fail_col_data)
     # logger.info(f'which_type: {which_type}')
 
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
-    logger.info(f'fail_col_data: {fail_col_data}')
+    # logger.info(f'fail_col_data: {fail_col_data}')
 
     pass_col_data = remove_list_na(pass_col_data, 'N/A')
-    logger.info(f'pass_col_data: {pass_col_data}')
+    # logger.info(f'pass_col_data: {pass_col_data}')
 
     fail_average_TGP = np.average(fail_col_data)
     pass_average_TGP = np.average(pass_col_data)

@@ -1,13 +1,12 @@
 import os
-
-from base.cell_command import *
-from base.componet import *
-from base.read_csv_with_pandas import *
+from base import common
+from base.one_step_sop import *
 
 path_dir = os.path.dirname(__file__)
+
 
 if __name__ == '__main__':
     fail_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG\fail'
     pass_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG\pass'
-    check_rule_25(fail_dir, pass_dir)
+    gpu_check_run(fail_dir, pass_dir)
     pass

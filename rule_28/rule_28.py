@@ -7,7 +7,8 @@ from base.read_csv_with_pandas import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    log_dir = r'D:\小拉\0_peformance\几种抓到的log类型'
+    fail_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG\fail'
+    pass_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG\pass'
 
-    check_rule_28(log_dir)
+    check_rule_28(fail_dir, pass_dir)
     pass
