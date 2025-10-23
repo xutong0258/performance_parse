@@ -7,6 +7,6 @@ from base.componet import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    log_dir = r'D:\小拉\0_peformance\GPU_FAIL'
-    check_rule_32(log_dir)
+    parent_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG'
+    check_rule_32(parent_dir=parent_dir)
     pass

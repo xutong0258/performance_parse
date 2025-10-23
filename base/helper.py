@@ -201,7 +201,7 @@ def get_list_average(input_list, debug = False):
         if debug:
             logger.info(f"item:{item}")
     if len(output_list):
-        logger.info(f"output_list:{output_list}")
+        # logger.info(f"output_list:{output_list}")
         average = sum(output_list) / len(output_list)
     return average
 
@@ -254,8 +254,11 @@ def is_two_list_delta_larger_than_threshold(col_fail, col_pass, threshold, df_fa
 def is_two_col_data_delta_larger_than_threshold(col_1_data, col_2_data, threshold):
     is_delta_larger_than_stand = False
     if col_1_data is not None and col_2_data is not None:
-        average_1 = get_list_average(col_1_data, True)
-        average_2 = get_list_average(col_2_data, True)
+        col_1_data = remove_list_na(col_1_data, target_str='nan')
+        col_2_data = remove_list_na(col_2_data, target_str='nan')
+
+        average_1 = get_list_average(col_1_data, False)
+        average_2 = get_list_average(col_2_data, False)
         delta = abs(average_1 - average_2)
         logger.info(f'delta:{delta}')
         logger.info(f'threshold:{threshold}')

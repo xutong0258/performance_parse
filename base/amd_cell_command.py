@@ -19,6 +19,8 @@ from base.read_csv_with_csv import *
 
 
 def amd_check_rule_1(fail_dir, pass_dir=None):
+    logger.info(f'amd_check_rule_1')
+
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_1',
@@ -49,6 +51,7 @@ def amd_check_rule_1(fail_dir, pass_dir=None):
     return return_dict
 
 def amd_check_rule_2(fail_dir, pass_dir=None):
+    logger.info(f'amd_check_rule_2')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_2',
@@ -79,6 +82,7 @@ def amd_check_rule_2(fail_dir, pass_dir=None):
     return return_dict
 
 def amd_check_rule_3(fail_dir, pass_dir=None):
+    logger.info(f'amd_check_rule_3')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_3',
@@ -93,6 +97,7 @@ def amd_check_rule_3(fail_dir, pass_dir=None):
     return return_dict
 
 def amd_check_rule_4(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_4')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_4',
@@ -117,6 +122,7 @@ def amd_check_rule_4(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_5(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_5')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_5',
@@ -146,6 +152,7 @@ def amd_check_rule_5(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_6(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_6')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_6',
@@ -171,6 +178,7 @@ def amd_check_rule_6(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_7(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_7')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_7',
@@ -203,6 +211,7 @@ def amd_check_rule_7(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_8(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_8')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_8',
@@ -230,6 +239,7 @@ def amd_check_rule_8(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_9(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_9')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_9',
@@ -309,6 +319,7 @@ def amd_check_rule_9(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_10(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_10')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_10',
@@ -319,6 +330,7 @@ def amd_check_rule_10(fail_dir, pass_dir):
     }
     return return_dict
 def amd_check_rule_11(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_11')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_11',
@@ -330,6 +342,7 @@ def amd_check_rule_11(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_12(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_12')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_12',
@@ -409,6 +422,7 @@ def amd_check_rule_12(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_13(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_13')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_13',
@@ -487,6 +501,7 @@ def amd_check_rule_13(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_14(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_14')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_14',
@@ -565,6 +580,7 @@ def amd_check_rule_14(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_15(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_15')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_15',
@@ -592,6 +608,7 @@ def amd_check_rule_15(fail_dir, pass_dir):
     return return_dict
 
 def amd_check_rule_16(fail_dir, pass_dir):
+    logger.info(f'amd_check_rule_16')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_33',

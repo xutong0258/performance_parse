@@ -583,6 +583,7 @@ def check_rule_12_ex(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_13')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_13',
@@ -613,6 +614,7 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
 
 
 def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_14')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_14',
@@ -642,6 +644,7 @@ def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_15')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_15',
@@ -702,6 +705,7 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_16')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_16',
@@ -744,6 +748,7 @@ def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_17')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_17',
@@ -815,6 +820,7 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_18')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_18',
@@ -851,6 +857,7 @@ def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_19(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_19')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_19',
@@ -891,6 +898,7 @@ def check_rule_19(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_20(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_20')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_20',
@@ -905,12 +913,12 @@ def check_rule_20(parent_dir=None, fail_dir=None, pass_dir=None):
 
     gpu_log_file = get_gpu_file_with_dir(fail_dir)
 
-    # headers, new_list = get_gpu_data_with_csv(gpu_log_file)
-    # new_file = os.path.join(fail_dir, 'GPU_New.csv')
-    # write_to_csv(new_file, new_list, headers)
+    headers, new_list = get_gpu_data_with_csv(gpu_log_file)
+    new_file = os.path.join(fail_dir, 'GPU_New.csv')
+    write_to_csv(new_file, new_list, headers)
 
     col = '1:GPC Clock (MHz)'
-    col_data_1 = get_csv_file_col_data_by_file(gpu_log_file, col)
+    col_data_1 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
     logger.info(f'col_data_1:{col_data_1}')
 
     if col_data_1 is None:
@@ -924,13 +932,14 @@ def check_rule_20(parent_dir=None, fail_dir=None, pass_dir=None):
 
     if min_value == max_value:
         col = '1:GPU Utilization (%)'
-        col_data_2 = get_csv_file_col_data_by_file(new_file, col)
+        col_data_2 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
         for idx, item in enumerate(col_data_2):
             if item < 100:
                 return_dict = check_result_dict
     return return_dict
 
 def check_rule_21(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_21')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_21',
@@ -956,6 +965,7 @@ def check_rule_21(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_22(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_22')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_22',
@@ -971,6 +981,7 @@ def check_rule_22(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_23(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_23')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_23',
@@ -1014,6 +1025,7 @@ def check_rule_23(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_24(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_24')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_24',
@@ -1057,6 +1069,7 @@ def check_rule_24(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_25(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_25')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_25',
@@ -1098,6 +1111,7 @@ def check_rule_25(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_26(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_26')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_26',
@@ -1156,6 +1170,7 @@ def check_rule_26(parent_dir=None, fail_dir=None, pass_dir=None):
 
 
 def check_rule_27(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_27')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_27',
@@ -1204,6 +1219,7 @@ def check_rule_27(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_28(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_28')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_28',
@@ -1251,6 +1267,7 @@ def check_rule_28(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_29(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_29')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_29',
@@ -1274,6 +1291,7 @@ def check_rule_29(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_30(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_30')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_30',
@@ -1349,6 +1367,7 @@ def check_rule_30(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_31(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_31')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_31',
@@ -1371,6 +1390,7 @@ def check_rule_31(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_32(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_32')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_32',
@@ -1398,6 +1418,7 @@ def check_rule_32(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_33(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_33')
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_33',
@@ -1413,6 +1434,8 @@ def check_rule_33(parent_dir=None, fail_dir=None, pass_dir=None):
     channel_str = 'Controller0-ChannelA-DIMM1'
     channel_dict_fail = get_cpu_log_content(fail_dir, channel_str)
     channel_dict_pass = get_cpu_log_content(pass_dir, channel_str)
+    if channel_dict_fail is None:
+        return None
 
     for key, value in channel_dict_fail.items():
         if key not in channel_dict_pass or value not in channel_dict_fail[key]:
