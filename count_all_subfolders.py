@@ -1,6 +1,7 @@
 import os
 import argparse
 from base.logger import *
+from base.fileOP import *
 
 def count_all_subfolders(folder_path):
     """
@@ -43,17 +44,20 @@ def count_all_subfolders(folder_path):
 
     return total_count
 
+def list_subfolders():
+    root_path = r'D:\0_intelcpu_case_1022'
+    list_folders = os.listdir(root_path)
+    dump_file('hello.yaml',list_folders)
+    return
+
 if __name__ == "__main__":
-    # # 设置命令行参数
-    # parser = argparse.ArgumentParser(description='统计文件夹下所有层级的子文件夹数量（包括嵌套文件夹）')
-    # parser.add_argument(r'D:\0_RESULT_1011', help='要统计的文件夹路径')
-    # args = parser.parse_args()
+    list_subfolders()
 
-    # 统计所有子文件夹数量
-    folder_path = r'D:\小拉\0_peformance_验收\intel+nv_case-1021'
-    count = count_all_subfolders(folder_path)
-
-    # 输出结果
-    if count >= 0:
-        print(f"文件夹 '{folder_path}' 及其子文件夹中，所有层级的子文件夹总数为: {count}")
+    # # 统计所有子文件夹数量
+    # folder_path = r'D:\小拉\0_peformance_验收\intel+nv_case-1021'
+    # count = count_all_subfolders(folder_path)
+    #
+    # # 输出结果
+    # if count >= 0:
+    #     print(f"文件夹 '{folder_path}' 及其子文件夹中，所有层级的子文件夹总数为: {count}")
     

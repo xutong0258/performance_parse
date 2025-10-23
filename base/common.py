@@ -52,6 +52,8 @@ def get_amd_performance_file_data_frame_by_dir(input_dir):
     return data_frame
 
 def get_tat_file_col_data_by_dir(input_dir, col_name):
+    if input_dir is None:
+        return None
     col_data = []
     tat_file = get_tat_file_with_dir(input_dir)
     file_data = read_csv_with_pandas(tat_file)

@@ -18,7 +18,13 @@ def intel_check_run(parent_dir,fail_dir=None, pass_dir=None):
             # break
     # dir_name = './'
     result_yaml_file = 'result.yaml'
-    result_yaml_file = os.path.join(parent_dir, result_yaml_file)
+    result_dir = None
+    if parent_dir is not None:
+        result_dir = parent_dir
+    else:
+        result_dir = fail_dir
+    result_yaml_file = os.path.join(result_dir, result_yaml_file)
+
     dump_file(result_yaml_file, check_result_list)
     logger.info(f'check_result_list:{check_result_list}')
     return

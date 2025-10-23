@@ -29,10 +29,19 @@ def get_list_lower_index(input_list, bench_mark):
             break
     return target_index
 
+def get_list_lower_equal_index(input_list, bench_mark):
+    target_index = None
+    for idx, item in enumerate(input_list):
+        # logger.info(f"item: {item}")
+        if float(item) <= bench_mark:
+            target_index = idx
+            break
+    return target_index
+
 def remove_list_na(input_list, target_str='NA'):
     out_list = []
     for item in input_list:
-        if target_str not in str(item) and 'nan' not in str(item):
+        if target_str not in str(item) and 'nan' not in str(item) and 'Invalid' not in str(item):
             out_list.append(item)
     return out_list
 
@@ -49,6 +58,8 @@ def get_SystemDeckPM_file_with_dir(dir_name):
     return SystemDeckPM_file
 
 def get_tat_file_with_dir(dir_name):
+    if dir_name is None:
+        return None
     if not os.path.isdir(dir_name):
         return None
     tat_file = None
@@ -145,7 +156,7 @@ def get_list_text_count(result, text):
 
     for item in data_list:
         item = item.lower()
-        logger.info(f'item:{item}')
+        # logger.info(f'item:{item}')
         if item and text in item:
             count = count + 1
     return count
@@ -185,10 +196,13 @@ def get_list_average(input_list, debug = False):
         return average
 
     for item in input_list:
+        item = float(item)
         output_list.append(item)
         if debug:
             logger.info(f"item:{item}")
-    average = sum(output_list) / len(output_list)
+    if len(output_list):
+        logger.info(f"output_list:{output_list}")
+        average = sum(output_list) / len(output_list)
     return average
 
 
@@ -240,7 +254,9 @@ def is_two_list_delta_larger_than_threshold(col_fail, col_pass, threshold, df_fa
 def is_two_col_data_delta_larger_than_threshold(col_1_data, col_2_data, threshold):
     is_delta_larger_than_stand = False
     if col_1_data is not None and col_2_data is not None:
-        delta = abs(col_1_data[0] - col_2_data[0])
+        average_1 = get_list_average(col_1_data, True)
+        average_2 = get_list_average(col_2_data, True)
+        delta = abs(average_1 - average_2)
         logger.info(f'delta:{delta}')
         logger.info(f'threshold:{threshold}')
         if delta >= threshold:
