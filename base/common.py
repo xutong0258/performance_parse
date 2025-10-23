@@ -14,6 +14,14 @@ from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
 from base.fileOP import *
 
+path_dir = os.path.dirname(__file__)
+
+file = r'GPU_parameters.yaml'
+file_path = os.path.join(path_dir, file)
+
+GPU_parameters = read_file_dict(file_path)
+# logger.info(f'GPU_parameters: {GPU_parameters}')
+
 def get_log_case(input_dir):
     case_type = None
     tat_file = get_tat_file_with_dir(input_dir)
@@ -77,7 +85,16 @@ def get_gpu_file_col_data_by_dir(input_dir, col_name):
     new_file = os.path.join(input_dir, 'GPU_New.csv')
     write_to_csv(new_file, new_list, headers)
 
+    is_new_gpu_tool = False
+    if col_name in headers:
+        is_new_gpu_tool = True
+
+    if is_new_gpu_tool == False:
+        col_name = GPU_parameters[col_name]
+        logger.info(f'col_name:{col_name}')
+
     file_data = read_csv_with_pandas(new_file)
+
     col_data = file_data.get(col_name)
     return col_data, file_data
 
@@ -102,6 +119,20 @@ def get_performance_file_col_data_by_dir(input_dir, col_name):
     return col_data, file_data
 
 def get_csv_file_col_data_by_file(input_file, col_name):
+    col_data = []
+    file_data = read_csv_with_pandas(input_file)
+    col_data = file_data.get(col_name)
+    return col_data
+
+def get_csv_file_col_data_by_file_gpu(input_file, col_name, headers):
+    is_new_gpu_tool = False
+    if col_name in headers:
+        is_new_gpu_tool = True
+
+    if is_new_gpu_tool == False:
+        col_name = GPU_parameters[col_name]
+        logger.info(f'col_name:{col_name}')
+
     col_data = []
     file_data = read_csv_with_pandas(input_file)
     col_data = file_data.get(col_name)

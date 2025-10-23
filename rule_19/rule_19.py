@@ -7,9 +7,6 @@ from base.read_csv_with_pandas import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    src_dir = r'D:\小拉\0_peformance'
-    log_file = os.path.join(src_dir, '2-IPTATLog-1722610856407_iPTAT_02-08-2024_23H-01-05S157.csv')
-    fail_dir = r'D:\小拉\0_peformance_验收\intel+nv_case-1021\CPU_case-环温sensor\Fail_环温sensor_CinebenchR23_2025-05-15_034755'
-    pass_dir = r'D:\小拉\0_peformance_验收\intel+nv_case-1021\CPU_case-环温sensor\pass_环温sensor'
-    check_rule_19(fail_dir)
+    parent_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG'
+    check_rule_19(parent_dir=parent_dir)
     pass

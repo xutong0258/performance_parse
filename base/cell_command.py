@@ -865,15 +865,15 @@ def check_rule_19(parent_dir=None, fail_dir=None, pass_dir=None):
 
     gpu_log_file = get_gpu_file_with_dir(fail_dir)
 
-    # headers, new_list = get_gpu_data_with_csv(gpu_log_file)
-    # new_file = os.path.join(fail_dir, 'GPU_New.csv')
-    # write_to_csv(new_file, new_list, headers)
+    headers, new_list = get_gpu_data_with_csv(gpu_log_file)
+    new_file = os.path.join(fail_dir, 'GPU_New.csv')
+    write_to_csv(new_file, new_list, headers)
 
     col = '1:GPC Clock (MHz)'
-    col_data_1 = get_csv_file_col_data_by_file(gpu_log_file, col)
+    col_data_1 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
 
     col = '1:GPC Slowdown Factor (%)'
-    col_data_2 = get_csv_file_col_data_by_file(gpu_log_file, col)
+    col_data_2 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
 
     if col_data_1 is None:
         return return_dict
