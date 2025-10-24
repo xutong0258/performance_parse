@@ -611,7 +611,7 @@ def amd_check_rule_16(fail_dir, pass_dir):
     logger.info(f'amd_check_rule_16')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_33',
+        'rule name': 'gpu_rule_16',
         'Root cause': '从AMDZlog中取',
         'Component': 'EE',
         'Solution': '',

@@ -7,6 +7,6 @@ from base.read_csv_with_pandas import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    parent_dir = r'D:\0_intelcpu_case_1024_verify\CPU_VR_TDC_rule10_issue'
-    check_rule_18(parent_dir=parent_dir)
+    parent_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG'
+    gpu_rule_9(parent_dir=parent_dir)
     pass

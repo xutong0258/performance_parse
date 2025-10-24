@@ -29,6 +29,14 @@ def get_list_lower_index(input_list, bench_mark):
             break
     return target_index
 
+def get_list_lower_index_list(input_list, bench_mark):
+    target_index_list = []
+    for idx, item in enumerate(input_list):
+        if float(item) < bench_mark:
+            target_index_list.append(idx)
+            break
+    return target_index_list
+
 def get_list_lower_equal_index(input_list, bench_mark):
     target_index = None
     for idx, item in enumerate(input_list):
@@ -40,6 +48,8 @@ def get_list_lower_equal_index(input_list, bench_mark):
 
 def remove_list_na(input_list, target_str='NA'):
     out_list = []
+    if input_list is None:
+        return out_list
     for item in input_list:
         if target_str not in str(item) and 'nan' not in str(item) and 'Invalid' not in str(item):
             out_list.append(item)
@@ -58,6 +68,7 @@ def get_SystemDeckPM_file_with_dir(dir_name):
     return SystemDeckPM_file
 
 def get_tat_file_with_dir(dir_name):
+    logger.info(f'dir_name:{dir_name}')
     if dir_name is None:
         return None
     if not os.path.isdir(dir_name):
@@ -188,6 +199,17 @@ def get_list_lower_than_stand_average(input_list, stand, debug = False):
         average = sum(output_list) / len(output_list)
     return average
 
+def is_digital_item(cell_item):
+    number_list = ['0','1','2','3','4','5','6','7','8','9']
+    is_number = False
+    for item in cell_item:
+        # logger.info(f"item:{item}")
+        if item in number_list:
+            is_number = True
+            break
+    # logger.info(f"is_number:{is_number}")
+    return is_number
+
 def get_list_average(input_list, debug = False):
     output_list = []
     average = None
@@ -195,13 +217,24 @@ def get_list_average(input_list, debug = False):
     if input_list is None:
         return average
 
+    input_list = remove_list_na(input_list, 'nan')
+
+    # logger.info(f"input_list:{input_list}")
     for item in input_list:
-        item = float(item)
-        output_list.append(item)
+        type_str = type(item)
+        # logger.info(f"type_str:{type_str}")
+        if type(item) is str:
+            is_number = is_digital_item(item)
+            if is_number:
+                item = float(item)
+                output_list.append(item)
+        if type(item) is int or type(item) is float:
+            output_list.append(item)
         if debug:
             logger.info(f"item:{item}")
+
+    # logger.info(f"output_list:{output_list}")
     if len(output_list):
-        # logger.info(f"output_list:{output_list}")
         average = sum(output_list) / len(output_list)
     return average
 
@@ -270,6 +303,9 @@ def is_two_data_delta_larger_than_threshold(data_1, data_2, threshold):
     is_delta_larger_than_stand = False
     # logger.info(f'data_1:{data_1}, data_2:{data_2}')
 
+    if data_1 is None or data_2 is None:
+        return is_delta_larger_than_stand
+
     delta = abs(data_1 - data_2)
     # logger.info(f'delta:{delta}')
     delta_ratio = delta/data_1
@@ -329,4 +365,5 @@ def remove_list_emptpy(input_list):
     return new_list
 
 if __name__ == '__main__':
+    is_digital_item('170')
     pass

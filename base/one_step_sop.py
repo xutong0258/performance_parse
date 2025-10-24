@@ -33,7 +33,7 @@ def gpu_check_run(parent_dir,fail_dir=None, pass_dir=None):
     rule_count = 33
     check_result_list = []
     for idx in range(18, rule_count):
-        function_name = f'check_rule_{idx}'
+        function_name = f'gpu_rule_{idx}'
         return_dict = eval(function_name)(parent_dir, fail_dir, pass_dir)
         if return_dict:
             check_result_list.append(return_dict)

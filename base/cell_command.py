@@ -37,12 +37,12 @@ def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
 
     df = read_csv_with_pandas(fail_tat_file)
     head_list = df.head()
-    cpu_list = []
+    col_list = []
     for item in head_list:
         if 'CPU' in item and '-Frequency(MHz)' in item:
-            cpu_list.append(item)
+            col_list.append(item)
 
-    for item in cpu_list:
+    for item in col_list:
         # col_1 = 'CPU0-Frequency(MHz)'
         col_2 = 'Power-Package Power(Watts)'
 
@@ -73,14 +73,14 @@ def check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
 
     df = read_csv_with_pandas(fail_tat_file)
     head_list = df.head()
-    cpu_list = []
+    col_list = []
     for item in head_list:
         if 'CPU' in item and '-Frequency(MHz)' in item:
-            cpu_list.append(item)
+            col_list.append(item)
 
     check_flag = False
     bench_mark = 400
-    for item in cpu_list:
+    for item in col_list:
         # col_1 = 'CPU0-Frequency(MHz)'
         col_list = df.get(item)
         lower_index = get_list_lower_index(df[item], bench_mark)
@@ -127,40 +127,54 @@ def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
 
     df = read_csv_with_pandas(fail_tat_file)
     head_list = df.head()
-    cpu_list = []
+    col_list = []
     for item in head_list:
         if 'CPU' in item and '-Frequency(MHz)' in item:
-            cpu_list.append(item)
+            col_list.append(item)
 
     check_flag = False
     bench_mark = 400
-    for item in cpu_list:
+    for item in col_list:
         logger.info(f"col: {item}")
         col_list = df.get(item)
-        lower_index = get_list_lower_equal_index(df[item], bench_mark)
-        logger.info(f"lower_index: {lower_index}")
-        if lower_index is not None:
-            break
+        target_index_list = get_list_lower_index_list(df[item], bench_mark)
+        logger.info(f"target_index_list: {target_index_list}")
+
+    if target_index_list is None:
+        return return_dict
 
     col_2 = 'Turbo Parameters-IA Clip Reason'
-
-    if lower_index is not None:
+    col_3 = 'Miscellaneous-MSR Package Temperature(Degree C)'
+    col_4 = 'Miscellaneous-TJMAX Temperature(Degree C)'
+    col_5 = 'Miscellaneous-TCC Offset Temperature(Degree C)'
+    for lower_index in target_index_list:
         check_list = []
         item = df[col_2][lower_index]
+        logger.info(f"Turbo Parameters-IA Clip Reason: {item}")
         check_list.append(item)
 
-        if lower_index >= 1:
-            item = df[col_2][lower_index - 1]
-            check_list.append(item)
+        # logger.info(f"check_list: {check_list}")
+        count = get_list_text_count(check_list, 'prochot')
+        logger.info(f"count: {count}")
 
-        item = df[col_2][lower_index + 1]
-        check_list.append(item)
+        col_3_list = df.get(col_3, None)
 
-        logger.info(f"check_list: {check_list}")
-        count = get_list_text_count(check_list, 'Thermal event')
-        if count:
-            logger.info(f"check_result_dict: {check_result_dict}")
-            return_dict = check_result_dict
+        if col_3_list is not None:
+            col_3_cell = df[col_3][lower_index]
+            logger.info(f"col_3_cell: {col_3_cell}")
+
+            col_4_cell = df[col_4][lower_index]
+            logger.info(f"col_4_cell: {col_4_cell}")
+
+            col_5_cell = df[col_5][lower_index]
+            logger.info(f"col_5_cell: {col_5_cell}")
+
+            delta = col_4_cell - col_5_cell
+            logger.info(f"delta: {delta}")
+            if count and (col_3_cell >  delta):
+                logger.info(f"check_result_dict: {check_result_dict}")
+                return_dict = check_result_dict
+
     return return_dict
 
 def check_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
@@ -180,12 +194,12 @@ def check_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
     df_fail = read_csv_with_pandas(fail_tat_file)
 
     head_list = df_fail.head()
-    cpu_list = []
+    col_list = []
     for item in head_list:
         if 'CPU' in item and '-Turbo Capability' in item:
-            cpu_list.append(item)
+            col_list.append(item)
 
-    for item in cpu_list:
+    for item in col_list:
         col_data = df_fail.get(item)
         count = get_list_text_count(col_data, 'Supported and Disabled')
         if count:
@@ -209,8 +223,54 @@ def check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
+    if pass_dir is None:
+        return return_dict
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
+    logger.info(f'fail_tat_file={fail_tat_file}')
+
     df = read_csv_with_pandas(fail_tat_file)
+    head_list = df.head()
+    col_list = []
+    for item in head_list:
+        # logger.info(f"item: {item}")
+        if 'CPU-Info-' in item and 'pCore Active(MHz)' in item:
+            col_list.append(item)
+
+    logger.info(f"col_list: {col_list}")
+
+    for col in col_list:
+        fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+        average_fail = get_list_average(fail_col_data)
+        logger.info(f"average_fail: {average_fail}")
+    
+        pass_col_data, pass_file_data = get_intel_tat_file_col_data_by_dir_ex(pass_dir, col)
+        average_pass = get_list_average(pass_col_data)
+        logger.info(f"average_pass: {average_pass}")
+    
+        if average_fail != average_pass:
+            return_dict = check_result_dict
+            logger.info(f"check_result_dict: {check_result_dict}")
+            return return_dict
+
+    col_list = []
+    for item in head_list:
+        if 'CPU-Info-' in item and 'eCore Active(MHz)' in item:
+            col_list.append(item)
+
+    for col in col_list:
+        fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+        average_fail = get_list_average(fail_col_data)
+        logger.info(f"average_fail: {average_fail}")
+
+        pass_col_data, pass_file_data = get_intel_tat_file_col_data_by_dir_ex(pass_dir, col)
+        average_pass = get_list_average(pass_col_data)
+        logger.info(f"average_pass: {average_pass}")
+
+        if average_fail != average_pass:
+            return_dict = check_result_dict
+            logger.info(f"check_result_dict: {check_result_dict}")
+            return return_dict
 
     return return_dict
 
@@ -227,9 +287,12 @@ def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
+    if pass_dir is None:
+        return return_dict
+
     col = 'Power-Package Power(Watts)'
-    fail_col_data, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
-    pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
     fail_col_data = remove_list_na(fail_col_data, 'nan')
     # logger.info(f"fail_col_data: {fail_col_data}")
@@ -255,8 +318,8 @@ def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
     #
     # Power-Rest of Package Power
     col = 'Power-Rest of Package Power(Watts)'
-    fail_col_data, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
-    pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
     fail_col_data = remove_list_na(fail_col_data, 'nan')
     # logger.info(f"fail_col_data: {fail_col_data}")
@@ -293,8 +356,8 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
         pass_dir = os.path.join(parent_dir, 'pass')
 
     col = 'Power-Package Power(Watts)'
-    fail_col_data, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
-    pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
     fail_col_data = remove_list_na(fail_col_data, 'nan')
     # logger.info(f"fail_col_data: {fail_col_data}")
@@ -320,8 +383,8 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     #
     #
     col = 'Power-MSR EWMA Package Power(Watts)'
-    fail_col_data, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
-    pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
     fail_col_data = remove_list_na(fail_col_data, 'nan')
     # logger.info(f"fail_col_data: {fail_col_data}")
@@ -360,8 +423,8 @@ def check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
         return None
 
     col = 'Power-Package Power(Watts)'
-    fail_col_data = get_tat_file_col_data_by_dir(fail_dir, col)
-    pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
+    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
     fail_average = get_list_average(fail_col_data)
     pass_average = get_list_average(pass_col_data)
@@ -425,7 +488,7 @@ def check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
     data_list = remove_list_na(data_list, target_str='nan')
     logger.info(f"data_list: {data_list}")
 
-    count = get_list_text_count(data_list, 'VR TDC Clip-Power')
+    count = get_list_text_count(data_list, 'VR_TDC')
 
     if count:
         return_dict = check_result_dict
@@ -458,8 +521,8 @@ def check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f"count: {count}")
     if count:
         col = 'Power-Package Power(Watts)'
-        fail_col_data, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
-        pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
+        fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+        pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
         fail_col_data = remove_list_na(fail_col_data, 'nan')
         # logger.info(f"fail_col_data: {fail_col_data}")
@@ -508,17 +571,11 @@ def check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f"count: {count}")
     if count:
         col = 'Miscellaneous-TCC Offset Temperature(Degree C)'
-        fail_col_data, fail_file_data = get_tat_file_col_data_by_dir_ex(fail_dir, col)
-        pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
-
-        fail_col_data = remove_list_na(fail_col_data, 'nan')
-        # logger.info(f"fail_col_data: {fail_col_data}")
+        fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+        pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
         average_fail = get_list_average(fail_col_data, False)
         logger.info(f"average_fail: {average_fail}")
-
-        pass_col_data = remove_list_na(pass_col_data, 'nan')
-        logger.info(f"pass_col_data: {pass_col_data}")
 
         average_pass = get_list_average(pass_col_data, False)
         logger.info(f"average_pass: {average_pass}")
@@ -599,19 +656,67 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     if pass_dir is None:
         return None
 
-    fail_tat_file = get_tat_file_with_dir(fail_dir)
-    pass_tat_file = get_tat_file_with_dir(pass_dir)
-
-    df_pass = read_csv_with_pandas(pass_tat_file)
-    df_fail = read_csv_with_pandas(fail_tat_file)
     col = 'Turbo Parameters-IA Clip Reason'
-    # data_list = df_fail[col]
-    # logger.info(f'data_list[0]:{data_list[0]}')
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
 
-    # logger.info(return_dict)
+    count = get_list_text_count(fail_col_data, 'Thermal Event')
+
+    if count > 0:
+        return return_dict
+
+    fail_file_data = get_intel_tat_file_data_frame_by_dir(fail_dir)
+    pass_file_data = get_intel_tat_file_data_frame_by_dir(pass_dir)
+
+    col_list = ['Turbo Parameters-MMIO Power Limit_1 Power(Watts)',
+                'Turbo Parameters-MMIO Power Limit_2 Power(Watts)',
+                'Turbo Parameters-MSR Power Limit_4 Power(Watts)']
+
+    for col in col_list:
+        fail_col_data = fail_file_data.get(col, None)
+        pass_col_data = fail_file_data.get(col, None)
+
+        # logger.info(f"fail_col_data:{fail_col_data}")
+        average_fail = get_list_average(fail_col_data, False)
+        logger.info(f"average_fail: {average_fail}")
+
+        # logger.info(f"pass_col_data:{pass_col_data}")
+        average_pass = get_list_average(pass_col_data, False)
+        logger.info(f"average_pass: {average_pass}")
+
+        if average_pass != average_fail:
+            return_dict = check_result_dict
+            logger.info(return_dict)
+            return return_dict
 
     return return_dict
 
+def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_18')
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_18',
+        'Root cause': 'VR_TDC',
+        'Component': 'power',
+        'Solution': 'please reteset with temperature 0C envrioment',
+        '修复及验证': '0度环境下复测',
+    }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if pass_dir is None:
+        return None
+
+    col = 'Turbo Parameters-IA Clip Reason'
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+
+    count = get_list_text_count(fail_col_data, 'TVB')
+
+    if count > 0:
+        return_dict = check_result_dict
+        logger.info(return_dict)
+
+    return return_dict
 
 def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_14')
@@ -671,9 +776,9 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
     col = 'Turbo Parameters-IA Clip Reason'
     data_list = df_fail.get(col, None)
 
-    logger.info(f'data_list:{data_list}')
+    # logger.info(f'data_list:{data_list}')
     count = get_list_text_count(data_list, 'Thermal event')
-    logger.info(f'count:{count}')
+    logger.info(f'Thermal event count:{count}')
 
     delta = 0
     fail_PerformanceLog_file = get_performance_file_with_dir(fail_dir)
@@ -722,8 +827,8 @@ def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
         return None
 
     col = 'Miscellaneous-MSR Package Temperature(Degree C)'
-    fail_col_data = get_tat_file_col_data_by_dir(fail_dir, col)
-    pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
+    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
     correlation = get_two_list_correlation(fail_col_data, pass_col_data)
     if correlation:
@@ -734,8 +839,8 @@ def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
             logger.info(return_dict)
 
     col = 'Miscellaneous-MMO Package Temperature(Degree C)'
-    fail_col_data = get_tat_file_col_data_by_dir(fail_dir, col)
-    pass_col_data = get_tat_file_col_data_by_dir(pass_dir, col)
+    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
 
     correlation = get_two_list_correlation(fail_col_data, pass_col_data)
     if correlation:
@@ -819,11 +924,11 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_18')
+def gpu_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_1')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_18',
+        'rule name': 'gpu_rule_1',
         'Root cause': 'GPU sample difference',
         'Component': 'EE',
         'Solution': 'Please EE check ,if the gap is acceptable by Sample difference',
@@ -856,11 +961,11 @@ def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_19(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_19')
+def gpu_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_2')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_19',
+        'rule name': 'gpu_rule_2',
         'Root cause': 'GPU prochot',
         'Component': 'EC',
         'Solution': 'EC log first check the prochot reason',
@@ -897,11 +1002,11 @@ def check_rule_19(parent_dir=None, fail_dir=None, pass_dir=None):
             pass
     return return_dict
 
-def check_rule_20(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_20')
+def gpu_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_3')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_20',
+        'rule name': 'gpu_rule_3',
         'Root cause': 'NV Graphic driver',
         'Component': 'NV driver',
         'Solution': 'need confirm if current driver lock CPU clk',
@@ -938,11 +1043,11 @@ def check_rule_20(parent_dir=None, fail_dir=None, pass_dir=None):
                 return_dict = check_result_dict
     return return_dict
 
-def check_rule_21(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_21')
+def gpu_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_4')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_21',
+        'rule name': 'gpu_rule_4',
         'Root cause': 'GPU OC related',
         'Component': 'BIOS',
         'Solution': 'Retest with the same OC settings',
@@ -964,11 +1069,11 @@ def check_rule_21(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_22(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_22')
+def gpu_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_5')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_22',
+        'rule name': 'gpu_rule_5',
         'Root cause': 'Max TGP',
         'Component': 'BIOS',
         'Solution': 'Please BIOS check if max TGP configuration meet Fn+Q spec',
@@ -980,11 +1085,11 @@ def check_rule_22(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_23(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_23')
+def gpu_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_6')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_23',
+        'rule name': 'gpu_rule_6',
         'Root cause': '1:NVVDD Power (W) abnormal',
         'Component': 'EE',
         'Solution': '',
@@ -1024,11 +1129,11 @@ def check_rule_23(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_24(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_24')
+def gpu_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_7')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_24',
+        'rule name': 'gpu_rule_7',
         'Root cause': '1:FBVDD Power (W) abnormal',
         'Component': 'EE',
         'Solution': '',
@@ -1068,11 +1173,11 @@ def check_rule_24(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_25(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_25')
+def gpu_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_8')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_25',
+        'rule name': 'gpu_rule_8',
         'Root cause': 'enviroment issue',
         'Component': 'Thermal',
         'Solution': '',
@@ -1110,11 +1215,11 @@ def check_rule_25(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_26(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_26')
+def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_9')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_26',
+        'rule name': 'gpu_rule_9',
         'Root cause': 'thermal module',
         'Component': 'Please themal check module differrence',
         'Solution': '',
@@ -1169,11 +1274,11 @@ def check_rule_26(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 
-def check_rule_27(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_27')
+def gpu_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_10')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_27',
+        'rule name': 'gpu_rule_10',
         'Root cause': 'D-notifier',
         'Component': 'EC',
         'Solution': 'Please EC check D-notifer first',
@@ -1218,11 +1323,11 @@ def check_rule_27(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_28(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_28')
+def gpu_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_11')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_28',
+        'rule name': 'gpu_rule_11',
         'Root cause': 'PPAB issue',
         'Component': 'Driver',
         'Solution': 'Need driver confirm if current PPAB behvior is normal',
@@ -1266,11 +1371,11 @@ def check_rule_28(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_29(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_29')
+def gpu_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_12')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_29',
+        'rule name': 'gpu_rule_12',
         'Root cause': '1:GPC Slowdown Factor (%)',
         'Component': 'Thermal',
         'Solution': 'further thermal protect behavior',
@@ -1290,11 +1395,11 @@ def check_rule_29(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_30(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_30')
+def gpu_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_13')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_30',
+        'rule name': 'gpu_rule_13',
         'Root cause': 'VBIOS',
         'Component': 'EE',
         'Solution': 'please EE check VBIOS version',
@@ -1366,11 +1471,11 @@ def check_rule_30(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_31(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_31')
+def gpu_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_14')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_31',
+        'rule name': 'gpu_rule_14',
         'Root cause': 'Vram vendor',
         'Component': 'EE',
         'Solution': 'Please EE check Vram vendor difference',
@@ -1389,11 +1494,11 @@ def check_rule_31(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_32(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_32')
+def gpu_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_15')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_32',
+        'rule name': 'gpu_rule_15',
         'Root cause': 'Whisper mode',
         'Component': 'Driver',
         'Solution': 'check why non-quiet AC mode, Whisper mode is on',
@@ -1417,11 +1522,11 @@ def check_rule_32(parent_dir=None, fail_dir=None, pass_dir=None):
 
     return return_dict
 
-def check_rule_33(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_33')
+def gpu_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'gpu_rule_16')
     return_dict = None
     check_result_dict = {
-        'rule name': 'check_rule_33',
+        'rule name': 'gpu_rule_16',
         'Root cause': '从AMDZlog中取',
         'Component': 'EE',
         'Solution': '',

@@ -59,7 +59,7 @@ def get_amd_performance_file_data_frame_by_dir(input_dir):
     data_frame = read_csv_with_pandas(amd_fail_file)
     return data_frame
 
-def get_tat_file_col_data_by_dir(input_dir, col_name):
+def get_intel_tat_file_col_data_by_dir(input_dir, col_name):
     if input_dir is None:
         return None
     col_data = []
@@ -68,13 +68,18 @@ def get_tat_file_col_data_by_dir(input_dir, col_name):
     col_data = file_data.get(col_name)
     return col_data
 
-def get_tat_file_col_data_by_dir_ex(input_dir, col_name):
+def get_intel_tat_file_col_data_by_dir_ex(input_dir, col_name):
     col_data = []
     tat_file = get_tat_file_with_dir(input_dir)
     file_data = read_csv_with_pandas(tat_file)
     col_data = file_data.get(col_name)
     return col_data, file_data
 
+def get_intel_tat_file_data_frame_by_dir(input_dir):
+    col_data = []
+    tat_file = get_tat_file_with_dir(input_dir)
+    data_frame = read_csv_with_pandas(tat_file)
+    return data_frame
 
 def get_gpu_file_col_data_by_dir(input_dir, col_name):
     col_data = []

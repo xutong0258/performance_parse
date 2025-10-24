@@ -1,17 +1,10 @@
-df = read_csv_with_pandas(fail_tat_file)
-head_list = df.head()
-cpu_list = []
-for item in head_list:
-    if 'CPU' in item and '-Frequency(MHz)' in item:
-        cpu_list.append(item)
+    col = 'Power-Package Power(Watts)'
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
 
-for item in cpu_list:
-    # col_1 = 'CPU0-Frequency(MHz)'
-    col_2 = 'Power-Package Power(Watts)'
+    fail_col_data = remove_list_na(fail_col_data, 'nan')
+    # logger.info(f"fail_col_data: {fail_col_data}")
 
-    pearson_corr = df[item].corr(df[col_2], method='pearson')
-    logger.info(f"皮尔逊相关系数: {pearson_corr:.4f}")
-    if pearson_corr < 0.7:
-        logger.info(f"check_result_dict: {check_result_dict}")
-        return_dict = check_result_dict
-        break
+    average_fail = get_list_average(fail_col_data, False)
+    logger.info(f"average_fail: {average_fail}")
+
+    count = get_list_text_count(check_list, 'prochot')

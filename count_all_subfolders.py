@@ -45,10 +45,14 @@ def count_all_subfolders(folder_path):
     return total_count
 
 def list_subfolders():
-    root_path = r'D:\0_intelcpu_case_1022'
+    root_path = r'D:\0_intelcpu_case_1024'
     list_folders = os.listdir(root_path)
-    dump_file('hello.yaml',list_folders)
-    return
+    full_list = []
+    for folder in list_folders:
+        path = os.path.join(root_path, folder)
+        full_list.append(path)
+    dump_file('hello.yaml',full_list)
+    return full_list
 
 if __name__ == "__main__":
     list_subfolders()
