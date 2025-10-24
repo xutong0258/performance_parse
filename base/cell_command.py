@@ -10,6 +10,7 @@ import datetime
 import re
 
 import numpy as np
+from onnxslim.utils import check_point
 
 from base.contants import *
 from base.helper import *
@@ -109,6 +110,7 @@ def check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
             return_dict = check_result_dict
     return return_dict
 
+Processor_Base_Core_Frequency = 2400
 def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_3')
     return_dict = None
@@ -123,57 +125,63 @@ def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
+    col = 'Turbo Parameters-IA Clip Reason'
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+
+    target_index_list = get_list_target_text_index_list(fail_col_data, 'prochot')
+    logger.info(f"prochot count: {len(target_index_list)}")
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
     df = read_csv_with_pandas(fail_tat_file)
+
     head_list = df.head()
     col_list = []
     for item in head_list:
         if 'CPU' in item and '-Frequency(MHz)' in item:
             col_list.append(item)
 
-    check_flag = False
-    bench_mark = 400
-    for item in col_list:
-        logger.info(f"col: {item}")
-        col_list = df.get(item)
-        target_index_list = get_list_lower_index_list(df[item], bench_mark)
-        logger.info(f"target_index_list: {target_index_list}")
+    # logger.info(f"col_list: {col_list}")
 
-    if target_index_list is None:
-        return return_dict
-
-    col_2 = 'Turbo Parameters-IA Clip Reason'
     col_3 = 'Miscellaneous-MSR Package Temperature(Degree C)'
     col_4 = 'Miscellaneous-TJMAX Temperature(Degree C)'
     col_5 = 'Miscellaneous-TCC Offset Temperature(Degree C)'
-    for lower_index in target_index_list:
-        check_list = []
-        item = df[col_2][lower_index]
-        logger.info(f"Turbo Parameters-IA Clip Reason: {item}")
-        check_list.append(item)
 
-        # logger.info(f"check_list: {check_list}")
-        count = get_list_text_count(check_list, 'prochot')
-        logger.info(f"count: {count}")
+    col_3_list = df.get(col_3, None)
 
-        col_3_list = df.get(col_3, None)
+    if col_3_list is None:
+        return return_dict
 
-        if col_3_list is not None:
-            col_3_cell = df[col_3][lower_index]
-            logger.info(f"col_3_cell: {col_3_cell}")
+    check_point_1 = False
+    for idx, item in enumerate(col_3_list):
+        col_3_cell = df[col_3][idx]
+        logger.info(f"col_3_cell: {col_3_cell}")
 
-            col_4_cell = df[col_4][lower_index]
-            logger.info(f"col_4_cell: {col_4_cell}")
+        col_4_cell = df[col_4][idx]
+        logger.info(f"col_4_cell: {col_4_cell}")
 
-            col_5_cell = df[col_5][lower_index]
-            logger.info(f"col_5_cell: {col_5_cell}")
+        col_5_cell = df[col_5][idx]
+        logger.info(f"col_5_cell: {col_5_cell}")
 
-            delta = col_4_cell - col_5_cell
-            logger.info(f"delta: {delta}")
-            if count and (col_3_cell >  delta):
-                logger.info(f"check_result_dict: {check_result_dict}")
-                return_dict = check_result_dict
+        delta = col_4_cell - col_5_cell
+        logger.info(f"delta: {delta}")
+        if col_3_cell > delta:
+            check_point_1 = True
+            break
+
+    check_point_2 = False
+    for idx in target_index_list:
+        for item in col_list:
+            cell_data = df[item][idx]
+            # logger.info(f"cell_data: {cell_data}")
+            if cell_data < Processor_Base_Core_Frequency:
+                check_point_2 = True
+                break
+
+    if check_point_2 and check_point_1:
+        logger.info(f"check_result_dict: {check_result_dict}")
+        return_dict = check_result_dict
+
 
     return return_dict
 
@@ -609,6 +617,8 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
         'Solution': '',
         '修复及验证': '',
     }
+    detail_list = []
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -633,7 +643,7 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
 
     for col in col_list:
         fail_col_data = fail_file_data.get(col, None)
-        pass_col_data = fail_file_data.get(col, None)
+        pass_col_data = pass_file_data.get(col, None)
 
         # logger.info(f"fail_col_data:{fail_col_data}")
         average_fail = get_list_average(fail_col_data, False)
@@ -644,10 +654,27 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
         logger.info(f"average_pass: {average_pass}")
 
         if average_pass != average_fail:
-            return_dict = check_result_dict
-            logger.info(return_dict)
-            return return_dict
+            if col == 'Turbo Parameters-MMIO Power Limit_1 Power(Watts)':
+                detail_list.append('PL1 abnormal')
+            if col == 'Turbo Parameters-MMIO Power Limit_2 Power(Watts)':
+                detail_list.append('PL2 abnormal')
+            if col == 'Turbo Parameters-MSR Power Limit_4 Power(Watts)':
+                detail_list.append('PL4 abnormal')
+            continue
+    if detail_list is not None:
+        check_result_dict['Root cause'] = detail_list
+        return_dict = check_result_dict
+        logger.info(f"return_dict: {return_dict}")
 
+    # result_yaml_file = 'result.yaml'
+    # result_dir = None
+    # if parent_dir is not None:
+    #     result_dir = parent_dir
+    # else:
+    #     result_dir = fail_dir
+    # result_yaml_file = os.path.join(result_dir, result_yaml_file)
+    #
+    # dump_file(result_yaml_file, return_dict)
     return return_dict
 
 def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):

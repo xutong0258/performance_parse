@@ -6,6 +6,6 @@ path_dir = os.path.dirname(__file__)
 
 
 if __name__ == '__main__':
-    parent_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG'
+    parent_dir = r'D:\BAK\GPU'
     gpu_check_run(parent_dir=parent_dir)
     pass

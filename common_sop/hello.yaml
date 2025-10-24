@@ -1,14 +1,4 @@
-- D:\0_intelcpu_case_1024\bak_cpu Sample_rule1
-- D:\0_intelcpu_case_1024\CPU-hwp_rule17
-- D:\0_intelcpu_case_1024\CPU_prochot_rule2
-- D:\0_intelcpu_case_1024\CPU_prochot_thermal_rule3
-- D:\0_intelcpu_case_1024\cpu_ROP_rule6_rule7
-- D:\0_intelcpu_case_1024\cpu_Tau_rule11
-- D:\0_intelcpu_case_1024\CPU_tcc_offset_rule12
-- D:\0_intelcpu_case_1024\cpu_TCC_rule16
-- D:\0_intelcpu_case_1024\CPU_thermal_module_rule16
-- D:\0_intelcpu_case_1024\CPU_turbo_disabled_rule4
-- D:\0_intelcpu_case_1024\CPU_TVB_需要新增rule
-- D:\0_intelcpu_case_1024\CPU_VR_TDC_rule10
-- D:\0_intelcpu_case_1024\CPU_VR_Thermal_alert_rule9
-- D:\0_intelcpu_case_1024\Done_bak
+- D:\0_intelcpu_case_1024_verify\cpu_PL1_rule13
+- D:\0_intelcpu_case_1024_verify\cpu_PL2_rule13
+- D:\0_intelcpu_case_1024_verify\cpu_PL4_PL4建议加rule13
+- D:\0_intelcpu_case_1024_verify\CPU_prochot_thermal_rule3

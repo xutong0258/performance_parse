@@ -18,8 +18,16 @@ from base.logger import *
 # file = os.path.abspath(__file__)
 path_dir = os.path.dirname(__file__)
 
-global current_enable
-current_enable = False
+
+def get_list_target_text_index_list(input_list, target_text):
+    target_text = target_text.lower()
+    target_index_list = []
+    for idx, item in enumerate(input_list):
+        item = item.lower()
+        if target_text in item:
+            target_index_list.append(idx)
+
+    return target_index_list
 
 def get_list_lower_index(input_list, bench_mark):
     target_index = None
