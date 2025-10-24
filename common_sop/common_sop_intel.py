@@ -20,16 +20,16 @@ def list_subfolders():
     return full_list
 
 if __name__ == '__main__':
-    # parent_dir = r'D:\0_intelcpu_case_1024\cpu Sample_rule1\fail'
-    #
-    # intel_check_run(parent_dir=None, fail_dir=parent_dir, pass_dir=None)
+    parent_dir = r'D:\0_intelcpu_case_1024\cpu Sample_rule1\fail'
+
+    intel_check_run(parent_dir=None, fail_dir=parent_dir, pass_dir=None)
     #
     # fail_dir = r'D:\0_intelcpu_case_1022\cpu Sample_rule1\fail'
     # intel_check_run(parent_dir=None, fail_dir=fail_dir, pass_dir=None)
-    src_dir_list = list_subfolders()
-    for src_dir in src_dir_list:
-        src_dir = src_dir.strip()
-        if src_dir == '' or 'bak' in src_dir:
-            continue
-        intel_check_run(parent_dir=src_dir)
+    # src_dir_list = list_subfolders()
+    # for src_dir in src_dir_list:
+    #     src_dir = src_dir.strip()
+    #     if src_dir == '' or 'bak' in src_dir:
+    #         continue
+    #     intel_check_run(parent_dir=src_dir)
     pass

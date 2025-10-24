@@ -124,36 +124,6 @@ def get_performance_file_with_dir(dir_name):
             break
     return PerformanceLog_file
 
-def calculate_deviation(col_fail, col_pass, base='average'):
-    """
-    计算两列值的偏差百分比
-
-    参数:
-        col_fail, col_pass: 要比较的两列数据
-        base: 基准值选择，'col_fail'（以col1为基准）、'col_pass'（以col2为基准）、'average'（以两列平均值为基准）
-
-    返回:
-        偏差百分比（%），处理了除零情况
-    """
-    abs_diff = np.abs(col_fail - col_pass)  # 计算绝对差值
-
-    # 根据基准值计算分母
-    if base == 'col_fail':
-        denominator = col_fail
-    elif base == 'col_pass':
-        denominator = col_pass
-    else:  # average
-        denominator = (col_fail + col_pass) / 2
-
-    # 处理除零情况（避免除以0导致的错误）
-    with np.errstate(divide='ignore', invalid='ignore'):
-        deviation = (abs_diff / denominator) * 100
-
-    # 当分母为0且分子也为0时，偏差为0%；否则为NaN（无意义）
-    deviation = np.where((denominator == 0) & (abs_diff == 0), 0, deviation)
-    # logger.info(f'deviation:{deviation}')
-    return deviation
-
 def get_list_text_count(result, text):
     text = text.lower()
 
@@ -182,22 +152,6 @@ def get_list_equal_count(result, text):
         if text == item:
             count = count + 1
     return count
-
-def get_list_lower_than_stand_average(input_list, stand, debug = False):
-    output_list = []
-    average = None
-    total = 0
-    if input_list is None:
-        return average
-
-    for item in input_list:
-        if item < stand:
-            output_list.append(item)
-            if debug:
-                logger.info(f"item:{item}")
-    if len(output_list):
-        average = sum(output_list) / len(output_list)
-    return average
 
 def is_digital_item(cell_item):
     number_list = ['0','1','2','3','4','5','6','7','8','9']
@@ -271,18 +225,6 @@ def is_col_data_has_data_match_range(col_data, target_min, target_max):
 
     return has_match
 
-def is_two_list_delta_larger_than_threshold(col_fail, col_pass, threshold, df_fail):
-    is_larger_than_threshold = False
-
-    df_fail['deviation_%'] = calculate_deviation(col_fail, col_pass, base='col_pass')
-
-    df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
-    # logger.info(f'df_fail:{df_fail}')
-
-    count = get_list_equal_count(df_fail['exceed_threshold'], True)
-    if count:
-        is_larger_than_threshold = True
-    return is_larger_than_threshold
 
 def is_two_col_data_delta_larger_than_threshold(col_1_data, col_2_data, threshold):
     is_delta_larger_than_stand = False

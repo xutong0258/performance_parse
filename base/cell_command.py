@@ -354,6 +354,8 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
+    if pass_dir is None:
+        return return_dict
 
     col = 'Power-Package Power(Watts)'
     fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
@@ -513,6 +515,9 @@ def check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
+    if pass_dir is None:
+        return return_dict
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
     col = 'Turbo Parameters-IA Clip Reason'
@@ -563,6 +568,9 @@ def check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
+    if pass_dir is None:
+        return return_dict
+
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
     col = 'Turbo Parameters-IA Clip Reason'
@@ -589,54 +597,6 @@ def check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
             return_dict = check_result_dict
 
     logger.info(f"return_dict: {return_dict}")
-    return return_dict
-
-def check_rule_12_ex(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f"check_rule_12")
-
-    return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_12',
-        'Root cause': 'TCC offset abnormal',
-        'Component': 'Thermal',
-        'Solution': '',
-        '修复及验证': 'change Tcc offset value to pass, verify',
-    }
-    if parent_dir is not None:
-        fail_dir = os.path.join(parent_dir, 'fail')
-        pass_dir = os.path.join(parent_dir, 'pass')
-
-    if pass_dir is None:
-        return None
-
-    fail_tat_file = get_tat_file_with_dir(fail_dir)
-    pass_tat_file = get_tat_file_with_dir(pass_dir)
-
-    df_pass = read_csv_with_pandas(pass_tat_file)
-
-    df_fail = read_csv_with_pandas(fail_tat_file)
-    col = 'Turbo Parameters-IA Clip Reason'
-    data_list = df_fail[col]
-    logger.info(f'data_list[0]:{data_list[0]}')
-
-    if 'Thermal Event' == data_list[0] or True:
-        col = 'Miscellaneous-TCC Offset Temperature(Degree C)'
-
-        # 计算偏差百分比（以平均值为基准）
-        col_fail = df_fail.get(col, None)
-        col_pass = df_pass.get(col, None)
-        if col_fail is not None and col_pass is not None:
-            df_fail['deviation_%'] = calculate_deviation(col_fail, col_fail, base='col_pass')
-
-            # 设定阈值（例如：判断是否超过5%）
-            threshold = 3
-            df_fail['exceed_threshold'] = df_fail['deviation_%'] > threshold
-            logger.info(df_fail)
-            count = get_list_equal_count(df_fail['exceed_threshold'], True)
-            if count:
-                return_dict = check_result_dict
-                logger.info(return_dict)
-
     return return_dict
 
 def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
@@ -687,34 +647,6 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
             return_dict = check_result_dict
             logger.info(return_dict)
             return return_dict
-
-    return return_dict
-
-def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_18')
-    return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_18',
-        'Root cause': 'VR_TDC',
-        'Component': 'power',
-        'Solution': 'please reteset with temperature 0C envrioment',
-        '修复及验证': '0度环境下复测',
-    }
-    if parent_dir is not None:
-        fail_dir = os.path.join(parent_dir, 'fail')
-        pass_dir = os.path.join(parent_dir, 'pass')
-
-    if pass_dir is None:
-        return None
-
-    col = 'Turbo Parameters-IA Clip Reason'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
-
-    count = get_list_text_count(fail_col_data, 'TVB')
-
-    if count > 0:
-        return_dict = check_result_dict
-        logger.info(return_dict)
 
     return return_dict
 
@@ -921,6 +853,34 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
         return_dict = check_result_dict
         logger.info(return_dict)
         return return_dict
+
+    return return_dict
+
+def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_18')
+    return_dict = None
+    check_result_dict = {
+        'rule name': 'check_rule_18',
+        'Root cause': 'VR_TDC',
+        'Component': 'power',
+        'Solution': 'please reteset with temperature 0C envrioment',
+        '修复及验证': '0度环境下复测',
+    }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if pass_dir is None:
+        return None
+
+    col = 'Turbo Parameters-IA Clip Reason'
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+
+    count = get_list_text_count(fail_col_data, 'TVB')
+
+    if count > 0:
+        return_dict = check_result_dict
+        logger.info(return_dict)
 
     return return_dict
 
