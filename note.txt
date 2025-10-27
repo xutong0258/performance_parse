@@ -1,10 +1,12 @@
-    col = 'Power-Package Power(Watts)'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+col = 'Power-Package Power(Watts)'
+fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
 
-    fail_col_data = remove_list_na(fail_col_data, 'nan')
-    # logger.info(f"fail_col_data: {fail_col_data}")
+fail_col_data = remove_list_na(fail_col_data, 'nan')
+# logger.info(f"fail_col_data: {fail_col_data}")
 
-    average_fail = get_list_average(fail_col_data, False)
-    logger.info(f"average_fail: {average_fail}")
+average_fail = get_list_average(fail_col_data, False)
+logger.info(f"average_fail: {average_fail}")
 
-    count = get_list_text_count(check_list, 'prochot')
+count = get_list_text_count(check_list, 'prochot')
+
+is_digital_item('170')

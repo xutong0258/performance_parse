@@ -95,25 +95,21 @@ def get_gpu_file_col_data_by_dir(input_dir, col_name):
         is_new_gpu_tool = True
 
     if is_new_gpu_tool == False:
-        col_name = GPU_parameters[col_name]
+        col_name = GPU_parameters.get(col_name, None)
         logger.info(f'col_name:{col_name}')
 
     file_data = read_csv_with_pandas(new_file)
-
-    col_data = file_data.get(col_name)
+    col_data = None
+    if col_name is not None:
+        col_data = file_data.get(col_name)
     return col_data, file_data
 
-def get_gpu_file_head_col_data_by_dir(input_dir, col_name):
+def get_gpu_file_target_map_by_dir(input_dir, target_str):
     col_data = []
     gpu_log_file = get_gpu_file_with_dir(input_dir)
 
-    headers, new_list = get_gpu_head_data_with_csv(gpu_log_file)
-    new_file = os.path.join(input_dir, 'GPU_header.csv')
-    write_to_csv(new_file, new_list, headers)
-
-    file_data = read_csv_with_pandas(new_file)
-    col_data = file_data.get(col_name)
-    return col_data, file_data
+    target_map = get_gpu_target_map_with_csv(gpu_log_file, target_str)
+    return target_map
 
 def get_performance_file_col_data_by_dir(input_dir, col_name):
     col_data = []

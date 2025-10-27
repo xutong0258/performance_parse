@@ -73,6 +73,12 @@ def get_SystemDeckPM_file_with_dir(dir_name):
             SystemDeckPM_file = os.path.join(dir_name, filename)
             logger.info(f'SystemDeckPM_file:{SystemDeckPM_file}')
             break
+    if SystemDeckPM_file is None:
+        for filename in file_list:
+            if '.csv' in filename:
+                SystemDeckPM_file = os.path.join(dir_name, filename)
+                logger.info(f'SystemDeckPM_file:{SystemDeckPM_file}')
+                break
     return SystemDeckPM_file
 
 def get_tat_file_with_dir(dir_name):
@@ -102,10 +108,17 @@ def get_gpu_file_with_dir(dir_name):
     gpu_log_file = None
     file_list = os.listdir(dir_name)
     for filename in file_list:
-        if 'GPUMonLog' in filename and '.csv' in filename:
+        if 'NvGPUMon' in filename and '.csv' in filename:
             gpu_log_file = os.path.join(dir_name, filename)
             logger.info(f'gpu_log_file:{gpu_log_file}')
             break
+
+    if gpu_log_file is None:
+        for filename in file_list:
+            if '.csv' in filename:
+                gpu_log_file = os.path.join(dir_name, filename)
+                logger.info(f'gpu_log_file:{gpu_log_file}')
+                break
     return gpu_log_file
 
 def get_CPUZ_log_file_with_dir(dir_name):
@@ -225,6 +238,12 @@ def is_col_data_all_match_range(col_data, target_min, target_max):
 def is_col_data_has_data_match_range(col_data, target_min, target_max):
     has_match = False
     for item in col_data:
+        # logger.info(f"item:{item}")
+        if type(item) is str:
+            item = item.replace('%', '')
+        item = float(item)
+        if target_min<=item<=target_max:
+            has_match = True
         if target_min<=item<=target_max:
             has_match = True
             break
@@ -259,7 +278,7 @@ def is_two_data_delta_larger_than_threshold(data_1, data_2, threshold):
     delta = abs(data_1 - data_2)
     # logger.info(f'delta:{delta}')
     delta_ratio = delta/data_1
-    # logger.info(f'delta_ratio:{delta_ratio}')
+    logger.info(f'delta_ratio:{delta_ratio}')
     if delta_ratio > threshold:
         is_delta_larger_than_stand = True
     return is_delta_larger_than_stand

@@ -63,7 +63,7 @@ def amd_check_run(parent_dir,fail_dir=None, pass_dir=None):
     logger.info(f'check_result_list:{check_result_list}')
     return
 
-def one_process_run(fail_dir, pass_dir):
+def one_process_run(parent_dir=None, fail_dir=None, pass_dir=None):
     case_type = get_log_case(fail_dir)
     if case_type == Intel_Case:
         intel_check_run(fail_dir, pass_dir)
@@ -75,7 +75,7 @@ def one_process_run(fail_dir, pass_dir):
         amd_check_run(fail_dir, pass_dir)
     return
 
-def one_process_run_tmp(fail_dir, pass_dir):
+def one_process_run_tmp(parent_dir=None, fail_dir=None, pass_dir=None):
     intel_check_run(fail_dir, pass_dir)
     # gpu_check_run(fail_dir, pass_dir)
     return

@@ -7,6 +7,6 @@ from base.componet import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    parent_dir = r'D:\0_intel+nv_case-1021\GPUmode_HDDG'
+    parent_dir = r'D:\0_GPU_case_1027\GPU_NVVDD_rule7'
     gpu_rule_15(parent_dir=parent_dir)
     pass

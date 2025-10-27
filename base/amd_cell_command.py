@@ -10,6 +10,7 @@ import datetime
 import re
 
 import numpy as np
+from onnxslim.utils import check_point
 
 from base.contants import *
 from base.helper import *
@@ -18,7 +19,7 @@ from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
 
 
-def amd_check_rule_1(fail_dir, pass_dir=None):
+def amd_check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_1')
 
     return_dict = None
@@ -30,27 +31,48 @@ def amd_check_rule_1(fail_dir, pass_dir=None):
         '修复及验证': '',
     }
 
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+        
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
 
-    CPU0_CORES_CORE0_Freq_Eff = 'CPU0 CORES CORE0 Freq Eff'
-    CPU0_INFRASTRUCTURE2_Value_THM_CORE = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
-    CPU0_MISC_PROCHOT = 'CPU0 MISC PROCHOT'
-    CPU0_INFRASTRUCTURE2_Limit_THM_CORE = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail.get('CPU0 CORES CORE0 Freq Eff', None)
+    CPU0_INFRASTRUCTURE2_Value_THM_CORE_d = data_frame_fail.get('CPU0 INFRASTRUCTURE2 Value THM CORE', None)
+    CPU0_MISC_PROCHOT_d = data_frame_fail.get('CPU0 MISC PROCHOT', None)
+    CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d = data_frame_fail.get('CPU0 INFRASTRUCTURE2 Limit THM CORE', None)
 
-    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail[CPU0_CORES_CORE0_Freq_Eff]
-    CPU0_INFRASTRUCTURE2_Value_THM_CORE_d = data_frame_fail[CPU0_INFRASTRUCTURE2_Value_THM_CORE]
-    CPU0_MISC_PROCHOT_d = data_frame_fail[CPU0_MISC_PROCHOT]
-    CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d = data_frame_fail[CPU0_INFRASTRUCTURE2_Limit_THM_CORE]
+    if CPU0_CORES_CORE0_Freq_Eff_d is None or CPU0_INFRASTRUCTURE2_Value_THM_CORE_d is None or CPU0_MISC_PROCHOT_d is None or CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d is None:
+        return return_dict
+
+    check_point_1 = False
+    check_point_2 = False
+    check_point_3 = False
 
     for idx, value in enumerate(CPU0_CORES_CORE0_Freq_Eff_d):
-        if value <= 0.4:
-            if CPU0_INFRASTRUCTURE2_Value_THM_CORE_d[idx] >= CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d[idx] and CPU0_MISC_PROCHOT_d[idx] !=0:
-                return_dict = check_result_dict
-                break
+        logger.info(f'Freq Eff:{value}')
+        Value_THM = CPU0_INFRASTRUCTURE2_Value_THM_CORE_d[idx]
+        Limit_THM = CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d[idx]
+        MISC_PROCHOT = CPU0_MISC_PROCHOT_d[idx]
 
+        if value <= 0.54 :
+            check_point_1 = True
+        if Value_THM >= Limit_THM :
+            check_point_2 = True
+        if CPU0_MISC_PROCHOT_d[idx] !=0:
+            check_point_3 = True
+
+    if check_point_1 and check_point_2 and check_point_3:
+        return_dict = check_result_dict
+    logger.info(f'return_dict:{return_dict}')
+
+    # result_yaml_file = 'result.yaml'
+    # result_yaml_file = os.path.join(parent_dir, result_yaml_file)
+    #
+    # dump_file(result_yaml_file, return_dict)
     return return_dict
 
-def amd_check_rule_2(fail_dir, pass_dir=None):
+def amd_check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_2')
     return_dict = None
     check_result_dict = {
@@ -60,28 +82,42 @@ def amd_check_rule_2(fail_dir, pass_dir=None):
         'Solution': '',
         '修复及验证': '',
     }
-
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+        
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
 
-    CPU0_CORES_CORE0_Freq_Eff = 'CPU0 CORES CORE0 Freq Eff'
-    CPU0_INFRASTRUCTURE2_Value_THM_CORE = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
-    CPU0_MISC_PROCHOT = 'CPU0 MISC PROCHOT'
-    CPU0_INFRASTRUCTURE2_Limit_THM_CORE = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail.get('CPU0 CORES CORE0 Freq Eff', None)
+    CPU0_INFRASTRUCTURE2_Value_THM_CORE_d = data_frame_fail.get('CPU0 INFRASTRUCTURE2 Value THM CORE', None)
+    CPU0_MISC_PROCHOT_d = data_frame_fail.get('CPU0 MISC PROCHOT', None)
+    CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d = data_frame_fail.get('CPU0 INFRASTRUCTURE2 Limit THM CORE', None)
 
-    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail[CPU0_CORES_CORE0_Freq_Eff]
-    CPU0_INFRASTRUCTURE2_Value_THM_CORE_d = data_frame_fail[CPU0_INFRASTRUCTURE2_Value_THM_CORE]
-    CPU0_MISC_PROCHOT_d = data_frame_fail[CPU0_MISC_PROCHOT]
-    CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d = data_frame_fail[CPU0_INFRASTRUCTURE2_Limit_THM_CORE]
+    if CPU0_CORES_CORE0_Freq_Eff_d is None or CPU0_INFRASTRUCTURE2_Value_THM_CORE_d is None or CPU0_MISC_PROCHOT_d is None or CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d is None:
+        return return_dict
+
+    check_point_1 = False
+    check_point_2 = False
+    check_point_3 = False
 
     for idx, value in enumerate(CPU0_CORES_CORE0_Freq_Eff_d):
-        if value <= 0.4:
-            if CPU0_INFRASTRUCTURE2_Value_THM_CORE_d[idx] < CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d[idx] and CPU0_MISC_PROCHOT_d[idx] !=0:
-                return_dict = check_result_dict
-                break
+        Value_THM = CPU0_INFRASTRUCTURE2_Value_THM_CORE_d[idx]
+        Limit_THM = CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d[idx]
+        MISC_PROCHOT = CPU0_MISC_PROCHOT_d[idx]
 
+        if value <= 0.54:
+            check_point_1 = True
+        if Value_THM < Limit_THM:
+            check_point_2 = True
+        if CPU0_MISC_PROCHOT_d[idx] != 0:
+            check_point_3 = True
+
+    if check_point_1 and check_point_2 and check_point_3:
+        return_dict = check_result_dict
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_3(fail_dir, pass_dir=None):
+def amd_check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_3')
     return_dict = None
     check_result_dict = {
@@ -91,12 +127,19 @@ def amd_check_rule_3(fail_dir, pass_dir=None):
         'Solution': '更新BIOS开启Turbo重新测试',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
 
+    if True:
+        return return_dict
+    
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     CPU0_CORES_CORE0_Freq_Eff = 'CPU0 CORES CORE0 Freq Eff'
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_4(fail_dir, pass_dir):
+def amd_check_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_4')
     return_dict = None
     check_result_dict = {
@@ -106,6 +149,12 @@ def amd_check_rule_4(fail_dir, pass_dir):
         'Solution': '将EPP更改成一样值后重新测试',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if True:
+        return return_dict
 
     CPU0_CORES_CORE0_CPPC_EPP = 'CPU0 CORES CORE0 CPPC EPP'
 
@@ -119,9 +168,10 @@ def amd_check_rule_4(fail_dir, pass_dir):
         if value != col_pass[idx]:
             return_dict = check_result_dict
             break
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_5(fail_dir, pass_dir):
+def amd_check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_5')
     return_dict = None
     check_result_dict = {
@@ -131,6 +181,13 @@ def amd_check_rule_5(fail_dir, pass_dir):
         'Solution': '将Power Setting更新成一样值后重新测试',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if True:
+        return return_dict
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
@@ -147,11 +204,11 @@ def amd_check_rule_5(fail_dir, pass_dir):
         is_delta_larger = is_two_data_delta_larger_than_threshold(fail_average_data, pass_average_data, 0.02)
         if is_delta_larger:
             return_dict = check_result_dict
-            logger.info(f"return_dict: {return_dict}")
             break
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_6(fail_dir, pass_dir):
+def amd_check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_6')
     return_dict = None
     check_result_dict = {
@@ -161,6 +218,13 @@ def amd_check_rule_6(fail_dir, pass_dir):
         'Solution': '将TimeConstant值更新成一样后重新测试',
         '修复及验证': '',
     }
+
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if True:
+        return return_dict
 
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
@@ -173,11 +237,11 @@ def amd_check_rule_6(fail_dir, pass_dir):
         is_delta_larger = is_two_data_delta_larger_than_threshold(fail_average_data, pass_average_data, 0.02)
         if is_delta_larger:
             return_dict = check_result_dict
-            logger.info(f"return_dict: {return_dict}")
             break
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_7(fail_dir, pass_dir):
+def amd_check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_7')
     return_dict = None
     check_result_dict = {
@@ -187,6 +251,13 @@ def amd_check_rule_7(fail_dir, pass_dir):
         'Solution': 'check idle场景',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if True:
+        return return_dict
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
@@ -207,10 +278,11 @@ def amd_check_rule_7(fail_dir, pass_dir):
     is_delta_larger_than_stand = is_two_data_delta_larger_than_threshold(idle_average_fail, idle_average_pass, 2)
     if is_delta_larger_than_stand:
         return_dict = check_result_dict
-        logger.info(f"return_dict: {return_dict}")
+
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_8(fail_dir, pass_dir):
+def amd_check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_8')
     return_dict = None
     check_result_dict = {
@@ -220,6 +292,13 @@ def amd_check_rule_8(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if True:
+        return return_dict
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
@@ -234,11 +313,12 @@ def amd_check_rule_8(fail_dir, pass_dir):
         fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col)
         if fail_average_data != pass_average_data:
             return_dict = check_result_dict
-            logger.info(f"return_dict: {return_dict}")
             break
+
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_9(fail_dir, pass_dir):
+def amd_check_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_9')
     return_dict = None
     check_result_dict = {
@@ -248,6 +328,13 @@ def amd_check_rule_9(fail_dir, pass_dir):
         'Solution': '降低环境温度/增加Idle时间/出风口是否被阻挡',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if True:
+        return return_dict
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
@@ -314,11 +401,11 @@ def amd_check_rule_9(fail_dir, pass_dir):
 
     if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >30:
         return_dict = check_result_dict
-        logger.info(f"return_dict: {return_dict}")
 
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_10(fail_dir, pass_dir):
+def amd_check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_10')
     return_dict = None
     check_result_dict = {
@@ -328,8 +415,45 @@ def amd_check_rule_10(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '使用相同sku机台复制验证',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+
+    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail['CPU0 CORES CORE0 Freq Eff']
+    CPU0_CORES_CORE0_CPPC_MAX_Freq_d = data_frame_fail['CPU0 CORES CORE0 CPPC MAX Freq']
+
+    CPU0_INFRASTRUCTURE2_Value_THM_d = data_frame_fail.get('CPU0 INFRASTRUCTURE Value THM', None)
+    CPU0_INFRASTRUCTURE2_Limit_THM_d = data_frame_fail.get('CPU0 INFRASTRUCTURE Limit THM', None)
+
+
+    if CPU0_INFRASTRUCTURE2_Value_THM_d is None or CPU0_CORES_CORE0_Freq_Eff_d is None:
+        return return_dict
+
+    check_point_1 = False
+    check_point_2 = False
+    check_point_3 = False
+
+    for idx, value in enumerate(CPU0_CORES_CORE0_Freq_Eff_d):
+        Freq_Eff = CPU0_CORES_CORE0_Freq_Eff_d[idx]
+        MAX_Freq = CPU0_CORES_CORE0_CPPC_MAX_Freq_d[idx]
+
+        Value_THM = CPU0_INFRASTRUCTURE2_Value_THM_d[idx]
+        Limit_THM = CPU0_INFRASTRUCTURE2_Limit_THM_d[idx]
+
+        if Freq_Eff < MAX_Freq :
+            check_point_1 = True
+        if Value_THM < Limit_THM :
+            check_point_2 = True
+
+    if check_point_1 and check_point_2:
+        return_dict = check_result_dict
+    logger.info(f'return_dict:{return_dict}')
+
     return return_dict
-def amd_check_rule_11(fail_dir, pass_dir):
+
+def amd_check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_11')
     return_dict = None
     check_result_dict = {
@@ -339,9 +463,45 @@ def amd_check_rule_11(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '使用相同sku机台复制验证',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
+
+    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail['CPU0 CORES CORE0 Freq Eff']
+    CPU0_CORES_CORE0_CPPC_MAX_Freq_d = data_frame_fail['CPU0 CORES CORE0 CPPC MAX Freq']
+
+    CPU0_INFRASTRUCTURE2_Value_THM_d = data_frame_fail.get('CPU0 INFRASTRUCTURE Value THM', None)
+    CPU0_INFRASTRUCTURE2_Limit_THM_d = data_frame_fail.get('CPU0 INFRASTRUCTURE Limit THM', None)
+
+    if CPU0_INFRASTRUCTURE2_Value_THM_d is None or CPU0_CORES_CORE0_Freq_Eff_d is None:
+        return return_dict
+
+    check_point_1 = False
+    check_point_2 = False
+    check_point_3 = False
+    for idx, value in enumerate(CPU0_CORES_CORE0_Freq_Eff_d):
+        Freq_Eff = CPU0_CORES_CORE0_Freq_Eff_d[idx]
+        MAX_Freq = CPU0_CORES_CORE0_CPPC_MAX_Freq_d[idx]
+
+        Value_THM = CPU0_INFRASTRUCTURE2_Value_THM_d[idx]
+        Limit_THM = CPU0_INFRASTRUCTURE2_Limit_THM_d[idx]
+        logger.info(f'Value_THM:{Value_THM}')
+        logger.info(f'Limit_THM:{Limit_THM}')
+
+        if Freq_Eff < MAX_Freq :
+            check_point_1 = True
+        if Value_THM > Limit_THM :
+            check_point_2 = True
+
+    if check_point_1 and check_point_2:
+        return_dict = check_result_dict
+    logger.info(f'return_dict:{return_dict}')
+
     return return_dict
 
-def amd_check_rule_12(fail_dir, pass_dir):
+def amd_check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_12')
     return_dict = None
     check_result_dict = {
@@ -351,6 +511,13 @@ def amd_check_rule_12(fail_dir, pass_dir):
         'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
+    if True:
+        return return_dict
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
@@ -417,11 +584,11 @@ def amd_check_rule_12(fail_dir, pass_dir):
 
     if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >= 20 and Sensor_Temp <= 30:
         return_dict = check_result_dict
-        logger.info(f"return_dict: {return_dict}")
 
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_13(fail_dir, pass_dir):
+def amd_check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_13')
     return_dict = None
     check_result_dict = {
@@ -431,6 +598,12 @@ def amd_check_rule_13(fail_dir, pass_dir):
         'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+    if True:
+        return return_dict
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
@@ -497,10 +670,11 @@ def amd_check_rule_13(fail_dir, pass_dir):
 
     if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >= 20 and Sensor_Temp <= 30:
         return_dict = check_result_dict
-        logger.info(f"return_dict: {return_dict}")
+
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_14(fail_dir, pass_dir):
+def amd_check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_14')
     return_dict = None
     check_result_dict = {
@@ -510,6 +684,12 @@ def amd_check_rule_14(fail_dir, pass_dir):
         'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+    if True:
+        return return_dict
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
@@ -577,9 +757,11 @@ def amd_check_rule_14(fail_dir, pass_dir):
     if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >= 20 and Sensor_Temp <= 30:
         return_dict = check_result_dict
         logger.info(f"return_dict: {return_dict}")
+
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_15(fail_dir, pass_dir):
+def amd_check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_15')
     return_dict = None
     check_result_dict = {
@@ -589,7 +771,11 @@ def amd_check_rule_15(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '分别Disable/Enable AI chip功能验证结果',
     }
-
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+    if True:
+        return return_dict
     CPU0_CORES_CORE0_CPPC_EPP = 'CPU0 INFRASTRUCTURE Limit STAPM'
 
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
@@ -605,9 +791,11 @@ def amd_check_rule_15(fail_dir, pass_dir):
         if is_two_coloum_same == False:
             return_dict = check_result_dict
             break
+
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 
-def amd_check_rule_16(fail_dir, pass_dir):
+def amd_check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_16')
     return_dict = None
     check_result_dict = {
@@ -617,14 +805,19 @@ def amd_check_rule_16(fail_dir, pass_dir):
         'Solution': '',
         '修复及验证': '',
     }
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     channel_str = 'Controller0-ChannelA-DIMM1'
     channel_dict_fail = get_cpu_log_content(fail_dir, channel_str)
     channel_dict_pass = get_cpu_log_content(pass_dir, channel_str)
 
+    if channel_dict_fail is None:
+        return return_dict
     for key, value in channel_dict_fail.items():
         if key not in channel_dict_pass or value not in channel_dict_fail[key]:
             return_dict = check_result_dict
-            logger.info(f'return_dict: {return_dict}')
 
     channel_str = 'Controller0-ChannelB-DIMM1'
     channel_dict_fail = get_cpu_log_content(fail_dir, channel_str)
@@ -633,8 +826,8 @@ def amd_check_rule_16(fail_dir, pass_dir):
     for key, value in channel_dict_fail.items():
         if key not in channel_dict_pass or value not in channel_dict_fail[key]:
             return_dict = check_result_dict
-            logger.info(f'return_dict: {return_dict}')
 
+    logger.info(f'return_dict:{return_dict}')
     return return_dict
 if __name__ == '__main__':
     pass

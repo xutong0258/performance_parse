@@ -81,14 +81,16 @@ def get_gpu_data_with_csv(file_path):
             row_count = 0
             for row in csv_reader:
                 row_count += 1
-                # logger.info(f"行 {row_count}：", row)
-                if 'Timestamp' in row:
+                # logger.info(f'row: {row}')
+                if 'Timestamp' in row or '1:t_gpu' in row:
                     headers = row
+                    # logger.info(f'headers: {headers}')
                     continue
                 if headers:
                     new_list.append(row)
-                
-            # logger.info("\n读取完成，共", row_count, "行数据")
+
+            # logger.info(f'row_count: {row_count}')
+            # logger.info(f'headers: {headers}')
             return headers, new_list
     except PermissionError:
         logger.info(f"错误：没有权限读取文件 '{file_path}'")
@@ -98,7 +100,7 @@ def get_gpu_data_with_csv(file_path):
         logger.info(f"读取文件时发生错误：{e}")
 
 
-def get_gpu_head_data_with_csv(file_path, header_str='VRAM Strap'):
+def get_gpu_target_map_with_csv(file_path, target_str='VRAM Strap'):
     """使用内置csv模块读取CSV文件"""
     try:
         # 检查文件是否存在
@@ -112,21 +114,20 @@ def get_gpu_head_data_with_csv(file_path, header_str='VRAM Strap'):
             csv_reader = csv.reader(file)
 
             headers = []
+            target_map = {}
             new_list = []
             # 读取并打印行数据
-            row_count = 0
             for row in csv_reader:
-                row_count += 1
-                # logger.info(f"行 {row_count}：", row)
-                if header_str in row:
-                    headers = row
-                    continue
-                if headers:
-                    new_list.append(row)
+                # logger.info(f'row:{row}')
+                tmp_str = row[0]
+                if target_str in tmp_str:
+                    tmp_str = tmp_str.replace(f'- {target_str}:', '')
+                    target_map[target_str] = tmp_str.strip()
+                    logger.info(f'target_map: {target_map}')
                     break
 
             # logger.info("\n读取完成，共", row_count, "行数据")
-            return headers, new_list
+            return target_map
     except PermissionError:
         logger.info(f"错误：没有权限读取文件 '{file_path}'")
     except UnicodeDecodeError:

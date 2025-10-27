@@ -6,27 +6,27 @@ VRAM Strap: VRAM Strap
 AC VBIOS Rated TGP (W): AC VBIOS Rated TGP
 GPC Base Clock (MHz): Base clock
 Memory Base Clock (MHz): Memory clock
-1:GPC Clock (MHz): gpc_clk
-1:Memory Clock (MHz): clk_mem
+1:GPC Clock (MHz): 1:gpc_clk
+1:Memory Clock (MHz): 1:clk_mem
 1:TPP Measured (W): TPP_Momentary
 1:AC Target TPP Limit (mW): AC_Target_TPP_Limit
 1:AC Max GPU Limit (mW): AC Max Rated TGP
-1:TGP (W): pwr_tgp
-1:NVVDD Power (W): pwr_nvvdd
-1:FBVDD Power (W): pwr_fbvdd
-1:Capping Reason: Capping reason
+1:TGP (W): 1:pwr_tgp
+1:NVVDD Power (W): 1:pwr_nvvdd
+1:FBVDD Power (W): 1:pwr_fbvdd
+1:Capping Reason: 1:capping_reason
 Max Target Temperature (C): Target Temp
-1:Temperature GPU （C）: T_GPU
-1:Temperature Memory (C): T_mem
-Power Supply Mode: AC_DC
-1:PPAB State: PPAB_status
-1:GPU State: gpu_state
-1:GPU Utilization (%): gpc_util
-1:FB Utilization (%): fb_util
-1:P-State: P_state
-1:D-Notifier Limit: d_notifier_limit
-1:GPC Slowdown Factor (%): slowdown
-CPU Clock (MHz): cpu_clk
-CPU Temperature (C): cpu_temp
-CPU TDP (W): cpu_tdp
-CPU PROCHOT Asserted: cpu_prochot
+1:Temperature GPU （C）: 1:t_gpu
+1:Temperature Memory (C): 1:t_mem
+Power Supply Mode: 1:AC_DC
+1:PPAB State: 1:ppab_state
+1:GPU State: 1:gpu_state
+1:GPU Utilization (%): 1:gpc_util
+1:FB Utilization (%): 1:fb_util
+1:P-State: 1:p_state
+1:D-Notifier Limit: 1:d_notifier_limit
+1:GPC Slowdown Factor (%): 1:slowdown
+CPU Clock (MHz): 1:cpu_clk
+CPU Temperature (C): 1:cpu_temp
+CPU TDP (W): 1:cpu_tdp
+CPU PROCHOT Asserted: 1:cpu_prochot
