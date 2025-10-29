@@ -23,10 +23,6 @@ import difflib
 def similarity_ratio(str1, str2):
     return difflib.SequenceMatcher(None, str1, str2).ratio()
 
-# # 示例
-# s1 = "apple"
-# s2 = "appel"
-# print(similarity_ratio(s1, s2))  # 输出：0.8（即 80% 相似）
 
 def get_list_target_text_index_list(input_list, target_text):
     target_text = target_text.lower()
