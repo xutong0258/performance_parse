@@ -18,6 +18,15 @@ from base.logger import *
 # file = os.path.abspath(__file__)
 path_dir = os.path.dirname(__file__)
 
+import difflib
+
+def similarity_ratio(str1, str2):
+    return difflib.SequenceMatcher(None, str1, str2).ratio()
+
+# # 示例
+# s1 = "apple"
+# s2 = "appel"
+# print(similarity_ratio(s1, s2))  # 输出：0.8（即 80% 相似）
 
 def get_list_target_text_index_list(input_list, target_text):
     target_text = target_text.lower()
@@ -65,6 +74,7 @@ def remove_list_na(input_list, target_str='NA'):
 
 def get_SystemDeckPM_file_with_dir(dir_name):
     if not os.path.isdir(dir_name):
+        logger.info(f'get_SystemDeckPM_file_with_dir return None')
         return None
     SystemDeckPM_file = None
     file_list = os.listdir(dir_name)
@@ -77,8 +87,9 @@ def get_SystemDeckPM_file_with_dir(dir_name):
         for filename in file_list:
             if '.csv' in filename:
                 SystemDeckPM_file = os.path.join(dir_name, filename)
-                logger.info(f'SystemDeckPM_file:{SystemDeckPM_file}')
+                # logger.info(f'SystemDeckPM_file:{SystemDeckPM_file}')
                 break
+    logger.info(f'SystemDeckPM_file:{SystemDeckPM_file}')
     return SystemDeckPM_file
 
 def get_tat_file_with_dir(dir_name):
@@ -176,11 +187,11 @@ def get_list_equal_count(result, text):
 
 def is_digital_item(cell_item):
     number_list = ['0','1','2','3','4','5','6','7','8','9']
-    is_number = False
+    is_number = True
     for item in cell_item:
         # logger.info(f"item:{item}")
-        if item in number_list:
-            is_number = True
+        if item not in number_list:
+            is_number = False
             break
     # logger.info(f"is_number:{is_number}")
     return is_number
@@ -268,17 +279,21 @@ def is_two_col_data_delta_larger_than_threshold(col_1_data, col_2_data, threshol
             is_delta_larger_than_stand = True
     return is_delta_larger_than_stand
 
-def is_two_data_delta_larger_than_threshold(data_1, data_2, threshold):
+def is_two_data_delta_larger_than_threshold(data_fail, data_pass, threshold):
     is_delta_larger_than_stand = False
-    # logger.info(f'data_1:{data_1}, data_2:{data_2}')
+    # logger.info(f'data_fail:{data_fail}, data_pass:{data_pass}')
 
-    if data_1 is None or data_2 is None:
+    if data_fail is None or data_pass is None:
         return is_delta_larger_than_stand
 
-    delta = abs(data_1 - data_2)
+    delta = abs(data_fail - data_pass)
     # logger.info(f'delta:{delta}')
-    delta_ratio = delta/data_1
-    logger.info(f'delta_ratio:{delta_ratio}')
+    if data_pass > 0:
+        delta_ratio = delta/data_pass
+    else:
+        is_delta_larger_than_stand = True
+        return is_delta_larger_than_stand
+    # logger.info(f'delta_ratio:{delta_ratio}')
     if delta_ratio > threshold:
         is_delta_larger_than_stand = True
     return is_delta_larger_than_stand

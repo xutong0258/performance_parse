@@ -100,6 +100,35 @@ def get_gpu_data_with_csv(file_path):
         logger.info(f"读取文件时发生错误：{e}")
 
 
+def get_head_with_csv(file_path):
+    """使用内置csv模块读取CSV文件"""
+    try:
+        # 检查文件是否存在
+        if not os.path.exists(file_path):
+            logger.info(f"错误：文件 '{file_path}' 不存在")
+            return
+
+        # 打开CSV文件并读取
+        with open(file_path, 'r', encoding='utf-8') as file:
+            # 创建CSV读取器
+            csv_reader = csv.reader(file)
+
+            headers = []
+            # 读取并打印行数据
+            row_count = 0
+            for row in csv_reader:
+                headers = row
+                break
+            # logger.info(f'row_count: {row_count}')
+            # logger.info(f'headers: {headers}')
+            return headers
+    except PermissionError:
+        logger.info(f"错误：没有权限读取文件 '{file_path}'")
+    except UnicodeDecodeError:
+        logger.info(f"错误：文件编码不是utf-8，请尝试其他编码格式")
+    except Exception as e:
+        logger.info(f"读取文件时发生错误：{e}")
+
 def get_gpu_target_map_with_csv(file_path, target_str='VRAM Strap'):
     """使用内置csv模块读取CSV文件"""
     try:

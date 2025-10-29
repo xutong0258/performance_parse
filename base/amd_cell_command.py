@@ -50,7 +50,7 @@ def amd_check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     check_point_3 = False
 
     for idx, value in enumerate(CPU0_CORES_CORE0_Freq_Eff_d):
-        logger.info(f'Freq Eff:{value}')
+        # logger.info(f'Freq Eff:{value}')
         Value_THM = CPU0_INFRASTRUCTURE2_Value_THM_CORE_d[idx]
         Limit_THM = CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d[idx]
         MISC_PROCHOT = CPU0_MISC_PROCHOT_d[idx]
@@ -131,11 +131,24 @@ def amd_check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if True:
+    if os.path.isdir(pass_dir) == False:
         return return_dict
-    
-    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
-    CPU0_CORES_CORE0_Freq_Eff = 'CPU0 CORES CORE0 Freq Eff'
+
+    col = 'CPU0 CORES CORE0 Freq Eff'
+    fail_col_data, fail_file_data = get_amd_file_col_data_by_dir(fail_dir, col)
+    pass_col_data, pass_file_data = get_amd_file_col_data_by_dir(pass_dir, col)
+
+    average_fail = get_list_average(fail_col_data, False)
+    logger.info(f"average_fail: {average_fail}")
+
+    average_pass = get_list_average(pass_col_data, False)
+    logger.info(f"average_pass: {average_pass}")
+
+    is_delta_larger = is_two_data_delta_larger_than_threshold(average_fail, average_pass, 0.1)
+    logger.info(f'is_delta_larger:{is_delta_larger}')
+
+    if is_delta_larger:
+        return_dict = check_result_dict
     logger.info(f'return_dict:{return_dict}')
     return return_dict
 
@@ -153,21 +166,24 @@ def amd_check_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if True:
+    if os.path.isdir(pass_dir) == False:
         return return_dict
 
-    CPU0_CORES_CORE0_CPPC_EPP = 'CPU0 CORES CORE0 CPPC EPP'
+    col = 'CPU0 CORES CORE0 EPP'
+    fail_col_data, fail_file_data = get_amd_file_col_data_by_dir(fail_dir, col)
+    pass_col_data, pass_file_data = get_amd_file_col_data_by_dir(pass_dir, col)
 
-    data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
-    data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
+    average_fail = get_list_average(fail_col_data, False)
+    logger.info(f"average_fail: {average_fail}")
 
-    col_fail = data_frame_fail[CPU0_CORES_CORE0_CPPC_EPP]
-    col_pass = data_frame_pass[CPU0_CORES_CORE0_CPPC_EPP]
+    average_pass = get_list_average(pass_col_data, False)
+    logger.info(f"average_pass: {average_pass}")
 
-    for idx, value in enumerate(col_fail):
-        if value != col_pass[idx]:
-            return_dict = check_result_dict
-            break
+    is_delta_larger = is_two_data_delta_larger_than_threshold(average_fail, average_pass, 0.1)
+    logger.info(f'is_delta_larger:{is_delta_larger}')
+
+    if is_delta_larger:
+        return_dict = check_result_dict
     logger.info(f'return_dict:{return_dict}')
     return return_dict
 
@@ -185,8 +201,11 @@ def amd_check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if True:
+    if os.path.isdir(pass_dir) == False:
         return return_dict
+
+    head_list = get_amd_performance_file_head_list_by_dir(fail_dir)
+    # logger.info(f'head_list:{head_list}')
 
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
@@ -200,8 +219,11 @@ def amd_check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
                     'CPU0 MISC Slow PPT Time Constant',]
 
     for col in content_list:
-        fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col)
-        is_delta_larger = is_two_data_delta_larger_than_threshold(fail_average_data, pass_average_data, 0.02)
+        logger.info(f'col:{col}')
+        fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col, head_list)
+        is_delta_larger = is_two_data_delta_larger_than_threshold(fail_average_data, pass_average_data, 0.2)
+        logger.info(f'is_delta_larger:{is_delta_larger}')
+
         if is_delta_larger:
             return_dict = check_result_dict
             break
@@ -223,8 +245,11 @@ def amd_check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if True:
+    if os.path.isdir(pass_dir) == False:
         return return_dict
+
+    head_list = get_amd_performance_file_head_list_by_dir(fail_dir)
+    # logger.info(f'head_list:{head_list}')
 
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
@@ -233,8 +258,8 @@ def amd_check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
                     'CPU0 MISC Slow PPT Time Constant',]
 
     for col in content_list:
-        fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col)
-        is_delta_larger = is_two_data_delta_larger_than_threshold(fail_average_data, pass_average_data, 0.02)
+        fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col, head_list)
+        is_delta_larger = is_two_data_delta_larger_than_threshold(fail_average_data, pass_average_data, 0.2)
         if is_delta_larger:
             return_dict = check_result_dict
             break
@@ -255,7 +280,7 @@ def amd_check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if True:
+    if os.path.isdir(pass_dir) == False:
         return return_dict
 
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
@@ -275,7 +300,8 @@ def amd_check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     idle_average_pass = get_col_idle_average(col_data_pass)
     logger.info(f"idle_average_pass: {idle_average_pass}")
 
-    is_delta_larger_than_stand = is_two_data_delta_larger_than_threshold(idle_average_fail, idle_average_pass, 2)
+    is_delta_larger_than_stand = is_two_data_delta_larger_than_threshold(idle_average_fail, idle_average_pass, 0.02)
+    logger.info(f"is_delta_larger_than_stand: {is_delta_larger_than_stand}")
     if is_delta_larger_than_stand:
         return_dict = check_result_dict
 
@@ -298,6 +324,8 @@ def amd_check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
 
     if True:
         return return_dict
+    head_list = get_amd_performance_file_head_list_by_dir(fail_dir)
+    # logger.info(f'head_list:{head_list}')
 
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
@@ -310,7 +338,7 @@ def amd_check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
                     'CPU0 INFRASTRUCTURE Limit EDC SOC',]
 
     for col in content_list:
-        fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col)
+        fail_average_data, pass_average_data = get_two_data_frame_col_average(data_frame_fail, data_frame_pass, col, head_list)
         if fail_average_data != pass_average_data:
             return_dict = check_result_dict
             break
@@ -419,6 +447,9 @@ def amd_check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
+    if os.path.isdir(pass_dir) == False:
+        return return_dict
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
 
     CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail['CPU0 CORES CORE0 Freq Eff']
@@ -467,6 +498,8 @@ def amd_check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
+    if os.path.isdir(pass_dir) == False:
+        return return_dict
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
 
     CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail['CPU0 CORES CORE0 Freq Eff']
@@ -687,44 +720,75 @@ def amd_check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
-    if True:
-        return return_dict
 
+    if os.path.isdir(pass_dir) == False:
+        return return_dict
+    head_list = get_amd_performance_file_head_list_by_dir(fail_dir)
+    # logger.info(f'head_list:{head_list}')
+    
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
     data_frame_pass = get_amd_performance_file_data_frame_by_dir(pass_dir)
 
+    col = 'CPU0 INFRASTRUCTURE2 Limit STT APU'  
+    col = get_match_col_name(head_list, col)
+    logger.info(f'col:{col}')
+
+
     # CPU0 INFRASTRUCTURE2 Limit STT APU
-    col = 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+    # col = 'CPU0 INFRASTRUCTURE2 Limit STT APU'
     col_data_fail = data_frame_fail[col]
     average_data_fail_1 = get_list_average(col_data_fail)
+    logger.info(f'average_data_fail_1:{average_data_fail_1}')
+
     check_point_1 = False
     if average_data_fail_1 == 0:
         check_point_1 = True
+    logger.info(f'check_point_1:{check_point_1}')
 
     # CPU0 INFRASTRUCTURE2 Limit STT APU
     col = 'CPU0 INFRASTRUCTURE2 Value STT APU'
+    col = get_match_col_name(head_list, col)
+    logger.info(f'col:{col}')
+
     col_data_fail = data_frame_fail[col]
     average_data_fail_1 = get_list_average(col_data_fail)
+    logger.info(f'average_data_fail_1:{average_data_fail_1}')
     check_point_2 = False
     if average_data_fail_1 == 0:
         check_point_2 = True
+    logger.info(f'check_point_2:{check_point_2}')
 
     # CPU0 INFRASTRUCTURE2 Limit STT APU
     col_1 = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+    col_1 = get_match_col_name(head_list, col_1)
+    logger.info(f'col_1:{col_1}')
+
     col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    col_2 = get_match_col_name(head_list, col_2)
+    logger.info(f'col_2:{col_2}')
+
     col_data_fail_1 = data_frame_fail[col_1]
     average_data_fail_1 = get_list_average(col_data_fail_1)
+    logger.info(f'{col_1} average_data_fail_1:{average_data_fail_1}')
 
     col_data_fail_2 = data_frame_fail[col_2]
     average_data_fail_2 = get_list_average(col_data_fail_2)
+    logger.info(f'{col_2} average_data_fail_2:{average_data_fail_2}')
 
     check_point_3 = False
-    if average_data_fail_1 > average_data_fail_2 :
+    if average_data_fail_1 is not None and average_data_fail_2 is not None and average_data_fail_1 > average_data_fail_2 :
         check_point_3 = True
+    logger.info(f'check_point_3:{check_point_3}')
 
     # check_point_4
     col_1 = 'CPU0 INFRASTRUCTURE2 Value THM GFX'
+    col_1 = get_match_col_name(head_list, col_1)
+    logger.info(f'col_1:{col_1}')
+
     col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
+    col_2 = get_match_col_name(head_list, col_2)
+    logger.info(f'col_2:{col_2}')
+
     col_data_fail_1 = data_frame_fail[col_1]
     average_data_fail_1 = get_list_average(col_data_fail_1)
 
@@ -732,31 +796,45 @@ def amd_check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     average_data_fail_2 = get_list_average(col_data_fail_2)
 
     check_point_4 = False
-    if average_data_fail_1 > average_data_fail_2 :
+    if average_data_fail_1 is not None and average_data_fail_2 is not None and average_data_fail_1 > average_data_fail_2 :
         check_point_4 = True
+    logger.info(f'check_point_4:{check_point_4}')
 
     # check_point_5
     col_1 = 'CPU0 INFRASTRUCTURE2 Value THM SOC'
+    col_1 = get_match_col_name(head_list, col_1)
+    logger.info(f'col_1:{col_1}')
+
     col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
+    col_2 = get_match_col_name(head_list, col_2)
+    logger.info(f'col_2:{col_2}')
+
     col_data_fail_1 = data_frame_fail[col_1]
     average_data_fail_1 = get_list_average(col_data_fail_1)
+    logger.info(f'{col_1} average_data_fail_1:{average_data_fail_1}')
 
     col_data_fail_2 = data_frame_fail[col_2]
     average_data_fail_2 = get_list_average(col_data_fail_2)
+    logger.info(f'{col_2} average_data_fail_2:{average_data_fail_2}')
 
     check_point_5 = False
-    if average_data_fail_1 > average_data_fail_2 :
+    if average_data_fail_1 is not None and average_data_fail_2 is not None and average_data_fail_1 > average_data_fail_2 :
         check_point_5 = True
+    logger.info(f'check_point_5:{check_point_5}')
 
     # sensor part
-    col = 'Environment Sensor Temp'
-    col_data, file_data = get_performance_file_col_data_by_dir(fail_dir, col)
-    Sensor_Temp = get_list_average(col_data)
-    logger.info(f'Sensor_Temp:{Sensor_Temp}')
+    if False:
+        col = 'Environment Sensor Temp'
+        col = get_match_col_name(head_list, col)
+        logger.info(f'col:{col}')
 
-    if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >= 20 and Sensor_Temp <= 30:
+        col_data, file_data = get_performance_file_col_data_by_dir(fail_dir, col)
+        Sensor_Temp = get_list_average(col_data)
+        logger.info(f'Sensor_Temp:{Sensor_Temp}')
+    # Sensor_Temp >= 20 and Sensor_Temp <= 30
+    if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5:
         return_dict = check_result_dict
-        logger.info(f"return_dict: {return_dict}")
+        # logger.info(f"return_dict: {return_dict}")
 
     logger.info(f'return_dict:{return_dict}')
     return return_dict

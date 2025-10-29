@@ -54,6 +54,24 @@ def is_amd_case(input_dir):
         is_amd_case = True
     return is_amd_case
 
+def get_match_col_name(head_list, col_name):
+    max_ratio = 0
+    max_ratio_index = None
+    col = None
+    for idx, item in enumerate(head_list):
+        curr_ratio = similarity_ratio(item, col_name)
+        if curr_ratio > max_ratio:
+            max_ratio = curr_ratio
+            max_ratio_index = idx
+    col = head_list[max_ratio_index]
+    # logger.info(f'col:{col}')
+    return col
+
+def get_amd_performance_file_head_list_by_dir(input_dir):
+    amd_fail_file = get_SystemDeckPM_file_with_dir(input_dir)
+    head_list = get_head_with_csv(amd_fail_file)
+    return head_list
+
 def get_amd_performance_file_data_frame_by_dir(input_dir):
     amd_fail_file = get_SystemDeckPM_file_with_dir(input_dir)
     data_frame = read_csv_with_pandas(amd_fail_file)
@@ -68,12 +86,19 @@ def get_intel_tat_file_col_data_by_dir(input_dir, col_name):
     col_data = file_data.get(col_name)
     return col_data
 
+def get_amd_file_col_data_by_dir(input_dir, col_name):
+    col_data = []
+    amd_fail_file = get_SystemDeckPM_file_with_dir(input_dir)
+    data_frame = read_csv_with_pandas(amd_fail_file)
+    col_data = data_frame.get(col_name)
+    return col_data, data_frame
+
 def get_intel_tat_file_col_data_by_dir_ex(input_dir, col_name):
     col_data = []
     tat_file = get_tat_file_with_dir(input_dir)
-    file_data = read_csv_with_pandas(tat_file)
-    col_data = file_data.get(col_name)
-    return col_data, file_data
+    data_frame = read_csv_with_pandas(tat_file)
+    col_data = data_frame.get(col_name)
+    return col_data, data_frame
 
 def get_intel_tat_file_data_frame_by_dir(input_dir):
     col_data = []
@@ -147,7 +172,10 @@ def get_two_list_correlation(col_1, col_2):
     return correlation
 
 
-def get_two_data_frame_col_average(data_frame_1, data_frame_2, col_name):
+def get_two_data_frame_col_average(data_frame_1, data_frame_2, col_name, head_list):
+    col_name = get_match_col_name(head_list, col_name)
+    logger.info(f'col_name:{col_name}')
+
     col_amd_fail = data_frame_1[col_name]
     fail_average_data = get_list_average(col_amd_fail)
     logger.info(f"fail_average_data: {fail_average_data}")
@@ -163,7 +191,7 @@ def get_col_idle_average(input_list):
     logger.info(f"col_average: {col_average}")
     idle_list = []
     for idx, line in enumerate(input_list):
-        is_delta_larger_than_stand = is_two_data_delta_larger_than_threshold(line, col_average, 0.5)
+        is_delta_larger_than_stand = is_two_data_delta_larger_than_threshold(line, col_average, 0.3)
         if is_delta_larger_than_stand:
             # logger.info(f"line: {line}")
             idle_list.append(line)

@@ -980,7 +980,7 @@ def gpu_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
     col_data_1 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
 
     col = '1:GPC Slowdown Factor (%)'
-    col_data_2 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
+    col_data_pass = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
 
     if col_data_1 is None:
         return return_dict
@@ -990,7 +990,7 @@ def gpu_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
         if type(item) is str and item != '':
             item = item.replace('%', '')
             item = int(item)
-        cell_2_data = col_data_2[idx]
+        cell_2_data = col_data_pass[idx]
         # logger.info(f'cell_2_data: {cell_2_data}')
         if type(cell_2_data) is str and cell_2_data != ' ':
             cell_2_data = cell_2_data.replace('%', '')
@@ -1038,8 +1038,8 @@ def gpu_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
 
     if min_value == max_value:
         col = '1:GPU Utilization (%)'
-        col_data_2 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
-        for idx, item in enumerate(col_data_2):
+        col_data_pass = get_csv_file_col_data_by_file_gpu(gpu_log_file, col, headers)
+        for idx, item in enumerate(col_data_pass):
             if item < 100:
                 return_dict = check_result_dict
     return return_dict
