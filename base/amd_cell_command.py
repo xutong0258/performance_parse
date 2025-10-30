@@ -658,50 +658,27 @@ def amd_check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
 
     # CPU0 INFRASTRUCTURE2 Limit STT APU
     col_1 = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+    col_1 = get_match_col_name(head_list, col_1)
+    logger.info(f'col_1:{col_1}')
+
     col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    col_2 = get_match_col_name(head_list, col_2)
+    logger.info(f'col_2:{col_2}')
+
     col_data_fail_1 = data_frame_fail[col_1]
-    average_data_fail_1 = get_list_average(col_data_fail_1)
+    max_data_fail_1 = max(col_data_fail_1)
+    logger.info(f'{col_1} max_data_fail_1:{max_data_fail_1}')
 
     col_data_fail_2 = data_frame_fail[col_2]
     average_data_fail_2 = get_list_average(col_data_fail_2)
+    logger.info(f'{col_2} average_data_fail_2:{average_data_fail_2}')
 
     check_point_3 = False
-    if average_data_fail_1 < average_data_fail_2 :
+    if max_data_fail_1 is not None and average_data_fail_2 is not None and max_data_fail_1 < average_data_fail_2 :
         check_point_3 = True
+    logger.info(f'check_point_3:{check_point_3}')
 
-    # check_point_4
-    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM GFX'
-    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
-    col_data_fail_1 = data_frame_fail[col_1]
-    average_data_fail_1 = get_list_average(col_data_fail_1)
-
-    col_data_fail_2 = data_frame_fail[col_2]
-    average_data_fail_2 = get_list_average(col_data_fail_2)
-
-    check_point_4 = False
-    if average_data_fail_1 < average_data_fail_2 :
-        check_point_4 = True
-
-    # check_point_5
-    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM SOC'
-    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
-    col_data_fail_1 = data_frame_fail[col_1]
-    average_data_fail_1 = get_list_average(col_data_fail_1)
-
-    col_data_fail_2 = data_frame_fail[col_2]
-    average_data_fail_2 = get_list_average(col_data_fail_2)
-
-    check_point_5 = False
-    if average_data_fail_1 < average_data_fail_2 :
-        check_point_5 = True
-
-    # sensor part
-    col = 'Environment Sensor Temp'
-    col_data, file_data = get_performance_file_col_data_by_dir(fail_dir, col)
-    Sensor_Temp = get_list_average(col_data)
-    logger.info(f'Sensor_Temp:{Sensor_Temp}')
-
-    if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and Sensor_Temp >= 20 and Sensor_Temp <= 30:
+    if check_point_1 and check_point_2 and check_point_3 :
         return_dict = check_result_dict
 
     logger.info(f'return_dict:{return_dict}')
@@ -768,71 +745,19 @@ def amd_check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'col_2:{col_2}')
 
     col_data_fail_1 = data_frame_fail[col_1]
-    average_data_fail_1 = get_list_average(col_data_fail_1)
-    logger.info(f'{col_1} average_data_fail_1:{average_data_fail_1}')
+    max_data_fail_1 = max(col_data_fail_1)
+    logger.info(f'{col_1} max_data_fail_1:{max_data_fail_1}')
 
     col_data_fail_2 = data_frame_fail[col_2]
     average_data_fail_2 = get_list_average(col_data_fail_2)
     logger.info(f'{col_2} average_data_fail_2:{average_data_fail_2}')
 
     check_point_3 = False
-    if average_data_fail_1 is not None and average_data_fail_2 is not None and average_data_fail_1 > average_data_fail_2 :
+    if max_data_fail_1 is not None and average_data_fail_2 is not None and max_data_fail_1 >= average_data_fail_2 :
         check_point_3 = True
     logger.info(f'check_point_3:{check_point_3}')
 
-    # check_point_4
-    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM GFX'
-    col_1 = get_match_col_name(head_list, col_1)
-    logger.info(f'col_1:{col_1}')
-
-    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
-    col_2 = get_match_col_name(head_list, col_2)
-    logger.info(f'col_2:{col_2}')
-
-    col_data_fail_1 = data_frame_fail[col_1]
-    average_data_fail_1 = get_list_average(col_data_fail_1)
-
-    col_data_fail_2 = data_frame_fail[col_2]
-    average_data_fail_2 = get_list_average(col_data_fail_2)
-
-    check_point_4 = False
-    if average_data_fail_1 is not None and average_data_fail_2 is not None and average_data_fail_1 > average_data_fail_2 :
-        check_point_4 = True
-    logger.info(f'check_point_4:{check_point_4}')
-
-    # check_point_5
-    col_1 = 'CPU0 INFRASTRUCTURE2 Value THM SOC'
-    col_1 = get_match_col_name(head_list, col_1)
-    logger.info(f'col_1:{col_1}')
-
-    col_2 = 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
-    col_2 = get_match_col_name(head_list, col_2)
-    logger.info(f'col_2:{col_2}')
-
-    col_data_fail_1 = data_frame_fail[col_1]
-    average_data_fail_1 = get_list_average(col_data_fail_1)
-    logger.info(f'{col_1} average_data_fail_1:{average_data_fail_1}')
-
-    col_data_fail_2 = data_frame_fail[col_2]
-    average_data_fail_2 = get_list_average(col_data_fail_2)
-    logger.info(f'{col_2} average_data_fail_2:{average_data_fail_2}')
-
-    check_point_5 = False
-    if average_data_fail_1 is not None and average_data_fail_2 is not None and average_data_fail_1 > average_data_fail_2 :
-        check_point_5 = True
-    logger.info(f'check_point_5:{check_point_5}')
-
-    # sensor part
-    if False:
-        col = 'Environment Sensor Temp'
-        col = get_match_col_name(head_list, col)
-        logger.info(f'col:{col}')
-
-        col_data, file_data = get_performance_file_col_data_by_dir(fail_dir, col)
-        Sensor_Temp = get_list_average(col_data)
-        logger.info(f'Sensor_Temp:{Sensor_Temp}')
-    # Sensor_Temp >= 20 and Sensor_Temp <= 30
-    if check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5:
+    if check_point_1 and check_point_2 and check_point_3:
         return_dict = check_result_dict
         # logger.info(f"return_dict: {return_dict}")
 

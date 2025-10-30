@@ -12,7 +12,9 @@ from base.handle_request import *
 import time
 import base64
 from Crypto.Cipher import AES
+from Crypto.Cipher import DES
 from Crypto.Util.Padding import pad
+from base.des_api import *
 
 file_path = os.path.abspath(__file__)
 path_dir = os.path.dirname(file_path)
@@ -24,7 +26,7 @@ http = HandleRequest ()
 
 WEB_IP = "http://10.159.252.128:9298"
 # 登录的参数
-login_data = {"loginName": "15168284827", "password": "Rio4827"}
+login_data = {"loginName": "xinghuan", "password": "xinghuan@29"}
 # 登录的请求头
 header = {
     "Content-Type": "application/json"
@@ -39,14 +41,16 @@ def generate_token(username: str) -> str:
     plaintext = f"{username}@{timestamp}"
 
     # 2. 密钥（24字节，用于AES-192）
-    key = "sgEsmU8FdP8W7j5H03695286".encode('utf-8')  # 24 bytes
+    # key = "sgEsmU8FdP8W7j5H03695286".encode('utf-8')  # 24 bytes
+    key = b"sgEsmU8F"
 
-    # 3. 确保密钥长度正确（AES-192 需要 24 字节）
-    if len(key) != 24:
-        raise ValueError("密钥长度必须为24字节（AES-192）")
+    # # 3. 确保密钥长度正确（AES-192 需要 24 字节）
+    # if len(key) != 24:
+    #     raise ValueError("密钥长度必须为24字节（AES-192）")
 
     # 4. 使用 AES-192-ECB 加密
-    cipher = AES.new(key, AES.MODE_ECB)
+    # AES.new(key, AES.MODE_ECB)
+    cipher = DES.new(key, AES.MODE_ECB)
 
     # 5. 对明文进行 PKCS7 填充，并加密
     padded_data = pad(plaintext.encode('utf-8'), AES.block_size)
@@ -58,23 +62,28 @@ def generate_token(username: str) -> str:
     return token
 
 def hello():
-    logger.info(f'Enter hello')
+    username = "xinghuan"
+    # 登录的参数
+    login_data = {"loginName": "xinghuan", "password": "xinghuan@29"}
+
+    timestamp = int(time.time() * 1000)  # 毫秒时间戳
+    plaintext = f"{username}@{timestamp}"
+    encrypted = des_encrypt_ecb(plaintext)
+    logger.info(encrypted)
+
+    WEB_IP = "http://10.159.252.128:9298"
+
     url = f"{WEB_IP}/mbxApi/utp/queryReportdList? current=1&size=10"
 
-    username = "alice"
-    token = generate_token(username)
-    print("Generated token:", token)
-
     header = {
-        "token": f'{token}'
+        "token": f'{encrypted}'
     }
-
     try:
         # response = http.send(url=url, method="post", headers=header, json=login_data)
         response = http.send(url=url, method="post", headers=header, json=login_data)
         # 检查响应状态码
         if response.status_code == 200:
-            logger.info('文件上传成功')
+            # logger.info('文件上传成功')
             logger.info(f'响应内容:{response.text}')
         else:
             logger.info(f'文件上传失败，状态码:{ response.status_code}')

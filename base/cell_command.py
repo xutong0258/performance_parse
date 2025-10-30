@@ -666,15 +666,6 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
         return_dict = check_result_dict
         logger.info(f"return_dict: {return_dict}")
 
-    # result_yaml_file = 'result.yaml'
-    # result_dir = None
-    # if parent_dir is not None:
-    #     result_dir = parent_dir
-    # else:
-    #     result_dir = fail_dir
-    # result_yaml_file = os.path.join(result_dir, result_yaml_file)
-    #
-    # dump_file(result_yaml_file, return_dict)
     return return_dict
 
 def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
