@@ -15,13 +15,14 @@ from Crypto.Cipher import AES
 from Crypto.Cipher import DES
 from Crypto.Util.Padding import pad
 from base.des_api import *
+from base.fileOP import *
 
 file_path = os.path.abspath(__file__)
 path_dir = os.path.dirname(file_path)
 base_name = os.path.basename(path_dir)
 
 
-http = HandleRequest ()
+# http = HandleRequest ()
 
 
 WEB_IP = "http://10.159.252.128:9298"
@@ -32,34 +33,6 @@ header = {
     "Content-Type": "application/json"
 }
 
-def generate_token(username: str) -> str:
-    """
-    生成 token：username@13位时间戳，AES-192-ECB 加密，Base64 编码
-    """
-    # 1. 构造明文：username@13位时间戳（毫秒）
-    timestamp = int(time.time() * 1000)  # 13位时间戳
-    plaintext = f"{username}@{timestamp}"
-
-    # 2. 密钥（24字节，用于AES-192）
-    # key = "sgEsmU8FdP8W7j5H03695286".encode('utf-8')  # 24 bytes
-    key = b"sgEsmU8F"
-
-    # # 3. 确保密钥长度正确（AES-192 需要 24 字节）
-    # if len(key) != 24:
-    #     raise ValueError("密钥长度必须为24字节（AES-192）")
-
-    # 4. 使用 AES-192-ECB 加密
-    # AES.new(key, AES.MODE_ECB)
-    cipher = DES.new(key, AES.MODE_ECB)
-
-    # 5. 对明文进行 PKCS7 填充，并加密
-    padded_data = pad(plaintext.encode('utf-8'), AES.block_size)
-    encrypted_bytes = cipher.encrypt(padded_data)
-
-    # 6. Base64 编码为字符串
-    token = base64.b64encode(encrypted_bytes).decode('utf-8')
-
-    return token
 
 def hello():
     username = "xinghuan"
@@ -73,21 +46,100 @@ def hello():
 
     WEB_IP = "http://10.159.252.128:9298"
 
-    url = f"{WEB_IP}/mbxApi/utp/queryReportdList? current=1&size=10"
-
+    # url = f"{WEB_IP}/mbxApi/utp/queryReportdList? current=1&size=10"
+    url = f"{WEB_IP}/utp/queryReportList?current=1&size=10"
     header = {
-        "token": f'{encrypted}'
+        "token": f'{encrypted}',
+        'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        'Host': '10.159.252.128:9298',
+        'Connection': 'keep-alive',
     }
+    file = 'hello.json'
+    data = read_file_dict(file)
     try:
         # response = http.send(url=url, method="post", headers=header, json=login_data)
-        response = http.send(url=url, method="post", headers=header, json=login_data)
-        # 检查响应状态码
-        if response.status_code == 200:
-            # logger.info('文件上传成功')
-            logger.info(f'响应内容:{response.text}')
-        else:
-            logger.info(f'文件上传失败，状态码:{ response.status_code}')
-            logger.info(f'响应内容:{response.text}')
+        # response = http.send(url=url, method="post", headers=header, json=login_data, data=data)
+        pre_cmd = r'curl --location --request POST '
+        header_str = f' --header \'token: {encrypted}\' '
+        header_str = header_str + f' --header \'User-Agent: Apifox/1.0.0 (https://apifox.com)\''
+        header_str = header_str + f' --header \'Content-Type: application/json\''
+        header_str = header_str + f' --header \'Accept: */*\''
+        header_str = header_str + f' --header \'Host: 10.159.252.128:9298\''
+        header_str = header_str + f' --header \'Connection: keep-alive\''
+
+        step_cmd = pre_cmd + f'{url}' + header_str + ' --data-raw ' + f'\'{json.dumps(data)}\''
+
+        logger.info(f'cmd:{step_cmd}')
+
+        result, errors, return_code = cmd_excute(step_cmd)
+        logger.info(f'result:{result}')
+        logger.info(f'errors:{errors}')
+        logger.info(f'return_code:{return_code}')
+
+        # # 检查响应状态码
+        # if response.status_code == 200:
+        #     # logger.info('文件上传成功')
+        #     logger.info(f'响应内容:{response.text}')
+        # else:
+        #     logger.info(f'文件上传失败，状态码:{ response.status_code}')
+        #     logger.info(f'响应内容:{response.text}')
+    except Exception as e:
+        logger.info(f'发生未知错误: {e}')
+    return
+
+def api_test():
+    username = "xinghuan"
+    # 登录的参数
+    login_data = {"loginName": "xinghuan", "password": "xinghuan@29"}
+
+    timestamp = int(time.time() * 1000)  # 毫秒时间戳
+    plaintext = f"{username}@{timestamp}"
+    encrypted = des_encrypt_ecb(plaintext)
+    logger.info(encrypted)
+
+    WEB_IP = "http://10.159.252.128:9298"
+
+    # url = f"{WEB_IP}/mbxApi/utp/queryReportdList? current=1&size=10"
+    url = f"{WEB_IP}/utp/queryReportList?current=1&size=10"
+    header = {
+        "token": f'{encrypted}',
+        'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        'Host': '10.159.252.128:9298',
+        'Connection': 'keep-alive',
+    }
+    file = 'hello.json'
+    data = read_file_dict(file)
+    try:
+        # response = http.send(url=url, method="post", headers=header, json=login_data)
+        # response = http.send(url=url, method="post", headers=header, json=login_data, data=data)
+        pre_cmd = r'curl --location --request POST '
+        header_str = f' --header \'token: {encrypted}\' '
+        header_str = header_str + f' --header \'User-Agent: Apifox/1.0.0 (https://apifox.com)\''
+        header_str = header_str + f' --header \'Content-Type: application/json\''
+        header_str = header_str + f' --header \'Accept: */*\''
+        header_str = header_str + f' --header \'Host: 10.159.252.128:9298\''
+        header_str = header_str + f' --header \'Connection: keep-alive\''
+
+        step_cmd = pre_cmd + f'{url}' + header_str + ' --data-raw ' + f'\'{json.dumps(data)}\''
+
+        logger.info(f'cmd:{step_cmd}')
+
+        result, errors, return_code = cmd_excute(step_cmd)
+        logger.info(f'result:{result}')
+        logger.info(f'errors:{errors}')
+        logger.info(f'return_code:{return_code}')
+
+        # # 检查响应状态码
+        # if response.status_code == 200:
+        #     # logger.info('文件上传成功')
+        #     logger.info(f'响应内容:{response.text}')
+        # else:
+        #     logger.info(f'文件上传失败，状态码:{ response.status_code}')
+        #     logger.info(f'响应内容:{response.text}')
     except Exception as e:
         logger.info(f'发生未知错误: {e}')
     return

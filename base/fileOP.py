@@ -6,7 +6,6 @@ import os
 import platform
 import re
 from base.helper import *
-from base.contants import *
 
 
 def read_file_by_line(file_name: str) -> list:
