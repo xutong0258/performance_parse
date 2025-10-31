@@ -1,189 +1,86 @@
-# coding=utf-8
-
-import os
-import sys
+import requests
 import json
 import time
-import warnings
-import platform
-import shutil
-import datetime
-from base.handle_request import *
-import time
-import base64
-from Crypto.Cipher import AES
+from datetime import datetime
 from Crypto.Cipher import DES
-from Crypto.Util.Padding import pad
-from base.des_api import *
-from base.fileOP import *
+from Crypto.Util.Padding import pad, unpad
+import binascii
 
-file_path = os.path.abspath(__file__)
-path_dir = os.path.dirname(file_path)
-base_name = os.path.basename(path_dir)
+# 固定 DES 密钥（Java 中会自动截断到 8 字节）
+KEY = b"sgEsmU8F"  # 注意：原始字符串前 8 字节
 
+def des_encrypt_ecb(plaintext: str) -> str:
+    """
+    DES ECB 模式加密，PKCS#5 填充，输出 hex 小写字符串
+    :param plaintext: 明文字符串
+    :return: 十六进制表示的密文
+    """
+    cipher = DES.new(KEY, DES.MODE_ECB)
+    plaintext_bytes = plaintext.encode('utf-8')
+    padded_text = pad(plaintext_bytes, DES.block_size)
+    encrypted = cipher.encrypt(padded_text)
+    return binascii.hexlify(encrypted).decode('utf-8')
 
-# http = HandleRequest ()
+# 动态生成 token
+def generate_token():
+    timestamp = int(time.time() * 1000)  # 当前毫秒时间戳
+    plaintext = f"xinghuan@{timestamp}"
+    return des_encrypt_ecb(plaintext)
 
+# 请求 URL（包含查询参数）
+url = "http://10.159.252.128:9298/utp/queryReportList"
+url = "http://10.159.252.128:9298/utp/queryReportList?current=1&size=10"
 
-WEB_IP = "http://10.159.252.128:9298"
-# 登录的参数
-login_data = {"loginName": "xinghuan", "password": "xinghuan@29"}
-# 登录的请求头
-header = {
-    "Content-Type": "application/json"
+params = {
+    "current": 1,
+    "size": 10
 }
 
+# 动态生成 token
+dynamic_token = generate_token()
 
-def hello():
-    username = "xinghuan"
-    # 登录的参数
+# 请求头（使用动态 token）
+headers = {
+    'token': f'{dynamic_token}',
+    "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
+    "Content-Type": "application/json",
+    "Accept": "*/*",
+    "Host": "10.159.252.128:9298",
+    "Connection": "keep-alive"
+}
+
+# 请求体（JSON 数据）
+payload = {
+    "status": ["Passed", "Failed"],
+    "queryLikeKey": "sn",
+    "queryLikeValue": "PF57GMRV",
+    "hasErrorHistory": False,
+    "project": ["X1FLEX9_MTL"],
+    "model": ["KXCE0"],
+    "phase": ["FVT"],
+    "ac": "true",
+    "hasOnLine": False,
+    "startTime": "2025-10-31 08:54:03",
+    "endTime": "2025-11-22 08:54:03"
+}
+
+def test_api():
+    # 发送 POST 请求
     login_data = {"loginName": "xinghuan", "password": "xinghuan@29"}
 
-    timestamp = int(time.time() * 1000)  # 毫秒时间戳
-    plaintext = f"{username}@{timestamp}"
-    encrypted = des_encrypt_ecb(plaintext)
-    logger.info(encrypted)
-
-    WEB_IP = "http://10.159.252.128:9298"
-
-    # url = f"{WEB_IP}/mbxApi/utp/queryReportdList? current=1&size=10"
-    url = f"{WEB_IP}/utp/queryReportList?current=1&size=10"
-    header = {
-        "token": f'{encrypted}',
-        'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        'Host': '10.159.252.128:9298',
-        'Connection': 'keep-alive',
-    }
-    file = 'hello.json'
-    data = read_file_dict(file)
+    response = requests.post(
+        url,
+        headers=headers,
+        data=json.dumps(payload),
+        json=login_data,
+    )
+    # 输出响应
+    print("Status Code:", response.status_code)
+    print("Used Token:", dynamic_token)
+    print("Response Body:")
     try:
-        # response = http.send(url=url, method="post", headers=header, json=login_data)
-        # response = http.send(url=url, method="post", headers=header, json=login_data, data=data)
-        pre_cmd = r'curl --location --request POST '
-        header_str = f' --header \'token: {encrypted}\' '
-        header_str = header_str + f' --header \'User-Agent: Apifox/1.0.0 (https://apifox.com)\''
-        header_str = header_str + f' --header \'Content-Type: application/json\''
-        header_str = header_str + f' --header \'Accept: */*\''
-        header_str = header_str + f' --header \'Host: 10.159.252.128:9298\''
-        header_str = header_str + f' --header \'Connection: keep-alive\''
-
-        step_cmd = pre_cmd + f'{url}' + header_str + ' --data-raw ' + f'\'{json.dumps(data)}\''
-
-        logger.info(f'cmd:{step_cmd}')
-
-        result, errors, return_code = cmd_excute(step_cmd)
-        logger.info(f'result:{result}')
-        logger.info(f'errors:{errors}')
-        logger.info(f'return_code:{return_code}')
-
-        # # 检查响应状态码
-        # if response.status_code == 200:
-        #     # logger.info('文件上传成功')
-        #     logger.info(f'响应内容:{response.text}')
-        # else:
-        #     logger.info(f'文件上传失败，状态码:{ response.status_code}')
-        #     logger.info(f'响应内容:{response.text}')
+        print(json.dumps(response.json(), indent=2, ensure_ascii=False))
     except Exception as e:
-        logger.info(f'发生未知错误: {e}')
-    return
-
-def api_test():
-    username = "xinghuan"
-    # 登录的参数
-    login_data = {"loginName": "xinghuan", "password": "xinghuan@29"}
-
-    timestamp = int(time.time() * 1000)  # 毫秒时间戳
-    plaintext = f"{username}@{timestamp}"
-    encrypted = des_encrypt_ecb(plaintext)
-    logger.info(encrypted)
-
-    WEB_IP = "http://10.159.252.128:9298"
-
-    # url = f"{WEB_IP}/mbxApi/utp/queryReportdList? current=1&size=10"
-    url = f"{WEB_IP}/utp/queryReportList?current=1&size=10"
-    header = {
-        "token": f'{encrypted}',
-        'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        'Host': '10.159.252.128:9298',
-        'Connection': 'keep-alive',
-    }
-    file = 'hello.json'
-    data = read_file_dict(file)
-    try:
-        # response = http.send(url=url, method="post", headers=header, json=login_data)
-        # response = http.send(url=url, method="post", headers=header, json=login_data, data=data)
-        pre_cmd = r'curl --location --request POST '
-        header_str = f' --header \'token: {encrypted}\' '
-        header_str = header_str + f' --header \'User-Agent: Apifox/1.0.0 (https://apifox.com)\''
-        header_str = header_str + f' --header \'Content-Type: application/json\''
-        header_str = header_str + f' --header \'Accept: */*\''
-        header_str = header_str + f' --header \'Host: 10.159.252.128:9298\''
-        header_str = header_str + f' --header \'Connection: keep-alive\''
-
-        step_cmd = pre_cmd + f'{url}' + header_str + ' --data-raw ' + f'\'{json.dumps(data)}\''
-
-        logger.info(f'cmd:{step_cmd}')
-
-        result, errors, return_code = cmd_excute(step_cmd)
-        logger.info(f'result:{result}')
-        logger.info(f'errors:{errors}')
-        logger.info(f'return_code:{return_code}')
-
-        # # 检查响应状态码
-        # if response.status_code == 200:
-        #     # logger.info('文件上传成功')
-        #     logger.info(f'响应内容:{response.text}')
-        # else:
-        #     logger.info(f'文件上传失败，状态码:{ response.status_code}')
-        #     logger.info(f'响应内容:{response.text}')
-    except Exception as e:
-        logger.info(f'发生未知错误: {e}')
-    return
-
-def uploadZIP(headers, file_path):
-    logger.info("第一步：老师登录AI智能操场平台")
-
-    url = f"{WEB_IP}/scp-data/openApi/receive/uploadZIP"
-    try:
-        # 打开文件并作为二进制数据读取
-        with open(file_path, 'rb') as file:
-            # 构建文件参数，参数名 'file' 需依据接口文档确定
-            files = {'file': file}
-            response = http.send(url=url, method="post", headers=headers, json=LOGIN_DATA, files=files)
-        # 检查响应状态码
-        if response.status_code == 200:
-            logger.info('文件上传成功')
-            logger.info(f'响应内容:{response.text}')
-        else:
-            logger.info(f'文件上传失败，状态码:{ response.status_code}')
-            logger.info(f'响应内容:{response.text}')
-
-    except FileNotFoundError:
-        logger.info('错误: 文件未找到，请检查文件路径。')
-    except Exception as e:
-        logger.info(f'发生未知错误: {e}')
-    return
-
-def creat_test():
-    headers = {
-        "appId": "71bc83db980d4400aa6a7841216e7991",
-        "sign": "b6e0e80b3be8347641b7af518e3c4ac3",
-        "fileMD5": "cb2047f9c7300a06e60d4c27066d712975f6b78ee0b063babd7099d891ecbe55",
-        "timestamp": "create",
-        'schoolId': '8098',
-    }
-    file_path = r'D:\11\71bc83db980d4400aa6a7841216e7991_create.zip'
-
-    uploadZIP(headers, file_path)
-    return
-
+        print("Non-JSON response or error:", response.text)
 if __name__ == '__main__':
-    hello()
-    # del_test()
-    # change_file_format()
-    # disable_project()
-    pass
+    test_api()
