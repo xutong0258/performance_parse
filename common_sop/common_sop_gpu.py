@@ -8,6 +8,8 @@ file = r'D:\input_p.yaml'
 src_dir_list = get_file_content_list(file)
 logger.info(f'src_dir_list: {src_dir_list}')
 
+src_dir_list = [r'D:\0_GPU_case\gpu_thermal_module_rule9_ok']
+
 if __name__ == '__main__':
     # parent_dir = r'D:\0_GPU_case-1021\GPU_AI-FW'
     # gpu_check_run(parent_dir=parent_dir)

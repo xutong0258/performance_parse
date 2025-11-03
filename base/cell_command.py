@@ -1206,17 +1206,18 @@ def gpu_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
     if len(fail_col_data) > 1 :
         item_data = fail_col_data[0].strip()
         item_data = item_data.lower()
-    if item_data == 'thml' or item_data == 'thml pwr':
+    # if item_data == 'thml' or item_data == 'thml pwr':
+    if is_performance_ec_file_exit_by_dir(fail_dir):
         col = 'Environment Sensor Temp'
         fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col)
         pass_col_data, pass_file_data = get_performance_file_col_data_by_dir(pass_dir, col)
         is_delta_larger_than_stand = is_two_col_data_delta_larger_than_threshold(fail_col_data, pass_col_data, 1)
 
 
-    # 只有1:NVVDD Power (W)明显差异
-    if is_delta_larger_than_stand:
-        return_dict = check_result_dict
-        logger.info(f'return_dict: {return_dict}')
+        # 只有1:NVVDD Power (W)明显差异
+        if is_delta_larger_than_stand:
+            return_dict = check_result_dict
+            logger.info(f'return_dict: {return_dict}')
 
     return return_dict
 
@@ -1237,45 +1238,57 @@ def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
     # 1:NVVDD Power (W)
     is_match_rule = False
     is_delta_larger_than_stand = False
-    col = '1:Capping Reason'
+
+    head_list = get_gpu_file_head_list_by_dir(fail_dir)
+
+    col = '1:t_gpu'
+    col = get_match_col_name(head_list, col)
+    logger.info(f'col:{col}')
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    logger.info(f'fail_col_data:{fail_col_data}')
+
+    continue_flag_1 = False
+    for idx, value in enumerate(fail_col_data):
+        if value > 86:
+            continue_flag_1 = True
+            break
+
+    col = 'GPU Sensor Temp'
+    fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col)
+    logger.info(f'fail_col_data:{fail_col_data}')
+
+    continue_flag_2 = False
+    for idx, value in enumerate(fail_col_data):
+        if value > 86:
+            continue_flag_2 = True
+            break
+
+    logger.info(f'continue_flag_1:{continue_flag_1}')
+    logger.info(f'continue_flag_2:{continue_flag_2}')
+    if continue_flag_1 == False and continue_flag_2 == False:
+        return return_dict
+    #
+    col = '1:t_gpu'
+    col = get_match_col_name(head_list, col)
+    logger.info(f'col:{col}')
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
 
-    fail_col_data = remove_list_na(fail_col_data, 'N/A')
-    logger.info(f'fail_col_data: {fail_col_data}')
+    check_point_1 = True
+    for idx, value in enumerate(fail_col_data):
+        if value > 86:
+            check_point_1 = False
+            break
 
-    pass_col_data = remove_list_na(pass_col_data, 'N/A')
-    logger.info(f'pass_col_data: {pass_col_data}')
+    col = 'GPU Sensor Temp'
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
 
-    item_data = None
-    if len(fail_col_data) > 1 :
-        item_data = fail_col_data[0].strip()
-        item_data = item_data.lower()
-    logger.info(f'item_data: {item_data}')
-    if item_data == 'thml' or item_data == 'thml pwr':
-        col = '1:Temperature GPU (C)'
-        fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-        Temperature_GPU = fail_col_data[0]
-        logger.info(f'Temperature_GPU:{Temperature_GPU}')
-        if Temperature_GPU > 87:
-            is_match_rule = True
+    check_point_2 = True
+    for idx, value in enumerate(fail_col_data):
+        if value > 86:
+            check_point_2 = False
+            break
 
-        col = 'GPU Sensor Temp'
-        fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col)
-        GPU_sensor_Temp = fail_col_data[0]
-
-        col = 'Environment Sensor Temp'
-        fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col)
-        min_data = min(fail_col_data)
-        max_data = max(fail_col_data)
-        is_delta_larger_than_stand = is_two_data_delta_larger_than_threshold(min_data, max_data, 0.1)
-        logger.info(f'GPU_sensor_Temp:{GPU_sensor_Temp}')
-        if GPU_sensor_Temp > 87 and not is_delta_larger_than_stand:
-            is_match_rule = True
-
-
-    # 只有1:NVVDD Power (W)明显差异
-    if is_match_rule:
+    if check_point_1 and check_point_2:
         return_dict = check_result_dict
         logger.info(f'return_dict: {return_dict}')
 
@@ -1311,8 +1324,8 @@ def gpu_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
         cell_data = fail_col_data[0].strip()
     is_ac = False
 
-    if cell_data == 'AC':
-        is_ac = True
+    # if cell_data == 'AC':
+    is_ac = True
 
     col = '1:D-Notifier Limit'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
@@ -1320,12 +1333,15 @@ def gpu_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
     logger.info(f'fail_col_data: {fail_col_data}')
 
-    cell_data = fail_col_data[0].strip()
-    is_d2_d5 = False
-    logger.info(f'cell_data: {cell_data}')
+    if len(fail_col_data) == 0:
+        return return_dict
 
-    if 'D2' in cell_data or 'D3' in cell_data or 'D4' in cell_data or 'D5' in cell_data:
-        is_d2_d5 = True
+    is_d2_d5 = False
+    for cell_data in fail_col_data:
+        logger.info(f'cell_data: {cell_data}')
+        if 'D2' in cell_data or 'D3' in cell_data or 'D4' in cell_data or 'D5' in cell_data:
+            is_d2_d5 = True
+            break
 
     if is_d2_d5 and is_ac:
         return_dict = check_result_dict
@@ -1351,37 +1367,80 @@ def gpu_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
 
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
-    # logger.info(f'fail_col_data: {fail_col_data}')
+    logger.info(f'fail_col_data: {fail_col_data}')
 
-    is_all_enabled = is_col_data_all_same_with_target(fail_col_data, 'enable')
+    is_all_enabled = is_col_data_all_same_with_target(fail_col_data, 'Enabled')
     logger.info(f'is_all_enabled: {is_all_enabled}')
+
+    if is_all_enabled == False:
+        return return_dict
+
+    head_list = get_gpu_file_head_list_by_dir(fail_dir)
+    # logger.info(f'head_list:{head_list}')
+
+    col = '1:pwr_tgp'
+    col = get_match_col_name(head_list, col)
+    logger.info(f'col:{col}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+
+    average_fail = get_list_average(fail_col_data, False)
+    logger.info(f"average_fail: {average_fail}")
+
+    loading_index = get_loading_index(fail_col_data, average_fail, 0.5)
+    logger.info(f"loading_index: {loading_index}")
 
     col = '1:Capping Reason'
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
 
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
-    # logger.info(f'fail_col_data: {fail_col_data}')
-
-    is_all_pwr = is_col_data_all_same_with_target(fail_col_data, 'pwr')
-    logger.info(f'is_all_pwr: {is_all_pwr}')
-
-    col = '1:AC Target TPP Limit (mW)'
-    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-
-    fail_col_data = remove_list_na(fail_col_data, 'N/A')
     logger.info(f'fail_col_data: {fail_col_data}')
 
-    if len(fail_col_data) > 1 :
-        min_data = min(fail_col_data)
-        max_data = max(fail_col_data)
-        is_data_const = False
-        if min_data == max_data:
-            is_data_const = True
+    is_all_pwr = is_col_data_all_same_with_target(fail_col_data[loading_index: ], 'pwr')
+    logger.info(f'is_all_pwr: {is_all_pwr}')
 
-        if is_data_const and is_all_pwr and is_all_enabled:
-            return_dict = check_result_dict
-            logger.info(f'return_dict: {return_dict}')
+    if is_all_pwr == False:
+        return return_dict
 
+    # 1:AC_Target_TPP_Limit
+    # 1:AC Target TPP Limit (mW)
+    head_list = get_gpu_file_head_list_by_dir(fail_dir)
+    # logger.info(f'head_list:{head_list}')
+
+    col = '1:AC_Target_TPP_Limit'
+    col = get_match_col_name(head_list, col)
+    logger.info(f'col:{col}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+
+    average_fail = get_list_average(fail_col_data, False)
+    logger.info(f"average_fail: {average_fail}")
+
+    average_pass = get_list_average(pass_col_data, False)
+    logger.info(f"average_pass: {average_pass}")
+
+    if average_fail != average_pass:
+        return return_dict
+
+    col = '1:pwr_tgp'
+    col = get_match_col_name(head_list, col)
+    logger.info(f'col:{col}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+
+    fail_min = min(fail_col_data)
+    fail_max = max(fail_col_data)
+    average_fail = get_list_average(fail_col_data, False)
+
+    is_delta_larger = is_two_data_delta_larger_than_threshold(fail_min, fail_max, 0.3)
+    logger.info(f'is_delta_larger:{is_delta_larger}')
+
+    if is_delta_larger == True:
+        return_dict = check_result_dict
+
+    logger.info(f'return_dict: {return_dict}')
     return return_dict
 
 def gpu_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):

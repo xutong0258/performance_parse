@@ -1,8 +1,8 @@
 col = 'Power-Package Power(Watts)'
 fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
 
-fail_col_data = remove_list_na(fail_col_data, 'nan')
-# logger.info(f"fail_col_data: {fail_col_data}")
+loading_index = get_loading_index(fail_col_data, average_fail, 0.5)
+logger.info(f"loading_index: {loading_index}")
 
 average_fail = get_list_average(fail_col_data, False)
 logger.info(f"average_fail: {average_fail}")
@@ -10,3 +10,17 @@ logger.info(f"average_fail: {average_fail}")
 count = get_list_text_count(check_list, 'prochot')
 
 is_digital_item('170')
+
+head_list = get_amd_performance_file_head_list_by_dir(fail_dir)
+# logger.info(f'head_list:{head_list}')
+
+head_list = get_gpu_file_head_list_by_dir(fail_dir)
+
+col_1 = get_match_col_name(head_list, col_1)
+logger.info(f'col_1:{col_1}')
+
+if is_performance_ec_file_exit_by_dir(fail_dir):
+    col = 'Environment Sensor Temp'
+    fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col)
+    pass_col_data, pass_file_data = get_performance_file_col_data_by_dir(pass_dir, col)
+    is_delta_larger_than_stand = is_two_col_data_delta_larger_than_threshold(fail_col_data, pass_col_data, 1)

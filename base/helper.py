@@ -222,11 +222,12 @@ def get_list_average(input_list, debug = False):
 
 
 def is_col_data_all_same_with_target(col_data, target_str):
+    logger.info(f'col_data:{col_data}')
     is_match_target = False
     for item in col_data:
-        if target_str in item.strip():
+        if target_str.lower() in item.strip().lower():
             is_match_target = True
-        if target_str not in item.strip():
+        if target_str.lower() not in item.strip().lower():
             is_match_target = False
             break
     return is_match_target
@@ -248,6 +249,8 @@ def is_col_data_has_data_match_range(col_data, target_min, target_max):
         # logger.info(f"item:{item}")
         if type(item) is str:
             item = item.replace('%', '')
+            if is_digital_item(item) == False:
+                return False
         item = float(item)
         if target_min<=item<=target_max:
             has_match = True
@@ -256,7 +259,6 @@ def is_col_data_has_data_match_range(col_data, target_min, target_max):
             break
         if item>target_max or item<target_min:
             has_match = False
-
     return has_match
 
 
@@ -289,10 +291,18 @@ def is_two_data_delta_larger_than_threshold(data_fail, data_pass, threshold):
     else:
         is_delta_larger_than_stand = True
         return is_delta_larger_than_stand
-    # logger.info(f'delta_ratio:{delta_ratio}')
+    logger.info(f'delta_ratio:{delta_ratio}')
     if delta_ratio > threshold:
         is_delta_larger_than_stand = True
     return is_delta_larger_than_stand
+
+def get_loading_index(data_fail_list, data_average, threshold):
+    loading_index = 0
+    for idx, item in enumerate(data_fail_list):
+        is_delta_larger = is_two_data_delta_larger_than_threshold(item, data_average, threshold)
+        if is_delta_larger:
+            loading_index = idx
+    return loading_index
 
 def is_two_col_same(col_fail, col_pass):
     is_two_coloum_same = True

@@ -67,6 +67,16 @@ def get_match_col_name(head_list, col_name):
     # logger.info(f'col:{col}')
     return col
 
+def get_gpu_file_head_list_by_dir(input_dir):
+    gpu_log_file = get_gpu_file_with_dir(input_dir)
+    logger.info(f'gpu_log_file:{gpu_log_file}')
+
+    headers, new_list = get_gpu_data_with_csv(gpu_log_file)
+    logger.info(f'headers:{headers}')
+    # new_file = os.path.join(input_dir, 'GPU_New.csv')
+    # write_to_csv(new_file, new_list, headers)
+    return headers
+
 def get_amd_performance_file_head_list_by_dir(input_dir):
     amd_fail_file = get_SystemDeckPM_file_with_dir(input_dir)
     head_list = get_head_with_csv(amd_fail_file)
@@ -143,6 +153,13 @@ def get_performance_file_col_data_by_dir(input_dir, col_name):
     file_data = read_csv_with_pandas(performance_log_file)
     col_data = file_data.get(col_name)
     return col_data, file_data
+
+def is_performance_ec_file_exit_by_dir(input_dir):
+    is_exits = False
+    performance_log_file = get_performance_file_with_dir(input_dir)
+    if performance_log_file is not None:
+        is_exits = True
+    return is_exits
 
 def get_csv_file_col_data_by_file(input_file, col_name):
     col_data = []
