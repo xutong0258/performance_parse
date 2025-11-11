@@ -68,9 +68,23 @@ def remove_list_na(input_list, target_str='NA'):
             out_list.append(item)
     return out_list
 
-def get_SystemDeckPM_file_with_dir(dir_name):
+def get_amd_file_exact_with_dir(dir_name):
     if not os.path.isdir(dir_name):
-        logger.info(f'get_SystemDeckPM_file_with_dir return None')
+        logger.info(f'get_amd_file_with_dir return None')
+        return None
+    SystemDeckPM_file = None
+    file_list = os.listdir(dir_name)
+    for filename in file_list:
+        if 'SystemDeckPM' in filename and '.csv' in filename:
+            SystemDeckPM_file = os.path.join(dir_name, filename)
+            logger.info(f'SystemDeckPM_file:{SystemDeckPM_file}')
+            break
+    logger.info(f'SystemDeckPM_file:{SystemDeckPM_file}')
+    return SystemDeckPM_file
+
+def get_amd_file_with_dir(dir_name):
+    if not os.path.isdir(dir_name):
+        logger.info(f'get_amd_file_with_dir return None')
         return None
     SystemDeckPM_file = None
     file_list = os.listdir(dir_name)
@@ -91,8 +105,10 @@ def get_SystemDeckPM_file_with_dir(dir_name):
 def get_tat_file_with_dir(dir_name):
     logger.info(f'dir_name:{dir_name}')
     if dir_name is None:
+        logger.info(f'get_tat_file_with_dir return None')
         return None
     if not os.path.isdir(dir_name):
+        logger.info(f'get_tat_file_with_dir return None')
         return None
     tat_file = None
     file_list = os.listdir(dir_name)
@@ -108,6 +124,18 @@ def get_tat_file_with_dir(dir_name):
             logger.info(f'tat_file:{tat_file}')
             break
     return tat_file
+
+def get_gpu_file_exact_with_dir(dir_name):
+    if not os.path.isdir(dir_name):
+        return None
+    gpu_log_file = None
+    file_list = os.listdir(dir_name)
+    for filename in file_list:
+        if 'NvGPUMon' in filename and '.csv' in filename:
+            gpu_log_file = os.path.join(dir_name, filename)
+            logger.info(f'gpu_log_file:{gpu_log_file}')
+            break
+    return gpu_log_file
 
 def get_gpu_file_with_dir(dir_name):
     if not os.path.isdir(dir_name):

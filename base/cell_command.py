@@ -19,6 +19,14 @@ from base.fileOP import *
 from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
 
+path_dir = os.path.dirname(__file__)
+
+file = os.path.join(path_dir, 'intel_check_rule.yaml')
+intel_rule_dict = read_file_dict(file)
+
+file = os.path.join(path_dir, 'gpu_check_rule.yaml')
+gpu_rule_dict = read_file_dict(file)
+
 def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_1')
     return_dict = None
@@ -44,9 +52,11 @@ def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
             col_list.append(item)
 
     for item in col_list:
-        # col_1 = 'CPU0-Frequency(MHz)'
         col_2 = 'Power-Package Power(Watts)'
+        col_dict = intel_rule_dict.get('check_rule_1', None)
+        col_2 = col_dict.get('col_2', col_2)
 
+        logger.info(f"col_2:{col_2}")
         pearson_corr = df[item].corr(df[col_2], method='pearson')
         logger.info(f"皮尔逊相关系数: {pearson_corr:.4f}")
         if pearson_corr < 0.56 and pearson_corr > 0:
@@ -90,6 +100,8 @@ def check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
             break
 
     col_2 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_2', None)
+    col_2 = col_dict.get('col_2', col_2)
     
     if lower_index is not None:
         check_list = []
@@ -125,8 +137,10 @@ def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    col = 'Turbo Parameters-IA Clip Reason'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+    col_1 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_3', None)
+    col_1 = col_dict.get('col_1', col_1)
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
 
     target_index_list = get_list_target_text_index_list(fail_col_data, 'prochot')
     logger.info(f"prochot count: {len(target_index_list)}")
@@ -143,27 +157,33 @@ def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
 
     # logger.info(f"col_list: {col_list}")
 
-    col_3 = 'Miscellaneous-MSR Package Temperature(Degree C)'
-    col_4 = 'Miscellaneous-TJMAX Temperature(Degree C)'
-    col_5 = 'Miscellaneous-TCC Offset Temperature(Degree C)'
+    col_2 = 'Miscellaneous-MSR Package Temperature(Degree C)'
+    # col_dict = intel_rule_dict.get('check_rule_3', None)
+    col_2 = col_dict.get('col_2', col_2)
 
-    col_3_list = df.get(col_3, None)
+    col_3 = 'Miscellaneous-TJMAX Temperature(Degree C)'
+    col_3 = col_dict.get('col_3', col_3)
 
-    if col_3_list is None:
+    col_4 = 'Miscellaneous-TCC Offset Temperature(Degree C)'
+    col_4 = col_dict.get('col_4', col_4)
+
+    col_2_list = df.get(col_2, None)
+
+    if col_2_list is None:
         return return_dict
 
     check_point_1 = False
-    for idx, item in enumerate(col_3_list):
+    for idx, item in enumerate(col_2_list):
+        col_2_cell = df[col_2][idx]
+        logger.info(f"col_2_cell: {col_2_cell}")
+
         col_3_cell = df[col_3][idx]
         logger.info(f"col_3_cell: {col_3_cell}")
 
         col_4_cell = df[col_4][idx]
         logger.info(f"col_4_cell: {col_4_cell}")
 
-        col_5_cell = df[col_5][idx]
-        logger.info(f"col_5_cell: {col_5_cell}")
-
-        delta = col_4_cell - col_5_cell
+        delta = col_3_cell - col_4_cell
         logger.info(f"delta: {delta}")
         if col_3_cell > delta:
             check_point_1 = True
@@ -222,7 +242,7 @@ def check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_5',
-        'Root cause': ' Max Frequency Wrong',
+        'Root cause': 'Max Frequency Wrong',
         'Component': 'BIOS',
         'Solution': 'further check Intel code base',
         '修复及验证': '',
@@ -231,7 +251,7 @@ def check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
+    if not os.path.exists(pass_dir):
         return return_dict
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
@@ -295,21 +315,18 @@ def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
+    if not os.path.exists(pass_dir):
         return return_dict
 
-    col = 'Power-Package Power(Watts)'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
-    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
+    col_1 = 'Power-Package Power(Watts)'
+    col_dict = intel_rule_dict.get('check_rule_6', None)
+    col_1 = col_dict.get('col_1', col_1)
 
-    fail_col_data = remove_list_na(fail_col_data, 'nan')
-    # logger.info(f"fail_col_data: {fail_col_data}")
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_1)
 
     average_fail = get_list_average(fail_col_data, False)
     logger.info(f"average_fail: {average_fail}")
-
-    pass_col_data = remove_list_na(pass_col_data, 'nan')
-    # logger.info(f"pass_col_data: {pass_col_data}")
 
     average_pass = get_list_average(pass_col_data, False)
     logger.info(f"average_pass: {average_pass}")
@@ -325,18 +342,14 @@ def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
 
     #
     # Power-Rest of Package Power
-    col = 'Power-Rest of Package Power(Watts)'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
-    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
-
-    fail_col_data = remove_list_na(fail_col_data, 'nan')
-    # logger.info(f"fail_col_data: {fail_col_data}")
+    col_2 = 'Power-Rest of Package Power(Watts)'
+    col_dict = intel_rule_dict.get('check_rule_6', None)
+    col_2 = col_dict.get('col_2', col_2)
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_2)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
 
     average_fail = get_list_average(fail_col_data, False)
     logger.info(f"average_fail: {average_fail}")
-
-    pass_col_data = remove_list_na(pass_col_data, 'nan')
-    # logger.info(f"pass_col_data: {pass_col_data}")
 
     average_pass = get_list_average(pass_col_data, False)
     logger.info(f"average_pass: {average_pass}")
@@ -348,7 +361,9 @@ def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
 
     if is_larger_than_threshold:
         return_dict = check_result_dict
-        return return_dict
+        logger.info(f"return_dict: {return_dict}")
+
+    return return_dict
 
 def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     return_dict = None
@@ -362,21 +377,19 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
-    if pass_dir is None:
+
+    if not os.path.exists(pass_dir):
         return return_dict
 
-    col = 'Power-Package Power(Watts)'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
-    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
+    col_1 = 'Power-Package Power(Watts)'
+    col_dict = intel_rule_dict.get('check_rule_7', None)
+    col_1 = col_dict.get('col_1', col_1)
 
-    fail_col_data = remove_list_na(fail_col_data, 'nan')
-    # logger.info(f"fail_col_data: {fail_col_data}")
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_1)
 
     average_fail = get_list_average(fail_col_data, False)
     logger.info(f"average_fail: {average_fail}")
-
-    pass_col_data = remove_list_na(pass_col_data, 'nan')
-    # logger.info(f"pass_col_data: {pass_col_data}")
 
     average_pass = get_list_average(pass_col_data, False)
     logger.info(f"average_pass: {average_pass}")
@@ -392,18 +405,13 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
 
     #
     #
-    col = 'Power-MSR EWMA Package Power(Watts)'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
-    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
-
-    fail_col_data = remove_list_na(fail_col_data, 'nan')
-    # logger.info(f"fail_col_data: {fail_col_data}")
+    col_2 = 'Power-MSR EWMA Package Power(Watts)'
+    col_2 = col_dict.get('col_2', col_2)
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_2)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
 
     average_fail = get_list_average(fail_col_data, False)
     logger.info(f"average_fail: {average_fail}")
-
-    pass_col_data = remove_list_na(pass_col_data, 'nan')
-    # logger.info(f"pass_col_data: {pass_col_data}")
 
     average_pass = get_list_average(pass_col_data, False)
     logger.info(f"average_pass: {average_pass}")
@@ -415,6 +423,7 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
 
     if is_larger_than_threshold:
         return_dict = check_result_dict
+        logger.info(f"return_dict: {return_dict}")
     return return_dict
 
 def check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
@@ -429,12 +438,15 @@ def check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
-    if pass_dir is None:
-        return None
 
-    col = 'Power-Package Power(Watts)'
-    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col)
-    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
+    if not os.path.exists(pass_dir):
+        return return_dict
+
+    col_1 = 'Power-Package Power(Watts)'
+    col_dict = intel_rule_dict.get('check_rule_8', None)
+    col_1 = col_dict.get('col_1', col_1)
+    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col_1)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_1)
 
     fail_average = get_list_average(fail_col_data)
     pass_average = get_list_average(pass_col_data)
@@ -462,8 +474,13 @@ def check_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
     df = read_csv_with_pandas(fail_tat_file)
-    col = 'Turbo Parameters-IA Clip Reason'
-    data_list = df[col].tolist()
+    col_1 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_9', None)
+    col_1 = col_dict.get('col_1', col_1)
+
+    logger.info(f"col_1: {col_1}")
+
+    data_list = df.get(col_1)
 
     data_list = remove_list_na(data_list, target_str='nan')
     logger.info(f"data_list: {data_list}")
@@ -492,8 +509,11 @@ def check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     df = read_csv_with_pandas(fail_tat_file)
-    col = 'Turbo Parameters-IA Clip Reason'
-    data_list = df[col].tolist()
+    col_1 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_10', None)
+    col_1 = col_dict.get('col_1', col_1)
+
+    data_list = df.get(col_1)
 
     data_list = remove_list_na(data_list, target_str='nan')
     logger.info(f"data_list: {data_list}")
@@ -523,30 +543,38 @@ def check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
+    if not os.path.exists(pass_dir):
         return return_dict
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
-    col = 'Turbo Parameters-IA Clip Reason'
-    col_data = get_csv_file_col_data_by_file(fail_tat_file, col)
+    col_1 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_11', None)
+    col_1 = col_dict.get('col_1', col_1)
+
+    col_data = get_csv_file_col_data_by_file(fail_tat_file, col_1)
     count = get_list_text_count(col_data, text='PL1')
     logger.info(f"count: {count}")
     if count:
-        col = 'Power-Package Power(Watts)'
-        fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
-        pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
+        col_2 = 'Power-Package Power(Watts)'
+        col_2 = col_dict.get('col_2', col_2)
+        logger.info(f"col_2: {col_2}")
 
-        fail_col_data = remove_list_na(fail_col_data, 'nan')
+        head_list = get_intel_file_head_list_by_dir(fail_dir)
+
+        col_1 = get_match_col_name(head_list, col_2)
+        logger.info(f'col_2:{col_2}')
+
+        fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col_2)
         # logger.info(f"fail_col_data: {fail_col_data}")
 
-        average_fail = get_list_average(fail_col_data, False)
-        logger.info(f"average_fail: {average_fail}")
-
-        pass_col_data = remove_list_na(pass_col_data, 'nan')
+        pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
         # logger.info(f"pass_col_data: {pass_col_data}")
 
-        average_pass = get_list_average(pass_col_data, False)
+        average_fail = get_list_average(fail_col_data, True)
+        logger.info(f"average_fail: {average_fail}")
+
+        average_pass = get_list_average(pass_col_data, True)
         logger.info(f"average_pass: {average_pass}")
 
         is_larger_than_threshold = is_two_data_delta_larger_than_threshold(average_fail,
@@ -576,19 +604,24 @@ def check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
+    if not os.path.exists(pass_dir):
         return return_dict
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
-    col = 'Turbo Parameters-IA Clip Reason'
-    col_data = get_csv_file_col_data_by_file(fail_tat_file, col)
+    col_1 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_12', None)
+    col_1 = col_dict.get('col_1', col_1)
+
+    col_data = get_csv_file_col_data_by_file(fail_tat_file, col_1)
     count = get_list_text_count(col_data, text='Thermal Event')
     logger.info(f"count: {count}")
     if count:
-        col = 'Miscellaneous-TCC Offset Temperature(Degree C)'
-        fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
-        pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
+        col_2 = 'Miscellaneous-TCC Offset Temperature(Degree C)'
+        col_2 = col_dict.get('col_2', col_2)
+
+        fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_2)
+        pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
 
         average_fail = get_list_average(fail_col_data, False)
         logger.info(f"average_fail: {average_fail}")
@@ -623,11 +656,13 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
-        return None
+    if not os.path.exists(pass_dir):
+        return return_dict
 
-    col = 'Turbo Parameters-IA Clip Reason'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+    col_1 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_13', None)
+    col_1 = col_dict.get('col_1', col_1)
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
 
     count = get_list_text_count(fail_col_data, 'Thermal Event')
 
@@ -637,9 +672,23 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     fail_file_data = get_intel_tat_file_data_frame_by_dir(fail_dir)
     pass_file_data = get_intel_tat_file_data_frame_by_dir(pass_dir)
 
-    col_list = ['Turbo Parameters-MMIO Power Limit_1 Power(Watts)',
-                'Turbo Parameters-MMIO Power Limit_2 Power(Watts)',
-                'Turbo Parameters-MSR Power Limit_4 Power(Watts)']
+    col_list = []
+
+    col_2 = 'Turbo Parameters-MMIO Power Limit_1 Power(Watts)'
+    col_2 = col_dict.get('col_2', col_2)
+    col_list.append(col_2)
+
+    col_3 = 'Turbo Parameters-MMIO Power Limit_2 Power(Watts)'
+    col_3 = col_dict.get('col_3', col_3)
+    col_list.append(col_3)
+
+    col_4 = 'Turbo Parameters-MSR Power Limit_4 Power(Watts)'
+    col_4 = col_dict.get('col_4', col_4)
+    col_list.append(col_4)
+
+    # col_list = ['Turbo Parameters-MMIO Power Limit_1 Power(Watts)',
+    #             'Turbo Parameters-MMIO Power Limit_2 Power(Watts)',
+    #             'Turbo Parameters-MSR Power Limit_4 Power(Watts)']
 
     for col in col_list:
         fail_col_data = fail_file_data.get(col, None)
@@ -654,11 +703,11 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
         logger.info(f"average_pass: {average_pass}")
 
         if average_pass != average_fail:
-            if col == 'Turbo Parameters-MMIO Power Limit_1 Power(Watts)':
+            if col == col_2:
                 detail_list.append('PL1 abnormal')
-            if col == 'Turbo Parameters-MMIO Power Limit_2 Power(Watts)':
+            if col == col_3:
                 detail_list.append('PL2 abnormal')
-            if col == 'Turbo Parameters-MSR Power Limit_4 Power(Watts)':
+            if col == col_4:
                 detail_list.append('PL4 abnormal')
             continue
     if detail_list is not None:
@@ -682,8 +731,8 @@ def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
-        return None
+    if not os.path.exists(pass_dir):
+        return return_dict
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     pass_tat_file = get_tat_file_with_dir(pass_dir)
@@ -712,8 +761,8 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
-        return None
+    if not os.path.exists(pass_dir):
+        return return_dict
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     logger.info(f'fail_tat_file:{fail_tat_file}')
@@ -722,9 +771,19 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
 
     df_pass = read_csv_with_pandas(pass_tat_file)
     df_fail = read_csv_with_pandas(fail_tat_file)
-    col = 'Turbo Parameters-lA clip Reason'
-    col = 'Turbo Parameters-IA Clip Reason'
-    data_list = df_fail.get(col, None)
+
+    col_1 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_15', None)
+    col_1 = col_dict.get('col_1', col_1)
+    logger.info(f'col_1:{col_1}')
+
+    head_list = get_intel_file_head_list_by_dir(fail_dir)
+
+    col_1 = get_match_col_name(head_list, col_1)
+    # logger.info(f'col_1:{col_1}')
+
+    data_list = df_fail.get(col_1, None)
+    # logger.info(f'data_list:{data_list}')
 
     # logger.info(f'data_list:{data_list}')
     count = get_list_text_count(data_list, 'Thermal event')
@@ -740,14 +799,16 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
         df_pass = read_csv_with_pandas(pass_PerformanceLog_file)
         df_fail = read_csv_with_pandas(fail_PerformanceLog_file)
 
-        col = 'Environment Sensor Temp'
-        col_data = df_pass.get(col, None)
+        col_2 = 'Environment Sensor Temp'
+        col_2 = col_dict.get('col_2', col_2)
+
+        col_data = df_pass.get(col_2, None)
         # logger.info(f'col_data:{col_data}')
 
-        pass_max = max(df_pass.get(col, None))
+        pass_max = max(df_pass.get(col_2, None))
         logger.info(f'pass_max:{pass_max}')
 
-        fail_max = max(df_fail.get(col, None))
+        fail_max = max(df_fail.get(col_2, None))
         logger.info(f'fail_max:{fail_max}')
 
         delta = abs(fail_max - pass_max)
@@ -773,12 +834,15 @@ def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
-        return None
+    if not os.path.exists(pass_dir):
+        return return_dict
 
-    col = 'Miscellaneous-MSR Package Temperature(Degree C)'
-    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col)
-    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
+    col_1 = 'Miscellaneous-MSR Package Temperature(Degree C)'
+    col_dict = intel_rule_dict.get('check_rule_16', None)
+    col_1 = col_dict.get('col_1', col_1)
+
+    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col_1)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_1)
 
     correlation = get_two_list_correlation(fail_col_data, pass_col_data)
     if correlation:
@@ -787,10 +851,12 @@ def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
         if delta_correlation > 0.05:
             return_dict = check_result_dict
             logger.info(return_dict)
+            return return_dict
 
-    col = 'Miscellaneous-MMO Package Temperature(Degree C)'
-    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col)
-    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col)
+    col_2 = 'Miscellaneous-MMO Package Temperature(Degree C)'
+    col_2 = col_dict.get('col_2', col_2)
+    fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col_2)
+    pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
 
     correlation = get_two_list_correlation(fail_col_data, pass_col_data)
     if correlation:
@@ -816,8 +882,8 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
-        return None
+    if not os.path.exists(pass_dir):
+        return return_dict
 
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     pass_tat_file = get_tat_file_with_dir(pass_dir)
@@ -825,8 +891,11 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
     df_fail = read_csv_with_pandas(fail_tat_file)
     df_pass = read_csv_with_pandas(pass_tat_file)
 
-    col = 'HWP-pCore OSPM Requested Energy Performance Preference'
-    data_list = df_fail.get(col, None)
+    col_1 = 'HWP-pCore OSPM Requested Energy Performance Preference'
+    col_dict = intel_rule_dict.get('check_rule_17', None)
+    col_1 = col_dict.get('col_1', col_1)
+
+    data_list = df_fail.get(col_1, None)
     if data_list is None:
         return return_dict
 
@@ -835,21 +904,26 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
     if min_data != max_data:
         return_dict = check_result_dict
         logger.info(return_dict)
-        return return_dict
+        # return return_dict
 
-    col = 'HWP-eCore OSPM Requested Energy Performance Preference'
-    data_list = df_fail.get(col, None)
+    col_2 = 'HWP-eCore OSPM Requested Energy Performance Preference'
+    col_2 = col_dict.get('col_2', col_2)
+    logger.info(f'col_2:{col_2}')
+
+    data_list = df_fail.get(col_2, None)
     min_data = min(data_list)
     max_data = max(data_list)
     if min_data != max_data:
         return_dict = check_result_dict
         logger.info(return_dict)
-        return return_dict
+        # return return_dict
 
     # average part
-    col = 'HWP-pCore OSPM Requested Energy Performance Preference'
-    fail_data_list = df_fail.get(col, None)
-    pass_data_list = df_pass.get(col, None)
+    col_1 = 'HWP-pCore OSPM Requested Energy Performance Preference'
+    col_1 = col_dict.get('col_1', col_1)
+
+    fail_data_list = df_fail.get(col_1, None)
+    pass_data_list = df_pass.get(col_1, None)
 
     # logger.info(f'fail_data_list:{fail_data_list}')
     fail_average = get_list_average(fail_data_list)
@@ -859,18 +933,20 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
     if fail_average != pass_average:
         return_dict = check_result_dict
         logger.info(return_dict)
-        return return_dict
+        # return return_dict
 
-    col = 'HWP-eCore OSPM Requested Energy Performance Preference'
-    fail_data_list = df_fail.get(col, None)
-    pass_data_list = df_pass.get(col, None)
+    col_2 = 'HWP-eCore OSPM Requested Energy Performance Preference'
+    col_2 = col_dict.get('col_2', col_2)
+
+    fail_data_list = df_fail.get(col_2, None)
+    pass_data_list = df_pass.get(col_2, None)
 
     fail_average = get_list_average(fail_data_list)
     pass_average = get_list_average(pass_data_list)
     if fail_average != pass_average:
         return_dict = check_result_dict
         logger.info(return_dict)
-        return return_dict
+        # return return_dict
 
     return return_dict
 
@@ -889,16 +965,22 @@ def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
         pass_dir = os.path.join(parent_dir, 'pass')
 
     if pass_dir is None:
+        logger.info(f'return None')
         return None
 
-    col = 'Turbo Parameters-IA Clip Reason'
-    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
+    col_1 = 'Turbo Parameters-IA Clip Reason'
+    col_dict = intel_rule_dict.get('check_rule_18', None)
+    col_1 = col_dict.get('col_1', col_1)
+    logger.info(f'col_1:{col_1}')
+
+    fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
+    # logger.info(f'fail_col_data:{fail_col_data}')
 
     count = get_list_text_count(fail_col_data, 'TVB')
-
+    logger.info(f'count:{count}')
     if count > 0:
         return_dict = check_result_dict
-        logger.info(return_dict)
+    logger.info(return_dict)
 
     return return_dict
 
@@ -916,8 +998,8 @@ def gpu_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    if pass_dir is None:
-        return None
+    if not os.path.exists(pass_dir):
+        return return_dict
 
     col = '1:GPC Clock (MHz)'
     fail_col_data_gpu, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)

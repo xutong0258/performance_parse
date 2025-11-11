@@ -23,24 +23,24 @@ GPU_parameters = read_file_dict(file_path)
 # logger.info(f'GPU_parameters: {GPU_parameters}')
 
 def get_log_case(input_dir):
-    case_type = None
+    case_type = []
     tat_file = get_tat_file_with_dir(input_dir)
     if tat_file:
-        case_type = Intel_Case
+        case_type.append(Intel_Case)
 
-    SystemDeckPM_file = get_SystemDeckPM_file_with_dir(input_dir)
-    if SystemDeckPM_file:
-        case_type = AMD_Case
+    amd_file = get_amd_file_exact_with_dir(input_dir)
+    if amd_file:
+        case_type.append(AMD_Case)
 
     is_gpu_case = check_gpu_case(input_dir)
     if is_gpu_case:
-        case_type = GPU_Case
+        case_type.append(GPU_Case)
 
     return case_type
 
 def check_gpu_case(input_dir):
     is_gpu_case = False
-    gpu_file = get_gpu_file_with_dir(input_dir)
+    gpu_file = get_gpu_file_exact_with_dir(input_dir)
     if gpu_file is None:
         gpu_file = get_performance_file_with_dir(input_dir)
     if gpu_file:
@@ -67,6 +67,15 @@ def get_match_col_name(head_list, col_name):
     # logger.info(f'col:{col}')
     return col
 
+def get_intel_file_head_list_by_dir(input_dir):
+    intel_log_file = get_tat_file_with_dir(input_dir)
+    logger.info(f'intel_log_file:{intel_log_file}')
+
+    headers = get_head_with_csv(intel_log_file)
+    logger.info(f'headers:{headers}')
+
+    return headers
+
 def get_gpu_file_head_list_by_dir(input_dir):
     gpu_log_file = get_gpu_file_with_dir(input_dir)
     logger.info(f'gpu_log_file:{gpu_log_file}')
@@ -78,12 +87,12 @@ def get_gpu_file_head_list_by_dir(input_dir):
     return headers
 
 def get_amd_performance_file_head_list_by_dir(input_dir):
-    amd_fail_file = get_SystemDeckPM_file_with_dir(input_dir)
+    amd_fail_file = get_amd_file_with_dir(input_dir)
     head_list = get_head_with_csv(amd_fail_file)
     return head_list
 
 def get_amd_performance_file_data_frame_by_dir(input_dir):
-    amd_fail_file = get_SystemDeckPM_file_with_dir(input_dir)
+    amd_fail_file = get_amd_file_with_dir(input_dir)
     data_frame = read_csv_with_pandas(amd_fail_file)
     return data_frame
 
@@ -98,7 +107,7 @@ def get_intel_tat_file_col_data_by_dir(input_dir, col_name):
 
 def get_amd_file_col_data_by_dir(input_dir, col_name):
     col_data = []
-    amd_fail_file = get_SystemDeckPM_file_with_dir(input_dir)
+    amd_fail_file = get_amd_file_with_dir(input_dir)
     data_frame = read_csv_with_pandas(amd_fail_file)
     col_data = data_frame.get(col_name)
     return col_data, data_frame

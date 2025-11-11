@@ -64,15 +64,20 @@ def amd_check_run(parent_dir,fail_dir=None, pass_dir=None):
     return
 
 def one_process_run(parent_dir=None, fail_dir=None, pass_dir=None):
+    if parent_dir is not None:
+        fail_dir = os.path.join(parent_dir, 'fail')
+        pass_dir = os.path.join(parent_dir, 'pass')
+
     case_type = get_log_case(fail_dir)
-    if case_type == Intel_Case:
-        intel_check_run(fail_dir, pass_dir)
+    logger.info(f'case_type:{case_type}')
+    if Intel_Case in case_type :
+        intel_check_run(parent_dir,fail_dir, pass_dir)
 
-    if case_type == GPU_Case:
-        gpu_check_run(fail_dir, pass_dir)
+    if GPU_Case in case_type:
+        gpu_check_run(parent_dir, fail_dir, pass_dir)
 
-    if case_type == AMD_Case:
-        amd_check_run(fail_dir, pass_dir)
+    if AMD_Case in case_type:
+        amd_check_run(parent_dir, fail_dir, pass_dir)
     return
 
 def one_process_run_tmp(parent_dir=None, fail_dir=None, pass_dir=None):
