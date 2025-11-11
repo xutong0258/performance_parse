@@ -1,144 +1,144 @@
 check_rule_1: 
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'Frequency和package power行为不一致'
-  '对比规则': 'fail的CPU(0-X)-Frequency(MHz) (假如共有X个是取其中1列还是X列全部)与
-              Power-Package Power(Watts)的列值取相关系数
-              相关系数对数值的影响比较小，越接近1，行为越一致'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'clk行为和power行为不一致'
+  '对比规则': '1:Memory Clock (MHz)基本上在最高 fail与pass对比
+              计算1:GPC Clock (MHz)、1:TGP (W)非N/A部分的依次与Power-Package Power(Watts)取相关系数
+              有一个偏差超过3%'
 
 check_rule_2: 
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Turbo Parameters-IA Clip Reason
-  '判断标准': 'CPU0-Frequency(MHz)=399
-              Turbo Parameters-lA clip Reason存在prochot'
-  '对比规则': 'CPU0-Frequency(MHz)<400
-             （找到这个时间点对应的，clip reason，上一个时间点和下一个时间点，也就是一行，也要查询）
-              Turbo Parameters-lA clip Reason存在prochot
-              查询CPU(0-X)-Frequency(MHz)<400的列  
-              查看同列的Turbo Parameters-lA clip Reason若存在prochot'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'gpumon log>1:GPC Clock (MHz)=210
+              gpumon log>1:Memory Clock (MHz)
+              gpumon log>1:GPC Slowdown Factor (%)=25'
+  '对比规则': '对比1:GPC Clock (MHz)=210的列中取出1:Memory Clock (MHz)的值(这个值的作用是什么？)  并判断1:GPC Slowdown Factor (%)列是否为25%'
 
 check_rule_3:
-  col_1: Turbo Parameters-IA Clip Reason
-  col_2: Miscellaneous-MSR Package Temperature(Degree C)
-  col_3: Miscellaneous-TJMAX Temperature(Degree C)
-  col_4: Miscellaneous-TCC Offset Temperature(Degree C)
-  '判断标准': 'CPU0-Frequency(MHz)=399
-              Turbo Parameters-lA clip Reason存在prchot'
-  '对比规则': '1.查询CPU(0-X)-Frequency(MHz)<400的列  
-              2.查看同列的Turbo Parameters-IA Clip Reason若存在prochot
-              3. Miscellaneous-MSR Package Temperature(Degree C) >Miscellaneous-TJMAX Temperature(Degree C)-Miscellaneous-TCC Offset Temperature(Degree C)
-              三个条件同时满足'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'gpumon log>1:GPC Clock (MHz) 数值恒定
+              gpumon log>1:GPU Utilization (%) 小于100
+              gpumon log>driver 本参数是结果：该driver版本号有问题'
+  '对比规则': '1:GPC Clock (MHz) 数值恒定 的情况下  取1:GPU Utilization (%) 小于100的列   并查看driver 的值'
 
 check_rule_4:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Turbo Parameters-IA Clip Reason
-  '判断标准': 'CPU frequency= NominalTDPFrequency(DCL spec)
-              CPUx Turbo capability=supported and disabled'
-  '对比规则': '将CPU(0-X)-Frequency(MHz)的值与系统配置的DCL SPEC
-            （NominalTDPFrequency：P-core Turbo Frequency [GHz] (1- Core) ）
-            值一一比对；小于设定值，查询同列的CPUx Turbo capability=supported and disabled'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'gpumon log>1:Memory Clock (MHz)大于 gpumon log>Memory Base Clock (MHz)（pass和fail比较）'
+  '对比规则': '1:Memory Clock (MHz)稳定阶段取平均值与 Memory Clock比较   通过比较fail pass'
 
   check_rule_5:
-    col_1: CPU(0-X)-Frequency(MHz)
-    col_2: Power-Package Power(Watts)
-    '判断标准': 'CPU-lnfo-x- pCore Active(MHz)≠DCL spec P-core Turbo Frequency [GHz] (1-Core)
-              或
-              CPU-lnfo-x- eCore Active(MHz)≠DCL spec P-core Turbo Frequency [GHz] (1-Core)'
-    '对比规则': '1. CPU-lnfo-x- pCore Active(MHz)取最大值与系统设定的DCL spec P-core Turbo Frequency [GHz]比对
-                2. pass/fail log对比
-                CPU-lnfo-x- pCore Active(MHz)取平均值对比
-                CPU-lnfo-x- eCore Active(MHz)取平均值对比'
+    col_1: ''
+    col_2: ''
+    '判断标准': '从工单系统标题提取performance、banlance、quit关键词
+                显卡型号：NVIDIA GeForce RTX xxxx Laptop GPU
+                XXXX=3050 P0
+                3050Ti P0-R
+                4050 X2
+                4060 X4
+                4070 X6
+                4080 X9
+                4090 X11
+                （新一代的显卡信息需要后续再补充）预计新一代显卡如下：
+                5050 GN22-X2
+                5060 GN22-X4
+                5070 GN22-X6
+                50?? GN22-X7
+                5080 GN22-X9
+                5090 GN22-X11
+                对比是否一致'
+    '对比规则': 'AC Max Rated TGP: 175000
+                Fn+Q spec文档 对比不同模式下的值比较'
+check_rule_6:
+  col_1: ''
+  col_2: ''
+  '判断标准': '只有1:NVVDD Power (W)明显差异'
+  '对比规则': '1:NVVDD取平均值与pass的比较'
 
 check_rule_7:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'idle power有明显差别，ewma曲线表现差别大'
-  '对比规则': 'Power-Package Power(Watts)idle阶段数据取平均值与pass 的文件取同列idle阶段 取平均值对比
-              （3%）无明显差别的话
-              Power-EWMA Power(Watts)取平均值与pass的文件取同列平均值对比（3%'
+  col_1: ''
+  col_2: ''
+  '判断标准': '只有1:FBVDD Power (W)明显差异'
+  '对比规则': '1:TGP (W)取平均值  与pass对比'
 
 check_rule_8:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'GT power差异造成的IA power 较小'
-  '对比规则': 'Power-Package Power(Watts)取平均值与pass 的文件取同列 取平均值对比（相差范围需要确定）
-              无明显差别的话
-              Power-GT Power(Watts)取平均值与pass的文件取同列 取平均值对比（相差范围需要确定）'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'gpumon log>capping reason: thml/thml pwr
+              gpumon log>Environment Sensor Temp pass和fail对比，差值≤1度'
+  '对比规则': 'capping reason: thml/thml pwr的前提下
+              对比pass与fail的sensor_log 中envriorment sensor temp'
 
 check_rule_9:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'Turbo Parameters-IA Clip Reason=VR thermal alert'
-  '对比规则': '取Turbo Parameters-IA Clip Reason列中有VR thermal alert'
+  col_1: ''
+  col_2: ''
+  '判断标准': '1. fail gpumonlog t_gpu>86c, 或者sensor_log 中GPU Sensor Temp有点>86，继续判断2
+              2. 对比pass log当中，t_gpu/GPU Sensor Temp，都<86，判定为gpu thermal module；否则退出此规则判断'
+  '对比规则': 'capping reason: thml/thml pwr 前提下,（-log出问题了，capping reason这一栏并没有抓到。） t_gpu的平均值大于87C
+              或sensor_log 中GPU Sensor Temp的平均值是否大于87  Environment Sensor Temp的波动率是否超过3%'
 
 check_rule_10:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'Turbo Parameters-IA Clip Reason=VR TDC Clip-Power'
-  '对比规则': '取Turbo Parameters-IA Clip Reason列中有VR_TDC'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'gpumon log>Power Supply Mode显示AC
+              1:D-Notifier Limit显示D2（关键词）~D5（关键词'
+  '对比规则': '查看AC/DC中是否显示AC （d-notity中AC_DC）,
+              判断值是否在D2~D5
+              D-notify当前状态，只有DC状态下才会生效，AC下显是D1 -unilimitted'
 
 check_rule_11:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': '结合package power/PL1/P2/，发现clip reason是PL1但是package power明显跟PL1有滞后的情况下，对比Tau'
-  '对比规则': '当clip reason是PL1但是package power 与PL1 偏差大
-              根据（EWMA(t)-EWMA(t-1)）/(P(t)-EWMA(t-1)) 公式计算 TAU对比DTT TABLE中的TAU（暂时不计算）'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'PPAB statu enabled
+              1:TGP (W) loading起来之后过程中不超过3%波动
+              CPU TDP (W) 在1:TGP (W)动作相反
+              同时capping reason显示pwr
+              CPU TDP (W) <fn+q space'
+  '对比规则': '1:PPAB State全部是enabled 
+              同时1:Capping Reason显示pwr
+              判断1:AC Target TPP Limit (mW)是否恒定 (pass/fail相等)
+              CPU TDP (W) +gpu_tgp=AC Target TPP Limit 
+              CPU TDP (W) 在1:TGP (W)动作相反
+              判断tgp波动是否超过3%，超过则PPAB有问题
+              以上都在loading阶段取数据'
 
 check_rule_12:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'Turbo Parameters-IA Clip Reason=Thermal Event'
-  '对比规则': '偏差在3%以上的    当Turbo Parameters-IA Clip Reason=Thermal Event时
-              Miscellaneous-TCc Offset Temperature(Degree C)  pass和fail对比'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'loading的过程中gpumon log>1:GPC Slowdown Factor (%)>25%, <100%'
+  '对比规则': '把1:GPC Slowdown Factor (%)的在25%-100%之间的部分取出     是有问题的 '
 
 check_rule_13:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': '如果pass fail对比发现PL1/PL2有差，需要跟DTT table做比对'
-  '对比规则': '且Turbo Parameters-IA Clip Reason不等于Thermal Event时DTT table做比对Max PL1  Mlin PL1
-              PL2 (需要确定3个值的取值依据)
-              对比DTT table明确模式  
-              Turbo Parameters-MMIO Power Limit_1 Power(Watts)
-              Turbo Parameters-MMIO Power Limit_2 Power(Watts)
-              Turbo Parameters-MSR Power Limit_4 Power(Watts)'
+  col_1: ''
+  col_2: ''
+  '判断标准': '1:TGP (W)/1:FBVDD Power (W)/1:NVVDD Power (W)/nvvdd  fail和pass比较都低。
+              capping reason：vrel
+              vbios版本不一致'
+  '对比规则': '1:TGP (W)与1:FBVDD Power (W)  与1:NVVDD Power (W)与1:NVVDD Voltage (uV)取平均值与pass的比较
+              都低的情况下 查看1:Capping Reason 是否为   vrel'
 
 check_rule_14:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'DTT table如果没有异常，继续check AI chip对应的PL1 spec'
-  '对比规则': '如14未找到问题  比对spec文档 （需要确定对应字段）
-              check不是 ac balance模式    
-              Al Chip文档的Al Chip_PL1'
+  col_1: ''
+  col_2: ''
+  '判断标准': '对比vram厂商，不同的vram厂商表现有差'
+  '对比规则': '查看VRAM_Strap字段  取值  pass fail对比'
 
 check_rule_15:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': '1. Turbo Parameters-lA clip Reason存在Thermal event
-              2. check sensor log当中的环温sensor, pass fail对比最高温度点，有差超过两度'
-  '对比规则': '若Turbo Parameters-lA clip Reason存在Thermal event
-              到. check sensor log当中的环温Environment Sensor Temp, pass fail对比最高温度点，有差超过两度'
+  col_1: ''
+  col_2: ''
+  '判断标准': '识别AC quiet mode，标题信息
+              non AC quiet mode下, whisper mode应该是off
+              1:TGP (W)
+              WM2 platform enabled
+              WM2 Driver Enabled'
+  '对比规则': 'AC quiet mode模式下才判断
+              whisper mode是否是on
+              WM2 platform enabled  不同模式下
+              性能模式下，WM2 platform enabled、WM2 Driver Enabled如果是打开状态，会导致GPU性能低'
 
 check_rule_16:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': '这项tjmax-tccofset，是温度点的上限，鉴于这个温度点的判断比较复杂，简化一下,
-              1. Cinebench/3dmark CPU 场景，因为是主要是turbo阶段,考虑对比温度曲线的斜率（场景测试开始到第一次顶到最大温度点之间的斜率），斜率差别>0.1认为有异常，这个就是基于pass fail log的对比。
-              2. 单双考的稳态场景，ia clip reason连续触发thermal event超过3次可认为异常'
-  '对比规则': '这项tjmax-tccofset，是温度点的上限，鉴于这个温度点的判断比较复杂，简化一下,
-              1. Cinebench/3dmark CPU 场景，因为是主要是turbo阶段,考虑对比温度曲线的斜率（场景测试开始到第一次顶到最大温度点之间的斜率），斜率差别>0.1认为有异常，这个就是基于pass fail log的对比。
-              2. 单双考的稳态场景，ia clip reason连续触发thermal event超过3次可认为异常'
-
-check_rule_17:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'HWP-pCore OSPM Requested Energy Performance Preference≠Pass
-              HWP-eCore OSPM Requested Energy Performance Preference≠Pass'
-  '对比规则': 'HWP-pCore OSPM Requested Energy Performance Preference取平均值与pass的平均值对比
-              HWP-eCore OSPM Requested Energy Performance Preference取平均值与pass的平均值对比
-              在loading过程中值恒定(设定值 是不是全过程恒定？)'
-
-check_rule_18:
-  col_1: CPU(0-X)-Frequency(MHz)
-  col_2: Power-Package Power(Watts)
-  '判断标准': 'IA clip reason'
-  '对比规则': 'Turbo Parameters-IA Clip Reason列中有TVB'
+  col_1: ''
+  col_2: ''
+  '判断标准': 'CPUZ log>4 channle>double channel>single channel'
+  '对比规则': '从AMDzlog中取  Memory info：channle A  channle B   ....channle x   fail与pass的对比'
