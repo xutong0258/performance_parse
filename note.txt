@@ -1,3 +1,9 @@
+col_dict = gpu_rule_dict.get('check_rule_2', None)
+# logger.info(f'col_dict:{col_dict}')
+
+col_1 = col_dict.get('col_1', col_1)
+logger.info(f'col_1:{col_1}')
+
 col = 'Power-Package Power(Watts)'
 fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col)
 
@@ -30,7 +36,7 @@ col_1 = col_dict.get('col_1', col_1)
 
 col_2 = col_dict.get('col_2', col_2)
 
-if is_performance_ec_file_exit_by_dir(fail_dir):
+if is_performance_ec_file_exist_by_dir(fail_dir):
     col = 'Environment Sensor Temp'
     fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col)
     pass_col_data, pass_file_data = get_performance_file_col_data_by_dir(pass_dir, col)

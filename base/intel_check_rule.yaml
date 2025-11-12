@@ -1,6 +1,8 @@
 check_rule_1: 
   col_1: 'CPU(0-X)-Frequency(MHz)'
   col_2: 'Power-Package Power(Watts)'
+  logic:
+    - {"CPU(0-X)-Frequency(MHz) 与 Power-Package Power(Watts)的列值取相关系数": "col_1.corr(col_2, method='pearson')"}
   '判断标准': 'Frequency和package power行为不一致'
   '对比规则': 'fail的CPU(0-X)-Frequency(MHz) (假如共有X个是取其中1列还是X列全部)与
               Power-Package Power(Watts)的列值取相关系数
@@ -9,10 +11,14 @@ check_rule_1:
 check_rule_2: 
   col_1: 'CPU(0-X)-Frequency(MHz)'
   col_2: 'Turbo Parameters-IA Clip Reason'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - {'查询CPU(0-X)-Frequency(MHz)<400的列': 'check_point_1'}
+    - {'查看同列的Turbo Parameters-lA clip Reason若存在prochot ': 'check_point_2'}
   '判断标准': 'CPU0-Frequency(MHz)=399
               Turbo Parameters-lA clip Reason存在prochot'
   '对比规则': 'CPU0-Frequency(MHz)<400
-             （找到这个时间点对应的，clip reason，上一个时间点和下一个时间点，也就是一行，也要查询）
+             （找到这个时间点对应的 clip reason，上一个时间点和下一个时间点，也就是一行，也要查询）
               Turbo Parameters-lA clip Reason存在prochot
               查询CPU(0-X)-Frequency(MHz)<400的列  
               查看同列的Turbo Parameters-lA clip Reason若存在prochot'
@@ -22,6 +28,11 @@ check_rule_3:
   col_2: 'Miscellaneous-MSR Package Temperature(Degree C)'
   col_3: 'Miscellaneous-TJMAX Temperature(Degree C)'
   col_4: 'Miscellaneous-TCC Offset Temperature(Degree C)'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - {'查询CPU(0-X)-Frequency(MHz)<400的列': 'check_point_1'}
+    - {'查看同列的Turbo Parameters-lA clip Reason若存在prochot ': 'check_point_2'}
+    - {'Miscellaneous-MSR Package Temperature(Degree C) >Miscellaneous-TJMAX Temperature(Degree C)-Miscellaneous-TCC Offset Temperature(Degree C)': 'check_point_3' }
   '判断标准': 'CPU0-Frequency(MHz)=399
               Turbo Parameters-lA clip Reason存在prchot'
   '对比规则': '1.查询CPU(0-X)-Frequency(MHz)<400的列  
@@ -31,7 +42,8 @@ check_rule_3:
 
 check_rule_4:
   col_1: 'CPU(0-X)-Frequency(MHz)'
-  col_2: ''
+  logic:
+    - {'CPUx Turbo capability=supported and disabled': 'check_point_1'}
   '判断标准': 'CPU frequency= NominalTDPFrequency(DCL spec)
               CPUx Turbo capability=supported and disabled'
   '对比规则': '将CPU(0-X)-Frequency(MHz)的值与系统配置的DCL SPEC
@@ -40,6 +52,8 @@ check_rule_4:
 
   check_rule_5:
     col_1: 'CPU-lnfo-x- pCore Active(MHz)'
+    logic:
+      - {'CPU-lnfo-x- pCore Active(MHz) 取平均值对比': 'check_point_1'}
     '判断标准': 'CPU-lnfo-x- pCore Active(MHz)≠DCL spec P-core Turbo Frequency [GHz] (1-Core)
               或
               CPU-lnfo-x- eCore Active(MHz)≠DCL spec P-core Turbo Frequency [GHz] (1-Core)'
@@ -51,14 +65,22 @@ check_rule_4:
 check_rule_6:
   col_1: 'Power-Package Power(Watts)'
   col_2: 'Power-Rest of Package Power(Watts)'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2' }
+    - {'Power-Package Power(Watts)取平均值与pass 的文件取同列 取平均值对比（3%）': 'check_point_1'}
+    - {'Power-Rest of Package Power(Watts)指标取平均值和Pass文件的同列取平均值比对（3%）': 'check_point_2'}
   '判断标准': 'Power-Package Power(Watts)指标和Pass文件比较差别较大'
   '对比规则': 'Power-Package Power(Watts)取平均值与pass 的文件取同列 取平均值对比（3%）
               无明显差别的话
-              Power-Rest of Package Power(Watts)指标取平均值和Pass文件的同列取平均值比对 （3%）'
+              Power-Rest of Package Power(Watts)指标取平均值和Pass文件的同列取平均值比对（3%）'
 
 check_rule_7:
   col_1: 'Power-Package Power(Watts)'
   col_2: 'Power-MSR EWMA Package Power(Watts)'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2' }
+    - {'Power-Package Power(Watts)idle阶段数据取平均值与pass 的文件取同列idle阶段 取平均值对比': 'check_point_1'}
+    - {'Power-EWMA Power(Watts)取平均值与pass的文件取同列平均值对比（3%)': 'check_point_2'}
   '判断标准': 'idle power有明显差别，ewma曲线表现差别大'
   '对比规则': 'Power-Package Power(Watts)idle阶段数据取平均值与pass 的文件取同列idle阶段 取平均值对比
               （3%）无明显差别的话
@@ -66,7 +88,8 @@ check_rule_7:
 
 check_rule_8:
   col_1: 'Power-Package Power(Watts)'
-  col_2:
+  logic:
+    - { 'Power-Package Power(Watts)取平均值与pass 的文件取同列 取平均值对比（相差范围需要确定）': 'check_point_1' }
   '判断标准': 'GT power差异造成的IA power 较小'
   '对比规则': 'Power-Package Power(Watts)取平均值与pass 的文件取同列 取平均值对比（相差范围需要确定）
               无明显差别的话
@@ -74,19 +97,25 @@ check_rule_8:
 
 check_rule_9:
   col_1: 'Turbo Parameters-IA Clip Reason'
-  col_2:
+  logic:
+    - { '取Turbo Parameters-IA Clip Reason列中有VR thermal alert': 'check_point_1' }
   '判断标准': 'Turbo Parameters-IA Clip Reason=VR thermal alert'
   '对比规则': '取Turbo Parameters-IA Clip Reason列中有VR thermal alert'
 
 check_rule_10:
   col_1: 'Turbo Parameters-IA Clip Reason'
-  col_2:
+  logic:
+    - { 'Turbo Parameters-IA Clip Reason=VR_TDC': 'check_point_1' }
   '判断标准': 'Turbo Parameters-IA Clip Reason=VR TDC Clip-Power'
   '对比规则': '取Turbo Parameters-IA Clip Reason列中有VR_TDC'
 
 check_rule_11:
   col_1: 'Turbo Parameters-IA Clip Reason'
   col_2: 'Power-Package Power(Watts)'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - { 'Turbo Parameters-IA Clip Reason=PL1': 'check_point_1' }
+    - { 'Power-Package Power(Watts), FAIL与PASS 平均值比对, 大于3%': 'check_point_2' }
   '判断标准': '结合package power/PL1/P2/，发现clip reason是PL1但是package power明显跟PL1有滞后的情况下，对比Tau'
   '对比规则': '当clip reason是PL1但是package power 与PL1 偏差大
               根据（EWMA(t)-EWMA(t-1)）/(P(t)-EWMA(t-1)) 公式计算 TAU对比DTT TABLE中的TAU（暂时不计算）'
@@ -94,6 +123,10 @@ check_rule_11:
 check_rule_12:
   col_1: 'Turbo Parameters-IA Clip Reason'
   col_2: 'Miscellaneous-TCC Offset Temperature(Degree C)'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - { 'Turbo Parameters-IA Clip Reason=Thermal Event': 'check_point_1' }
+    - { 'Miscellaneous-TCC Offset Temperature(Degree C), FAIL与PASS 平均值比对, 大于3%': 'check_point_2' }
   '判断标准': 'Turbo Parameters-IA Clip Reason=Thermal Event'
   '对比规则': '偏差在3%以上的    当Turbo Parameters-IA Clip Reason=Thermal Event时
               Miscellaneous-TCc Offset Temperature(Degree C)  pass和fail对比'
@@ -103,6 +136,12 @@ check_rule_13:
   col_2: 'Turbo Parameters-MMIO Power Limit_1 Power(Watts)'
   col_3: 'Turbo Parameters-MMIO Power Limit_2 Power(Watts)'
   col_4: 'Turbo Parameters-MSR Power Limit_4 Power(Watts)'
+  logic:
+    - { '条件关系': 'check_point_1 and (check_point_2 or check_point_3 or check_point_4)' }
+    - { 'Turbo Parameters-IA Clip Reason!=Thermal Event': 'check_point_1' }
+    - { 'Turbo Parameters-MMIO Power Limit_1 Power(Watts), FAIL与PASS 平均值比对, 大于3%': 'check_point_2' }
+    - { 'Turbo Parameters-MMIO Power Limit_2 Power(Watts), FAIL与PASS 平均值比对, 大于3%': 'check_point_3' }
+    - { 'Turbo Parameters-MSR Power Limit_4 Power(Watts), FAIL与PASS 平均值比对, 大于3%': 'check_point_4' }
   '判断标准': '如果pass fail对比发现PL1/PL2有差，需要跟DTT table做比对'
   '对比规则': '且Turbo Parameters-IA Clip Reason不等于Thermal Event时DTT table做比对Max PL1  Mlin PL1
               PL2 (需要确定3个值的取值依据)
@@ -113,7 +152,8 @@ check_rule_13:
 
 check_rule_14:
   col_1: 'Turbo Parameters-IA Clip Reason'
-  col_2: ''
+  logic:
+    - { 'Turbo Parameters-IA Clip Reason': 'check_point_1' }
   '判断标准': 'DTT table如果没有异常，继续check AI chip对应的PL1 spec'
   '对比规则': '如14未找到问题  比对spec文档 （需要确定对应字段）
               check不是 ac balance模式    
@@ -122,6 +162,10 @@ check_rule_14:
 check_rule_15:
   col_1: 'Turbo Parameters-lA clip Reason'
   col_2: 'Environment Sensor Temp'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2)' }
+    - { 'Turbo Parameters-lA clip Reason = Thermal Event': 'check_point_1' }
+    - { 'Environment Sensor Temp, pass fail对比最高温度点，有差超过两度': 'check_point_2' }
   '判断标准': '1. Turbo Parameters-lA clip Reason存在Thermal event
               2. check sensor log当中的环温sensor, pass fail对比最高温度点，有差超过两度'
   '对比规则': '若Turbo Parameters-lA clip Reason存在Thermal event
@@ -130,6 +174,10 @@ check_rule_15:
 check_rule_16:
   col_1: 'Miscellaneous-MSR Package Temperature(Degree C)'
   col_2: 'Miscellaneous-MMO Package Temperature(Degree C)'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2)' }
+    - { 'Miscellaneous-MSR Package Temperature(Degree C) fail/pass 对比, 相关系数差异大于5%': 'check_point_1' }
+    - { 'Miscellaneous-MSR Package Temperature(Degree C) fail/pass 对比, 相关系数差异大于5%': 'check_point_2' }
   '判断标准': '这项tjmax-tccofset，是温度点的上限，鉴于这个温度点的判断比较复杂，简化一下,
               1. Cinebench/3dmark CPU 场景，因为是主要是turbo阶段,考虑对比温度曲线的斜率（场景测试开始到第一次顶到最大温度点之间的斜率），斜率差别>0.1认为有异常，这个就是基于pass fail log的对比。
               2. 单双考的稳态场景，ia clip reason连续触发thermal event超过3次可认为异常'
@@ -140,6 +188,12 @@ check_rule_16:
 check_rule_17:
   col_1: 'HWP-pCore OSPM Requested Energy Performance Preference'
   col_2: 'HWP-eCore OSPM Requested Energy Performance Preference'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2 or check_point_3 or check_point_4)' }
+    - { 'HWP-pCore OSPM Requested Energy Performance Preference 在loading过程中值恒定(设定值 是不是全过程恒定？)': 'check_point_1' }
+    - { 'HWP-eCore OSPM Requested Energy Performance Preference 在loading过程中值恒定(设定值 是不是全过程恒定？)': 'check_point_2' }
+    - { 'HWP-pCore OSPM Requested Energy Performance Preference取平均值与pass的平均值对比': 'check_point_3' }
+    - { 'HWP-eCore OSPM Requested Energy Performance Preference取平均值与pass的平均值对比': 'check_point_4' }
   '判断标准': 'HWP-pCore OSPM Requested Energy Performance Preference≠Pass
               HWP-eCore OSPM Requested Energy Performance Preference≠Pass'
   '对比规则': 'HWP-pCore OSPM Requested Energy Performance Preference取平均值与pass的平均值对比
@@ -148,6 +202,7 @@ check_rule_17:
 
 check_rule_18:
   col_1: 'Turbo Parameters-IA Clip Reason'
-  col_2: ''
+  logic:
+    - { 'Turbo Parameters-IA Clip Reason列中有TVB': 'check_point_1' }
   '判断标准': 'IA clip reason'
   '对比规则': 'Turbo Parameters-IA Clip Reason列中有TVB'

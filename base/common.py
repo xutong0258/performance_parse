@@ -163,12 +163,13 @@ def get_performance_file_col_data_by_dir(input_dir, col_name):
     col_data = file_data.get(col_name)
     return col_data, file_data
 
-def is_performance_ec_file_exit_by_dir(input_dir):
-    is_exits = False
+def is_performance_ec_file_exist_by_dir(input_dir):
+    is_exist = False
     performance_log_file = get_performance_file_with_dir(input_dir)
+    logger.info(f'performance_log_file:{performance_log_file}')
     if performance_log_file is not None:
-        is_exits = True
-    return is_exits
+        is_exist = True
+    return is_exist
 
 def get_csv_file_col_data_by_file(input_file, col_name):
     col_data = []
