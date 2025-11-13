@@ -1,6 +1,10 @@
 check_rule_1: 
   col_1: '1:GPC Clock (MHz)'
   col_2: '1:TGP (W)'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2)' }
+    - { '1:GPC Clock (MHz) fail/pass 对比, 相关系数差异大于3%': 'check_point_1' }
+    - { '1:TGP (W) fail/pass 对比, 相关系数差异大于3%': 'check_point_2' }
   '判断标准': 'clk行为和power行为不一致'
   '对比规则': '1:Memory Clock (MHz)基本上在最高 fail与pass对比
               计算1:GPC Clock (MHz)、1:TGP (W)非N/A部分的依次与Power-Package Power(Watts)取相关系数
@@ -9,51 +13,65 @@ check_rule_1:
 check_rule_2: 
   col_1: '1:GPC Clock (MHz)'
   col_2: '1:GPC Slowdown Factor (%)'
-  '判断标准': 'gpumon log>1:GPC Clock (MHz)=210
-              gpumon log>1:Memory Clock (MHz)
-              gpumon log>1:GPC Slowdown Factor (%)=25'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2)' }
+    - { '1:GPC Clock (MHz)=210': 'check_point_1' }
+    - { '1:GPC Slowdown Factor (%)=25': 'check_point_2' }
+  '判断标准': '1:GPC Clock (MHz)=210
+              1:Memory Clock (MHz)
+              1:GPC Slowdown Factor (%)=25'
   '对比规则': '对比1:GPC Clock (MHz)=210的列中取出1:Memory Clock (MHz)的值(这个值的作用是什么？)  并判断1:GPC Slowdown Factor (%)列是否为25%'
 
 check_rule_3:
   col_1: '1:GPC Clock (MHz)'
   col_2: '1:GPU Utilization (%)'
-  '判断标准': 'gpumon log>1:GPC Clock (MHz) 数值恒定
-              gpumon log>1:GPU Utilization (%) 小于100
-              gpumon log>driver 本参数是结果：该driver版本号有问题'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2)' }
+    - { '1:GPC Clock (MHz) 数值恒定 的情况下': 'check_point_1' }
+    - { '1:GPU Utilization (%) 小于100的列': 'check_point_2' }
+  '判断标准': '1:GPC Clock (MHz) 数值恒定
+              1:GPU Utilization (%) 小于100
+              driver 本参数是结果：该driver版本号有问题'
   '对比规则': '1:GPC Clock (MHz) 数值恒定 的情况下  取1:GPU Utilization (%) 小于100的列   并查看driver 的值'
 
 check_rule_4:
   col_1: '1:Memory Clock (MHz)'
-  col_2: ''
-  '判断标准': 'gpumon log>1:Memory Clock (MHz)大于 gpumon log>Memory Base Clock (MHz)（pass和fail比较）'
+  logic:
+    - { '1:Memory Clock (MHz) fail pass 比较': 'check_point_1' }
+  '判断标准': '1:Memory Clock (MHz)大于 Memory Base Clock (MHz)（pass和fail比较）'
   '对比规则': '1:Memory Clock (MHz)稳定阶段取平均值与 Memory Clock比较   通过比较fail pass'
 
-  check_rule_5:
-    col_1: ''
-    col_2: ''
-    '判断标准': '从工单系统标题提取performance、banlance、quit关键词
-                显卡型号：NVIDIA GeForce RTX xxxx Laptop GPU
-                XXXX=3050 P0
-                3050Ti P0-R
-                4050 X2
-                4060 X4
-                4070 X6
-                4080 X9
-                4090 X11
-                （新一代的显卡信息需要后续再补充）预计新一代显卡如下：
-                5050 GN22-X2
-                5060 GN22-X4
-                5070 GN22-X6
-                50?? GN22-X7
-                5080 GN22-X9
-                5090 GN22-X11
-                对比是否一致'
-    '对比规则': 'AC Max Rated TGP: 175000
-                Fn+Q spec文档 对比不同模式下的值比较'
+check_rule_5:
+  col_1: ''
+  col_2: ''
+  '判断标准': '从工单系统标题提取performance、banlance、quit关键词
+              显卡型号：NVIDIA GeForce RTX xxxx Laptop GPU
+              XXXX=3050 P0
+              3050Ti P0-R
+              4050 X2
+              4060 X4
+              4070 X6
+              4080 X9
+              4090 X11
+              （新一代的显卡信息需要后续再补充）预计新一代显卡如下：
+              5050 GN22-X2
+              5060 GN22-X4
+              5070 GN22-X6
+              50?? GN22-X7
+              5080 GN22-X9
+              5090 GN22-X11
+              对比是否一致'
+  '对比规则': 'AC Max Rated TGP: 175000
+              Fn+Q spec文档 对比不同模式下的值比较'
 check_rule_6:
   col_1: '1:NVVDD Power (W)'
   col_2: '1:TGP (W)'
   col_3: '1:FBVDD Power (W)'
+  logic:
+    - { '条件关系': 'check_point_1 and (not check_point_2 and not check_point_3)' }
+    - { '1:NVVDD Power (W) pass fail 比对, delta: 0.1': 'check_point_1' }
+    - { '1:TGP (W) pass fail 比对, delta: 0.1': 'check_point_2' }
+    - { '1:FBVDD Power (W) pass fail 比对, delta: 0.1': 'check_point_3' }
   '判断标准': '只有1:NVVDD Power (W)明显差异'
   '对比规则': '1:NVVDD取平均值与pass的比较'
 
@@ -61,14 +79,21 @@ check_rule_7:
   col_1: '1:NVVDD Power (W)'
   col_2: '1:TGP (W)'
   col_3: '1:FBVDD Power (W)'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3' }
+    - { '1:NVVDD Power (W): pass fail 比对, delta: 0.1': 'check_point_1' }
+    - { '1:TGP (W): pass fail 比对,  delta: 0.1': 'check_point_2' }
+    - { '1:FBVDD Power (W): pass fail 比对, delta: 0.1': 'check_point_3' }
   '判断标准': '只有1:FBVDD Power (W)明显差异'
   '对比规则': '1:TGP (W)取平均值  与pass对比'
 
 check_rule_8:
   col_1: '1:Capping Reason'
   col_2: 'Environment Sensor Temp'
-  '判断标准': 'gpumon log>capping reason: thml/thml pwr
-              gpumon log>Environment Sensor Temp pass和fail对比，差值≤1度'
+  logic:
+    - { 'Environment Sensor Temp: pass fail 比对,delta: 1 ': 'check_point_1' }
+  '判断标准': 'capping reason: thml/thml pwr
+              Environment Sensor Temp pass和fail对比，差值≤1度'
   '对比规则': 'capping reason: thml/thml pwr的前提下
               对比pass与fail的sensor_log 中envriorment sensor temp'
 
@@ -77,29 +102,47 @@ check_rule_9:
   col_2: 'GPU Sensor Temp'
   col_3: '1:t_gpu'
   col_4: 'GPU Sensor Temp'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - { '1. fail gpumonlog t_gpu>86c, 或者sensor_log 中GPU Sensor Temp有点>86，继续判断2': 'check_point_1' }
+    - { '2. 对比pass log当中，t_gpu/GPU Sensor Temp，都<86，判定为gpu thermal module；否则退出此规则判断': 'check_point_2' }
   '判断标准': '1. fail gpumonlog t_gpu>86c, 或者sensor_log 中GPU Sensor Temp有点>86，继续判断2
-              2. 对比pass log当中，t_gpu/GPU Sensor Temp，都<86，判定为gpu thermal module；否则退出此规则判断'
+             2. 对比pass log当中，t_gpu/GPU Sensor Temp，都<86，判定为gpu thermal module；否则退出此规则判断'
   '对比规则': 'capping reason: thml/thml pwr 前提下,（-log出问题了，capping reason这一栏并没有抓到。） t_gpu的平均值大于87C
-              或sensor_log 中GPU Sensor Temp的平均值是否大于87  Environment Sensor Temp的波动率是否超过3%'
+            或sensor_log 中GPU Sensor Temp的平均值是否大于87  Environment Sensor Temp的波动率是否超过3%'
 
 check_rule_10:
   col_1: 'Power Supply Mode'
   col_2: '1:D-Notifier Limit'
-  '判断标准': 'gpumon log>Power Supply Mode显示AC
-              1:D-Notifier Limit显示D2（关键词）~D5（关键词'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - { 'Power Supply Mode显示AC': 'check_point_1' }
+    - { '1:D-Notifier Limit显示D2（关键词）~D5（关键词)': 'check_point_2' }
+  '判断标准': 'Power Supply Mode显示AC
+            1:D-Notifier Limit显示D2（关键词）~D5（关键词)'
   '对比规则': '查看AC/DC中是否显示AC （d-notity中AC_DC）,
               判断值是否在D2~D5
               D-notify当前状态，只有DC状态下才会生效，AC下显是D1 -unilimitted'
 
 check_rule_11:
-  col_1: ''
-  col_2: ''
-  '判断标准': 'PPAB statu enabled
+  col_1: '1:PPAB State'
+  col_2: '1:pwr_tgp'
+  col_3: '1:Capping Reason'
+  col_4: '1:AC_Target_TPP_Limit'
+  col_5: '1:pwr_tgp'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5' }
+    - { 'PPAB status enabled': 'check_point_1' }
+    - { '1:TGP (W) loading起来之后过程中不超过3%波动': 'check_point_2' }
+    - { 'CPU TDP (W) 在1:TGP (W)动作相反': 'check_point_3' }
+    - { '同时capping reason显示pwr': 'check_point_4' }
+    - { 'CPU TDP (W) <fn+q space': 'check_point_5' }
+  '判断标准': 'PPAB status enabled
               1:TGP (W) loading起来之后过程中不超过3%波动
               CPU TDP (W) 在1:TGP (W)动作相反
               同时capping reason显示pwr
               CPU TDP (W) <fn+q space'
-  '对比规则': '1:PPAB State全部是enabled 
+  '对比规则': '1:PPAB status 全部是enabled 
               同时1:Capping Reason显示pwr
               判断1:AC Target TPP Limit (mW)是否恒定 (pass/fail相等)
               CPU TDP (W) +gpu_tgp=AC Target TPP Limit 
@@ -109,13 +152,22 @@ check_rule_11:
 
 check_rule_12:
   col_1: '1:GPC Clock (MHz)'
-  col_2: '1:TGP (W)'
-  '判断标准': 'loading的过程中gpumon log>1:GPC Slowdown Factor (%)>25%, <100%'
+  logic:
+    - { 'loading的过程中1:GPC Slowdown Factor (%)>25%, <100%': 'check_point_1' }
+  '判断标准': 'loading的过程中1:GPC Slowdown Factor (%)>25%, <100%'
   '对比规则': '把1:GPC Slowdown Factor (%)的在25%-100%之间的部分取出     是有问题的 '
 
 check_rule_13:
-  col_1: ''
-  col_2: ''
+  col_1: '1:TGP (W)'
+  col_2: '1:FBVDD Power (W)'
+  col_3: '1:NVVDD Power (W)'
+  col_4: '1:NVVDD Voltage (uV)'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3 and check_point_4' }
+    - { '1:TGP (W): average fail  比 average pass 小': 'check_point_1' }
+    - { '1:FBVDD Power (W): average fail  比 average pass 小': 'check_point_2' }
+    - { '1:NVVDD Power (W): average fail  比 average pass 小': 'check_point_2' }
+    - { '1:NVVDD Voltage (uV): average fail  比 average pass 小': 'check_point_2' }
   '判断标准': '1:TGP (W)/1:FBVDD Power (W)/1:NVVDD Power (W)/nvvdd  fail和pass比较都低。
               capping reason：vrel
               vbios版本不一致'
@@ -123,14 +175,18 @@ check_rule_13:
               都低的情况下 查看1:Capping Reason 是否为   vrel'
 
 check_rule_14:
-  col_1: ''
+  col_1: 'VRAM Strap'
   col_2: ''
   '判断标准': '对比vram厂商，不同的vram厂商表现有差'
   '对比规则': '查看VRAM_Strap字段  取值  pass fail对比'
 
 check_rule_15:
-  col_1: ''
-  col_2: ''
+  col_1: '1:WM2 Platform Enabled'
+  col_2: '1:WM2 Driver Enabled'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - { '1:WM2 Platform Enabled != ON': 'check_point_1' }
+    - { '1:WM2 Driver Enabled != ON': 'check_point_2' }
   '判断标准': '识别AC quiet mode，标题信息
               non AC quiet mode下, whisper mode应该是off
               1:TGP (W)
@@ -142,7 +198,7 @@ check_rule_15:
               性能模式下，WM2 platform enabled、WM2 Driver Enabled如果是打开状态，会导致GPU性能低'
 
 check_rule_16:
-  col_1: ''
-  col_2: ''
+  col_1: 'Controller0-ChannelA-DIMM1'
+  col_2: 'Controller0-ChannelB-DIMM1'
   '判断标准': 'CPUZ log>4 channle>double channel>single channel'
   '对比规则': '从AMDzlog中取  Memory info：channle A  channle B   ....channle x   fail与pass的对比'
