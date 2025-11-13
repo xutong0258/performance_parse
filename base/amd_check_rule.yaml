@@ -1,6 +1,13 @@
 check_rule_1: 
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 CORES CORE0 Freq Eff'
+  col_2: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+  col_3: 'CPU0 MISC PROCHOT'
+  col_4: 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3'}
+    - { '频率下降到：Freq Eff ≤0.4GHz': 'check_point_1' }
+    - { '温度顶到限制：Value THM>=Limit THM': 'check_point_2' }
+    - { '且MISC PROCHOT ≠ 0': 'check_point_3' }
   '判断标准': 'CPU频率掉到400MHz，且CPU core温度触发limit
               CPU0 CORES CORE0 Freq Eff ≤0.4GHz（不一定是0.4GHz，可能是≤0.54）
               CPU0 INFRASTRUCTURE2 Value THM CORE ≥ CPU0 INFRASTRUCTURE2 Limit THM CORE
@@ -10,8 +17,15 @@ check_rule_1:
               3. 且MISC PROCHOT ≠ 0'
 
 check_rule_2:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 CORES CORE0 Freq Eff'
+  col_2: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+  col_3: 'CPU0 MISC PROCHOT'
+  col_4: 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3' }
+    - { 'CPU频率掉到400MHz，且CPU core温度未触发limit': 'check_point_1' }
+    - { 'CPU0 INFRASTRUCTURE2 Value THM CORE ＜CPU0 INFRASTRUCTURE2 Limit THM CORE': 'check_point_2' }
+    - { 'CPU0 MISC PROCHOT ≠ 0': 'check_point_3' }
   '判断标准': 'CPU频率掉到400MHz，且CPU core温度未触发limit
               CPU0 CORES CORE0 Freq Eff ≤0.4GHz（不一定是0.4GHz，可能是≤0.54）
               CPU0 INFRASTRUCTURE2 Value THM CORE ＜CPU0 INFRASTRUCTURE2 Limit THM CORE
@@ -21,16 +35,18 @@ check_rule_2:
               3. 且MISC PROCHOT ≠ 0'
 
 check_rule_3:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 CORES CORE0 Freq Eff'
+  logic:
+    - { 'CPU0 CORES CORE0 Freq Eff ≤ CPU base freq': 'check_point_1' }
   '判断标准': 'CPU最大频率一直keep base频率
               CPU0 CORES CORE0 Freq Eff ≤ CPU base freq'
   '对比规则': '最大频率值不超过base频率：CPU0 CORES CORE0 Freq Eff ≤ CPU base freq
               有一个开了  就算开了'
 
 check_rule_4:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 CORES CORE0 EPP'
+  logic:
+    - { 'CPU0 CORES CORE0 EPP: pass fail 对比, delta: 0.1': 'check_point_1' }
   '判断标准': 'Pass vs fail机台的EPP值不一致
               CPU0 CORES CORE0 CPPC EPP'
   '对比规则': 'HWP-pCore OSPM Requested Energy Performance Preference取平均值与pass的平均值对比
@@ -38,23 +54,35 @@ check_rule_4:
               在loading过程中值恒定(设定值 是不是全过程恒定？)'
 
 check_rule_5:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 MISC STAPM Time Constant'
+  col_2: 'CPU0 MISC Slow PPT Time Constant'
+  col_3: 'CPU0 INFRASTRUCTURE Limit STAPM'
+  col_4: 'CPU0 INFRASTRUCTURE Limit PPT FAST'
+  col_5: 'CPU0 INFRASTRUCTURE Limit PPT SLOW'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5' }
+    - { 'CPU0 MISC STAPM Time Constant: pass fail 对比, delta: 0.2': 'check_point_1' }
+    - { 'CPU0 MISC Slow PPT Time Constant: pass fail 对比, delta: 0.2': 'check_point_2' }
+    - { 'CPU0 INFRASTRUCTURE Limit STAPM: pass fail 对比, delta: 0.2': 'check_point_3' }
+    - { 'CPU0 INFRASTRUCTURE Limit PPT FAST: pass fail 对比, delta: 0.2': 'check_point_4' }
+    - { 'CPU0 INFRASTRUCTURE Limit PPT SLOW: pass fail 对比, delta: 0.2': 'check_point_5' }
   '判断标准': 'log获取到两台机器的SPL/SPPT/FPPT Limit值不一致，并与DPTC table对比分别是在相同性能mode
               CPU0 MISC STAPM Time Constant
               CPU0 MISC Slow PPT Time Constant
               CPU0 INFRASTRUCTURE Limit STAPM
               CPU0 INFRASTRUCTURE Limit PPT FAST
-              CPU0 INFRASTRUCTURE Limit PPT SLOW
-              CPU0 MISC STAPM Time Constant
-              CPU0 MISC Slow PPT Time Constant'
+              CPU0 INFRASTRUCTURE Limit PPT SLOW'
   '对比规则': '获取pass/fail两份log日志中的SPL/SPPT/FPPT Limit，对比平均值（以pass机器的平均值为标准，计算相对误差2%之内）
               根据DPTC中SPL/SPPT/FPPT 三个参数确定机器的性能mode模式，如果是在相同模式下，再比较两台机器的SPL/SPPT/FPPT
               SPPT time'
 
 check_rule_6:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 MISC STAPM Time Constant'
+  col_2: 'CPU0 MISC Slow PPT Time Constant'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - { 'CPU0 MISC STAPM Time Constant: pass fail 对比, delta: 0.2': 'check_point_1' }
+    - { 'CPU0 MISC Slow PPT Time Constant: pass fail 对比, delta: 0.2': 'check_point_2' }
   '判断标准': '对比pass/fail机台的SPL Time Constant是否一致
               CPU0 MISC STAPM Time Constant
               CPU0 MISC Slow PPT Time Constant'
@@ -62,8 +90,9 @@ check_rule_6:
               （以pass机器的平均值为标准，计算相对误差2%之内）'
 
 check_rule_7:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 Power Correlation SOCKET Power'
+  logic:
+    - { 'CPU0 Power Correlation SOCKET Power: pass fail 对比, delta: 0.2': 'check_point_1' }
   '判断标准': '对比Pass vs fail机台的场景测试前的Idle power有明显差异'
   '对比规则': '对比pass和fail的Idle power阶段的 SOCKET Power的平均值
             （以pass机器的平均值为标准，计算相对误差2%之内）
@@ -72,15 +101,27 @@ check_rule_7:
             增长幅度 > 200%'
 
 check_rule_8:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 INFRASTRUCTURE Limit TDC VDD'
+  col_2: 'CPU0 INFRASTRUCTURE Value TDC VDD'
+  col_3: 'CPU0 INFRASTRUCTURE Limit TDC SOC'
+  col_4: 'CPU0 INFRASTRUCTURE Value TDC SOC'
+  col_5: 'CPU0 INFRASTRUCTURE Limit EDC VDD'
+  col_6: 'CPU0 INFRASTRUCTURE Limit EDC SOC'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2 or check_point_3 or check_point_4 or check_point_5' }
+    - { 'CPU0 INFRASTRUCTURE Limit TDC VDD: pass fail 对比, 不相等': 'check_point_1' }
+    - { 'CPU0 INFRASTRUCTURE Value TDC VDD: pass fail 对比, 不相等': 'check_point_2' }
+    - { 'CPU0 INFRASTRUCTURE Limit TDC SOC: pass fail 对比, 不相等': 'check_point_3' }
+    - { 'CPU0 INFRASTRUCTURE Value TDC SOC: pass fail 对比, 不相等': 'check_point_4' }
+    - { 'CPU0 INFRASTRUCTURE Limit EDC VDD: pass fail 对比, 不相等': 'check_point_5' }
+    - { 'CPU0 INFRASTRUCTURE Limit EDC SOC: pass fail 对比, 不相等': 'check_point_6' }
   '判断标准': '对比pass/fail机台的TDC/EDC limit不一致，同时检查TDC/EDC value 行为不一致
-              SystemdeckLog->CPU0 INFRASTRUCTURE Limit TDC VDD
-              SystemdeckLog->CPU0 INFRASTRUCTURE Value TDC VDD
-              SystemdeckLog->CPU0 INFRASTRUCTURE Limit TDC SOC
-              SystemdeckLog->CPU0 INFRASTRUCTURE Value TDC SOC
-              SystemdeckLog->CPU0 INFRASTRUCTURE Limit EDC VDD
-              SystemdeckLog->CPU0 INFRASTRUCTURE Limit EDC SOC'
+              CPU0 INFRASTRUCTURE Limit TDC VDD
+              CPU0 INFRASTRUCTURE Value TDC VDD
+              CPU0 INFRASTRUCTURE Limit TDC SOC
+              CPU0 INFRASTRUCTURE Value TDC SOC
+              CPU0 INFRASTRUCTURE Limit EDC VDD
+              CPU0 INFRASTRUCTURE Limit EDC SOC'
   '对比规则': '对比pass和fail机器log
               TDC/EDC 是否触发limit
               1. TDC VDD和TDC SOC limt平均值，恒定
@@ -89,71 +130,115 @@ check_rule_8:
               输出过程数据'
 
 check_rule_9:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+  col_2: 'CPU0 INFRASTRUCTURE2 Value STT APU'
+  col_3: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+  col_4: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+  col_5: 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+  col_6: 'CPU0 INFRASTRUCTURE2 Value THM GFX'
+  col_7: 'PU0 INFRASTRUCTURE2 Limit THM GFX'
+  col_8: 'CPU0 INFRASTRUCTURE2 Value THM SOC'
+  col_9: 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3 and check_point_4 and check_point_5 and check_point_6' }
+    - { 'CPU0 INFRASTRUCTURE2 Limit STT APU ≠0': 'check_point_1' }
+    - { 'CPU0 INFRASTRUCTURE2 Value STT APU ≥ CPU0 INFRASTRUCTURE2 Limit STT APU': 'check_point_2' }
+    - { 'CPU0 INFRASTRUCTURE2 Value THM CORE ＜ CPU0 INFRASTRUCTURE2 Limit THM CORE': 'check_point_3' }
+    - { ' CPU0 INFRASTRUCTURE2 Value THM GFX＜ CPU0 INFRASTRUCTURE2 Limit THM GFX': 'check_point_4' }
+    - { 'CPU0 INFRASTRUCTURE2 Value THM SOC ＜ CPU0 INFRASTRUCTURE2 Limit THM SOC': 'check_point_5' }
+    - { '同时还要确认测试时环温超过30°': 'check_point_6' }
   '判断标准': '支持STT方案的机台上：Pass vs fail机台的STT温度触发limit，相同sku机台如果有的顶到，表示这台机器的散热模组可能异常；同时还要确认测试时环温超过30°
             CPU0 INFRASTRUCTURE2 Limit STT APU ≠0
             CPU0 INFRASTRUCTURE2 Value STT APU ≥ CPU0 INFRASTRUCTURE2 Limit STT APU
             CPU0 INFRASTRUCTURE2 Value THM CORE ＜ CPU0 INFRASTRUCTURE2 Limit THM CORE
             CPU0 INFRASTRUCTURE2 Value THM GFX＜ CPU0 INFRASTRUCTURE2 Limit THM GFX
-            CPU0 INFRASTRUCTURE2 Value THM SOC ＜ CPU0 INFRASTRUCTURE2 Limit THM SOC
-            CPU0 INFRASTRUCTURE2 Limit STT HS2
-            CPU0 INFRASTRUCTURE2 Value STT HS2'
+            CPU0 INFRASTRUCTURE2 Value THM SOC ＜ CPU0 INFRASTRUCTURE2 Limit THM SOC'
   '对比规则': 'fail机器log：平均值比对
               1. 查看5个条件是否都满足
               如果满足以上条件，再看Enviroment sensor temp>30°
               判断结束后，需要对比pass.log，展示所有数据'
 
 check_rule_10:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 CORES CORE0 Freq Eff'
+  col_2: 'CPU0 CORES CORE0 CPPC MAX Freq'
+  col_3: 'CPU0 INFRASTRUCTURE Value THM'
+  col_4: 'CPU0 INFRASTRUCTURE Limit THM'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - { '达不到最大频率要求：Freq Eff <MAX Freq': 'check_point_1' }
+    - { '并且温度没有顶到限制：Value THM<Limit THM': 'check_point_2' }
   '判断标准': '在单核测试场景（Cinebench单核）中，当EPP值是0时，CPU单核最大频率不能达到SPEC要求；
               CPU0 CORES CORE0 Freq Eff ＜ CPU0 CORES CORE0 CPPC MAX Freq（gap＞200Mhz）
               CPU0 CORES CORE0 CPPC EPP = 0
-              SystemdeckLog->CPU0 INFRASTRUCTURE2 Limit THM CORE
-              SystemdeckLog->CPU0 INFRASTRUCTURE2 Value THM CORE ＜ Tdie,lmt（应该是Tdie,tdp）'
+              CPU0 INFRASTRUCTURE2 Limit THM CORE
+              CPU0 INFRASTRUCTURE2 Value THM CORE ＜ Tdie,lmt（应该是Tdie,tdp）'
   '对比规则': '1. epp=0
               2. 达不到最大频率要求：Freq Eff <MAX Freq
               3. 并且温度没有顶到限制：Value THM<Limit THM ，且 Value THM ＜ Tdie，tdp
               （Tdie，tdp：Thermal Design Guide中获取的值）'
 
 check_rule_11:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 CORES CORE0 Freq Eff'
+  col_2: 'CPU0 CORES CORE0 CPPC MAX Freq'
+  col_3: 'CPU0 INFRASTRUCTURE Value THM'
+  col_4: 'CPU0 INFRASTRUCTURE Limit THM'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2' }
+    - { '达不到最大频率要求：Freq Eff <MAX Freq': 'check_point_1' }
+    - { '并且温度顶到限制：Value THM>Limit THM ': 'check_point_2' }
   '判断标准': '在单核测试场景（Cinebench单核）中，当EPP值是0时，CPU单核最大频率不能达到SPEC要求；
               CPU0 CORES CORE0 Freq Eff ＜ CPU0 CORES CORE0 CPPC MAX Freq（gap＞200Mhz）
               CPU0 CORES CORE0 CPPC EPP = 0
-              SystemdeckLog->CPU0 INFRASTRUCTURE2 Limit THM CORE
-              SystemdeckLog->CPU0 INFRASTRUCTURE2 Value THM CORE ≥ Tdie,lmt（应该是Tdie,tdp）'
+              CPU0 INFRASTRUCTURE2 Limit THM CORE
+              CPU0 INFRASTRUCTURE2 Value THM CORE ≥ Tdie,lmt（应该是Tdie,tdp）'
   '对比规则': '1. epp=0
               2. 达不到最大频率要求：Freq Eff <MAX Freq
               3. 并且温度顶到限制：Value THM>Limit THM ，且 Value THM >= Tdie，tdp
               （Tdie，tdp：Thermal Design Guide中获取的值）'
 
 check_rule_12:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+  col_2: 'CPU0 INFRASTRUCTURE2 Value STT APU'
+  col_3: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+  col_4: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+  col_5: 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+  col_4: 'CPU0 INFRASTRUCTURE2 Value THM GFX'
+  col_5: 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
+  col_8: 'CPU0 INFRASTRUCTURE2 Value THM SOC'
+  col_9: 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2 or check_point_3 or check_point_4 or check_point_5' }
+    - { 'CPU0 INFRASTRUCTURE2 Limit STT APU ≠0': 'check_point_1' }
+    - { 'CPU0 INFRASTRUCTURE2 Value STT APU ≥ CPU0 INFRASTRUCTURE2 Limit STT APU': 'check_point_2' }
+    - { 'CPU0 INFRASTRUCTURE2 Value THM CORE ＞ CPU0 INFRASTRUCTURE2 Limit THM CORE': 'check_point_3' }
+    - { 'CPU0 INFRASTRUCTURE2 Value THM GFX ＞ CPU0 INFRASTRUCTURE2 Limit THM GFX': 'check_point_4' }
+    - { 'CPU0 INFRASTRUCTURE2 Value THM SOC ＞ CPU0 INFRASTRUCTURE2 Limit THM SOC': 'check_point_5' }
   '判断标准': '支持STT方案的机台上：Pass vs fail机台的STT温度触发limit，相同sku机台如果有的顶到，表示这台机器的散热模组可能异常；同时还要确认测试时环温在25°左右
               CPU0 INFRASTRUCTURE2 Limit STT APU ≠0
               CPU0 INFRASTRUCTURE2 Value STT APU ≥ CPU0 INFRASTRUCTURE2 Limit STT APU
               CPU0 INFRASTRUCTURE2 Value THM CORE ＞ CPU0 INFRASTRUCTURE2 Limit THM CORE
               CPU0 INFRASTRUCTURE2 Value THM GFX ＞ CPU0 INFRASTRUCTURE2 Limit THM GFX
-              CPU0 INFRASTRUCTURE2 Value THM SOC ＞ CPU0 INFRASTRUCTURE2 Limit THM SOC 
-              CPU0 INFRASTRUCTURE Limit STT HS2
-              CPU0 INFRASTRUCTURE Value STT HS2'
+              CPU0 INFRASTRUCTURE2 Value THM SOC ＞ CPU0 INFRASTRUCTURE2 Limit THM SOC'
   '对比规则': '只要有一个就报温度'
 
 check_rule_13:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+  col_2: 'CPU0 INFRASTRUCTURE2 Value STT APU'
+  col_3: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+  col_4: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+  col_5: 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3' }
+    - { 'CPU0 INFRASTRUCTURE2 Limit STT APU ≠0': 'check_point_1' }
+    - { 'CPU0 INFRASTRUCTURE2 Value STT APU ≥ CPU0 INFRASTRUCTURE2 Limit STT APU': 'check_point_2' }
+    - { 'CPU0 INFRASTRUCTURE2 Value THM CORE ＜ CPU0 INFRASTRUCTURE2 Limit THM CORE': 'check_point_3' }
   '判断标准': '支持STT方案的机台上：Pass vs fail机台的STT温度触发limit，相同sku机台如果有的顶到，表示这台机器的散热模组可能异常；同时还要确认测试时环温在25°左右
               CPU0 INFRASTRUCTURE2 Limit STT APU ≠0
               CPU0 INFRASTRUCTURE2 Value STT APU ≥ CPU0 INFRASTRUCTURE2 Limit STT APU
               CPU0 INFRASTRUCTURE2 Value THM CORE ＜ CPU0 INFRASTRUCTURE2 Limit THM CORE
               CPU0 INFRASTRUCTURE2 Value THM GFX＜ CPU0 INFRASTRUCTURE2 Limit THM GFX——做对比图形展示不做判断
-              CPU0 INFRASTRUCTURE2 Value THM SOC ＜ CPU0 INFRASTRUCTURE2 Limit THM SOC ——做对比图形展示不做判断
-              CPU0 INFRASTRUCTURE Limit STT HS2——无需判断
-              CPU0 INFRASTRUCTURE Value STT HS2——无需判断'
+              CPU0 INFRASTRUCTURE2 Value THM SOC ＜ CPU0 INFRASTRUCTURE2 Limit THM SOC ——做对比图形展示不做判断'
+
   '对比规则': '重复上一个问题
               fail机器log：平均值比对
               1. 查看5个条件是否都满足
@@ -162,8 +247,15 @@ check_rule_13:
               判断结束后，需要对比pass.log，展示所有数据'
 
 check_rule_14:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
+  col_2: 'CPU0 INFRASTRUCTURE2 Value STT APU'
+  col_3: 'CPU0 INFRASTRUCTURE2 Value THM CORE '
+  col_4: 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+  logic:
+    - { '条件关系': 'check_point_1 and check_point_2 and check_point_3' }
+    - { 'CPU0 INFRASTRUCTURE2 Limit STT APU = 0': 'check_point_1' }
+    - { 'CPU0 INFRASTRUCTURE2 Value STT APU = 0': 'check_point_2' }
+    - { 'CPU0 INFRASTRUCTURE2 Value THM CORE ＞ CPU0 INFRASTRUCTURE2 Limit THM CORE': 'check_point_3' }
   '判断标准': '支持STAPM方案的机台上：Pass vs fail机台的STT温度触发limit，相同sku机台如果有的顶到，表示这台机器的散热模组可能异常；同时还要确认测试时环温在25°左右
               CPU0 INFRASTRUCTURE2 Limit STT APU = 0
               CPU0 INFRASTRUCTURE2 Value STT APU = 0
@@ -179,8 +271,14 @@ check_rule_14:
               判断结束后，需要对比pass.log，展示所有数据'
 
 check_rule_15:
-  col_1: ''
-  col_2: ''
+  col_1: 'CPU0 INFRASTRUCTURE Limit STAPM'
+  col_2: 'CPU0 INFRASTRUCTURE Limit PPT FAST'
+  col_2: 'CPU0 INFRASTRUCTURE Limit PPT SLOW'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2 or check_point_3' }
+    - { 'CPU0 INFRASTRUCTURE Limit STAPM: pass fail 对比, 不相等': 'check_point_1' }
+    - { 'CPU0 INFRASTRUCTURE Limit PPT FAST: pass fail 对比, 不相等': 'check_point_2' }
+    - { 'CPU0 INFRASTRUCTURE Limit PPT SLOW: pass fail 对比, 不相等': 'check_point_3' }
   '判断标准': '在支持AI chip的项目上，如果在平衡或智能模式，对比pass/fail机台的SPL/SPPT/FPPT等是否一致
               CPU0 INFRASTRUCTURE Limit STAPM
               CPU0 INFRASTRUCTURE Limit PPT FAST
@@ -193,8 +291,12 @@ check_rule_15:
               （以pass机器的平均值为标准，计算相对误差2%之内）'
 
 check_rule_16:
-  col_1: ''
-  col_2: ''
+  col_1: 'Controller0-ChannelA-DIMM1'
+  col_2: 'Controller0-ChannelB-DIMM1'
+  logic:
+    - { '条件关系': 'check_point_1 or check_point_2' }
+    - { '对比内存大小 size': 'check_point_1' }
+    - { '对比单双通道 内存条行数': 'check_point_2' }
   '判断标准': '对比pass/fail的内存信息；
               看是否有单双通道/厂商差异'
   '对比规则': '对比pass和fail的log日志

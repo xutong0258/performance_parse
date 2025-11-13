@@ -214,9 +214,7 @@ def amd_check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
                     'CPU0 MISC Slow PPT Time Constant',
                     'CPU0 INFRASTRUCTURE Limit STAPM',
                     'CPU0 INFRASTRUCTURE Limit PPT FAST',
-                    'CPU0 INFRASTRUCTURE Limit PPT SLOW',
-                    'CPU0 MISC STAPM Time Constant',
-                    'CPU0 MISC Slow PPT Time Constant',]
+                    'CPU0 INFRASTRUCTURE Limit PPT SLOW',]
 
     for col in content_list:
         logger.info(f'col:{col}')
