@@ -1,4 +1,4 @@
-check_rule_1: 
+gpu_rule_1:
   col_1: '1:GPC Clock (MHz)'
   col_2: '1:TGP (W)'
   logic:
@@ -9,8 +9,12 @@ check_rule_1:
   '对比规则': '1:Memory Clock (MHz)基本上在最高 fail与pass对比
               计算1:GPC Clock (MHz)、1:TGP (W)非N/A部分的依次与Power-Package Power(Watts)取相关系数
               有一个偏差超过3%'
+  'Root cause': 'GPU sample difference'
+  'Component': 'EE'
+  'Solution': 'Please EE check ,if the gap is acceptable by Sample difference'
+  '修复及验证': 'change to pass EPP value to verify, furhter check PPM version'
 
-check_rule_2: 
+gpu_rule_2:
   col_1: '1:GPC Clock (MHz)'
   col_2: '1:GPC Slowdown Factor (%)'
   logic:
@@ -21,8 +25,12 @@ check_rule_2:
               1:Memory Clock (MHz)
               1:GPC Slowdown Factor (%)=25'
   '对比规则': '对比1:GPC Clock (MHz)=210的列中取出1:Memory Clock (MHz)的值(这个值的作用是什么？)  并判断1:GPC Slowdown Factor (%)列是否为25%'
+  'Root cause': 'GPU prochot'
+  'Component': 'EC'
+  'Solution': 'EC log first check the prochot reason'
+  '修复及验证': ''
 
-check_rule_3:
+gpu_rule_3:
   col_1: '1:GPC Clock (MHz)'
   col_2: '1:GPU Utilization (%)'
   logic:
@@ -33,15 +41,23 @@ check_rule_3:
               1:GPU Utilization (%) 小于100
               driver 本参数是结果：该driver版本号有问题'
   '对比规则': '1:GPC Clock (MHz) 数值恒定 的情况下  取1:GPU Utilization (%) 小于100的列   并查看driver 的值'
+  'Root cause': 'NV Graphic driver'
+  'Component': 'NV driver'
+  'Solution': 'need confirm if current driver lock CPU clk'
+  '修复及验证': ''
 
-check_rule_4:
+gpu_rule_4:
   col_1: '1:Memory Clock (MHz)'
   logic:
     - { '1:Memory Clock (MHz) fail pass 比较': 'check_point_1' }
   '判断标准': '1:Memory Clock (MHz)大于 Memory Base Clock (MHz)（pass和fail比较）'
   '对比规则': '1:Memory Clock (MHz)稳定阶段取平均值与 Memory Clock比较   通过比较fail pass'
+  'Root cause': 'GPU OC related'
+  'Component': 'BIOS'
+  'Solution': 'Retest with the same OC settings'
+  '修复及验证': ''
 
-check_rule_5:
+gpu_rule_5:
   col_1: ''
   col_2: ''
   '判断标准': '从工单系统标题提取performance、banlance、quit关键词
@@ -63,7 +79,12 @@ check_rule_5:
               对比是否一致'
   '对比规则': 'AC Max Rated TGP: 175000
               Fn+Q spec文档 对比不同模式下的值比较'
-check_rule_6:
+  'Root cause': 'Max TGP'
+  'Component': 'BIOS'
+  'Solution': 'Please BIOS check if max TGP configuration meet Fn+Q spec'
+  '修复及验证': ''
+
+gpu_rule_6:
   col_1: '1:NVVDD Power (W)'
   col_2: '1:TGP (W)'
   col_3: '1:FBVDD Power (W)'
@@ -74,8 +95,12 @@ check_rule_6:
     - { '1:FBVDD Power (W) pass fail 比对, delta: 0.1': 'check_point_3' }
   '判断标准': '只有1:NVVDD Power (W)明显差异'
   '对比规则': '1:NVVDD取平均值与pass的比较'
+  'Root cause': '1:NVVDD Power (W) abnormal'
+  'Component': 'EE'
+  'Solution': ''
+  '修复及验证': ''
 
-check_rule_7:
+gpu_rule_7:
   col_1: '1:NVVDD Power (W)'
   col_2: '1:TGP (W)'
   col_3: '1:FBVDD Power (W)'
@@ -86,8 +111,12 @@ check_rule_7:
     - { '1:FBVDD Power (W): pass fail 比对, delta: 0.1': 'check_point_3' }
   '判断标准': '只有1:FBVDD Power (W)明显差异'
   '对比规则': '1:TGP (W)取平均值  与pass对比'
+  'Root cause': '1:FBVDD Power (W) abnorma'
+  'Component': 'EE'
+  'Solution': ''
+  '修复及验证': ''
 
-check_rule_8:
+gpu_rule_8:
   col_1: '1:Capping Reason'
   col_2: 'Environment Sensor Temp'
   logic:
@@ -96,8 +125,12 @@ check_rule_8:
               Environment Sensor Temp pass和fail对比，差值≤1度'
   '对比规则': 'capping reason: thml/thml pwr的前提下
               对比pass与fail的sensor_log 中envriorment sensor temp'
+  'Root cause': 'enviroment issue'
+  'Component': 'Thermal'
+  'Solution': ''
+  '修复及验证': ''
 
-check_rule_9:
+gpu_rule_9:
   col_1: '1:t_gpu'
   col_2: 'GPU Sensor Temp'
   col_3: '1:t_gpu'
@@ -110,8 +143,12 @@ check_rule_9:
              2. 对比pass log当中，t_gpu/GPU Sensor Temp，都<86，判定为gpu thermal module；否则退出此规则判断'
   '对比规则': 'capping reason: thml/thml pwr 前提下,（-log出问题了，capping reason这一栏并没有抓到。） t_gpu的平均值大于87C
             或sensor_log 中GPU Sensor Temp的平均值是否大于87  Environment Sensor Temp的波动率是否超过3%'
+  'Root cause': 'thermal module'
+  'Component': 'Please themal check module differrence'
+  'Solution': ''
+  '修复及验证': ''
 
-check_rule_10:
+gpu_rule_10:
   col_1: 'Power Supply Mode'
   col_2: '1:D-Notifier Limit'
   logic:
@@ -123,8 +160,12 @@ check_rule_10:
   '对比规则': '查看AC/DC中是否显示AC （d-notity中AC_DC）,
               判断值是否在D2~D5
               D-notify当前状态，只有DC状态下才会生效，AC下显是D1 -unilimitted'
+  'Root cause': 'D-notifier'
+  'Component': 'EC'
+  'Solution': 'Please EC check D-notifer first'
+  '修复及验证': ''
 
-check_rule_11:
+gpu_rule_11:
   col_1: '1:PPAB State'
   col_2: '1:pwr_tgp'
   col_3: '1:Capping Reason'
@@ -149,15 +190,23 @@ check_rule_11:
               CPU TDP (W) 在1:TGP (W)动作相反
               判断tgp波动是否超过3%，超过则PPAB有问题
               以上都在loading阶段取数据'
+  'Root cause': 'PPAB issue'
+  'Component': 'Driver'
+  'Solution': 'Need driver confirm if current PPAB behvior is normal'
+  '修复及验证': ''
 
-check_rule_12:
+gpu_rule_12:
   col_1: '1:GPC Clock (MHz)'
   logic:
     - { 'loading的过程中1:GPC Slowdown Factor (%)>25%, <100%': 'check_point_1' }
   '判断标准': 'loading的过程中1:GPC Slowdown Factor (%)>25%, <100%'
-  '对比规则': '把1:GPC Slowdown Factor (%)的在25%-100%之间的部分取出     是有问题的 '
+  '对比规则': '把1:GPC Slowdown Factor (%)的在25%-100%之间的部分取出     是有问题的'
+  'Root cause': '1:GPC Slowdown Factor (%)'
+  'Component': 'Thermal'
+  'Solution': 'further thermal protect behavior'
+  '修复及验证': ''
 
-check_rule_13:
+gpu_rule_13:
   col_1: '1:TGP (W)'
   col_2: '1:FBVDD Power (W)'
   col_3: '1:NVVDD Power (W)'
@@ -173,14 +222,22 @@ check_rule_13:
               vbios版本不一致'
   '对比规则': '1:TGP (W)与1:FBVDD Power (W)  与1:NVVDD Power (W)与1:NVVDD Voltage (uV)取平均值与pass的比较
               都低的情况下 查看1:Capping Reason 是否为   vrel'
+  'Root cause': 'VBIOS'
+  'Component': 'EE'
+  'Solution': 'please EE check VBIOS version'
+  '修复及验证': ''
 
-check_rule_14:
+gpu_rule_14:
   col_1: 'VRAM Strap'
   col_2: ''
   '判断标准': '对比vram厂商，不同的vram厂商表现有差'
   '对比规则': '查看VRAM_Strap字段  取值  pass fail对比'
+  'Root cause': 'Vram vendor'
+  'Component': 'EE'
+  'Solution': 'Please EE check Vram vendor difference'
+  '修复及验证': ''
 
-check_rule_15:
+gpu_rule_15:
   col_1: '1:WM2 Platform Enabled'
   col_2: '1:WM2 Driver Enabled'
   logic:
@@ -196,9 +253,17 @@ check_rule_15:
               whisper mode是否是on
               WM2 platform enabled  不同模式下
               性能模式下，WM2 platform enabled、WM2 Driver Enabled如果是打开状态，会导致GPU性能低'
+  'Root cause': 'Whisper mode'
+  'Component': 'Driver'
+  'Solution': 'check why non-quiet AC mode, Whisper mode is on'
+  '修复及验证': ''
 
-check_rule_16:
+gpu_rule_16:
   col_1: 'Controller0-ChannelA-DIMM1'
   col_2: 'Controller0-ChannelB-DIMM1'
   '判断标准': 'CPUZ log>4 channle>double channel>single channel'
   '对比规则': '从AMDzlog中取  Memory info：channle A  channle B   ....channle x   fail与pass的对比'
+  'Root cause': '从AMDZlog中取'
+  'Component': 'EE'
+  'Solution': ''
+  '修复及验证': ''

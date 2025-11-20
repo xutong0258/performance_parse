@@ -7,6 +7,6 @@ from base.read_csv_with_pandas import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    parent_dir = r'D:\0_intelcpu_case_1024\cpu_ROP_rule6_rule7'
+    parent_dir = r'D:\0_intelcpu_case_1112\cpu_ROP_rule6_rule7'
     check_rule_8(parent_dir=parent_dir)
     pass

@@ -17,7 +17,7 @@ from base.fileOP import *
 path_dir = os.path.dirname(__file__)
 
 file = r'GPU_parameters.yaml'
-file_path = os.path.join(path_dir, file)
+file_path = os.path.join(CONFIG_PATH, file)
 
 GPU_parameters = read_file_dict(file_path)
 # logger.info(f'GPU_parameters: {GPU_parameters}')

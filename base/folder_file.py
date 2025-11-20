@@ -2,8 +2,21 @@ import shutil
 import os
 from base.fileOP import *
 from base.logger import *
+from base.contants import *
 
 BASEDIR = os.path.dirname(__file__)
+
+def file_walk_delete_file(file_format='.csv'):
+    # 要遍历的文件夹路径
+    folder_path = ROOT_DIR
+    for root, dirs, files in os.walk(folder_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            # print(file_path)
+            if file_format in file_path:
+                os.remove(file_path)
+                logger.info(f"del: {file_path}")
+    return
 
 def delete_folder(folder_path):
     try:
@@ -142,6 +155,27 @@ def replace_file():
         cmd_excute(command)
     return
 
+def get_file_path_by_dir(folder_path, target_file_name):
+    # 要遍历的文件路径
+    file_path = None
+    target_file_path = None
+    for root, dirs, files in os.walk(folder_path):
+        for dir in dirs:
+            path = os.path.join(root, dir)
+            if '.' in path and '.git' not in path and '.idea' not in path:
+                # print(f"del: {path}")
+                pass
+
+        for file in files:
+            file_path = os.path.join(root, file)
+            # print(file_path)
+            if target_file_name.lower() in file_path.lower() :
+                # logger.info(f"target file: {file_path}")
+                target_file_path = file_path
+                break
+    logger.info(f"target_file_path: {target_file_path}")
+    return target_file_path
+
 def get_latest_file_path_by_dir(folder_path, target_file):
     # 要遍历的文件路径
     target_file_path = None
@@ -174,6 +208,4 @@ def get_latest_file_path_by_dir(folder_path, target_file):
 # 使用示例
 if __name__ == "__main__":
     # 要删除的文件夹路径
-    folder_path = r'D:\hello\DumpFile\ApplicationDumps'
-    target_file = '.dmp'
-    get_latest_file_path_by_dir(folder_path, target_file)
+    file_walk_delete_file(file_format='.csv')

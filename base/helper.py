@@ -8,7 +8,6 @@ import logging
 import time
 import datetime
 import re
-import cv2
 import subprocess
 import pandas as pd
 import numpy as np
@@ -319,7 +318,7 @@ def is_two_data_delta_larger_than_threshold(data_fail, data_pass, threshold):
     else:
         is_delta_larger_than_stand = True
         return is_delta_larger_than_stand
-    logger.info(f'delta_ratio:{delta_ratio}')
+    # logger.info(f'delta_ratio:{delta_ratio}')
     if delta_ratio > threshold:
         is_delta_larger_than_stand = True
     return is_delta_larger_than_stand

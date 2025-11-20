@@ -18,18 +18,19 @@ from base.common import *
 from base.read_csv_with_pandas import *
 from base.read_csv_with_csv import *
 
+file = os.path.join(CONFIG_PATH, 'amd_check_rule.yaml')
+amd_rule_dict = read_file_dict(file)
 
 def amd_check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_1')
-
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_1',
-        'Root cause': 'Thermal prochot',
-        'Component': 'Thermal',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    col_dict = amd_rule_dict.get('check_rule_1', None)
+    check_result_dict['rule_name'] = 'check_rule_1'
+    check_result_dict['Root cause'] = col_dict.get('Root cause')
+    check_result_dict['Component'] = col_dict.get('Component')
+    check_result_dict['Solution'] = col_dict.get('Solution')
+    check_result_dict['修复及验证'] = col_dict.get('修复及验证')
 
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
@@ -37,10 +38,25 @@ def amd_check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
         
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
 
-    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail.get('CPU0 CORES CORE0 Freq Eff', None)
-    CPU0_INFRASTRUCTURE2_Value_THM_CORE_d = data_frame_fail.get('CPU0 INFRASTRUCTURE2 Value THM CORE', None)
-    CPU0_MISC_PROCHOT_d = data_frame_fail.get('CPU0 MISC PROCHOT', None)
-    CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d = data_frame_fail.get('CPU0 INFRASTRUCTURE2 Limit THM CORE', None)
+    col_dict = amd_rule_dict.get('check_rule_1', None)
+    col_1 = 'CPU0 CORES CORE0 Freq Eff'
+    col_1 = col_dict.get('col_1', col_1)
+
+    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail.get(col_1, None)
+
+    col_2 = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+    col_2 = col_dict.get('col_2', col_2)
+
+    CPU0_INFRASTRUCTURE2_Value_THM_CORE_d = data_frame_fail.get(col_2, None)
+
+    col_3 = 'CPU0 MISC PROCHOT'
+    col_3 = col_dict.get('col_3', col_3)
+
+    CPU0_MISC_PROCHOT_d = data_frame_fail.get(col_3, None)
+
+    col_4 = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    col_4 = col_dict.get('col_4', col_4)
+    CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d = data_frame_fail.get(col_4, None)
 
     if CPU0_CORES_CORE0_Freq_Eff_d is None or CPU0_INFRASTRUCTURE2_Value_THM_CORE_d is None or CPU0_MISC_PROCHOT_d is None or CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d is None:
         return return_dict
@@ -66,32 +82,45 @@ def amd_check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
         return_dict = check_result_dict
     logger.info(f'return_dict:{return_dict}')
 
-    # result_yaml_file = 'result.yaml'
-    # result_yaml_file = os.path.join(parent_dir, result_yaml_file)
-    #
-    # dump_file(result_yaml_file, return_dict)
     return return_dict
 
 def amd_check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_2')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_2',
-        'Root cause': 'Charge AC prochot',
-        'Component': 'EC',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    col_dict = amd_rule_dict.get('check_rule_2', None)
+    check_result_dict['rule_name'] = 'check_rule_2'
+    check_result_dict['Root cause'] = col_dict.get('Root cause')
+    check_result_dict['Component'] = col_dict.get('Component')
+    check_result_dict['Solution'] = col_dict.get('Solution')
+    check_result_dict['修复及验证'] = col_dict.get('修复及验证')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
         
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
 
-    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail.get('CPU0 CORES CORE0 Freq Eff', None)
-    CPU0_INFRASTRUCTURE2_Value_THM_CORE_d = data_frame_fail.get('CPU0 INFRASTRUCTURE2 Value THM CORE', None)
-    CPU0_MISC_PROCHOT_d = data_frame_fail.get('CPU0 MISC PROCHOT', None)
-    CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d = data_frame_fail.get('CPU0 INFRASTRUCTURE2 Limit THM CORE', None)
+    col_dict = amd_rule_dict.get('check_rule_2', None)
+    col_1 = 'CPU0 CORES CORE0 Freq Eff'
+    col_1 = col_dict.get('col_1', col_1)
+
+    CPU0_CORES_CORE0_Freq_Eff_d = data_frame_fail.get(col_1, None)
+
+    col_2 = 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+    col_2 = col_dict.get('col_2', col_2)
+
+    CPU0_INFRASTRUCTURE2_Value_THM_CORE_d = data_frame_fail.get(col_2, None)
+
+    col_3 = 'CPU0 MISC PROCHOT'
+    col_3 = col_dict.get('col_3', col_3)
+
+    CPU0_MISC_PROCHOT_d = data_frame_fail.get(col_3, None)
+
+    col_4 = 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+    col_4 = col_dict.get('col_4', col_4)
+
+    CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d = data_frame_fail.get(col_4, None)
 
     if CPU0_CORES_CORE0_Freq_Eff_d is None or CPU0_INFRASTRUCTURE2_Value_THM_CORE_d is None or CPU0_MISC_PROCHOT_d is None or CPU0_INFRASTRUCTURE2_Limit_THM_CORE_d is None:
         return return_dict
@@ -119,6 +148,16 @@ def amd_check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
 
 def amd_check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'amd_check_rule_3')
+
+    return_dict = None
+    check_result_dict = {}
+    col_dict = amd_rule_dict.get('check_rule_3', None)
+    check_result_dict['rule_name'] = 'check_rule_3'
+    check_result_dict['Root cause'] = col_dict.get('Root cause')
+    check_result_dict['Component'] = col_dict.get('Component')
+    check_result_dict['Solution'] = col_dict.get('Solution')
+    check_result_dict['修复及验证'] = col_dict.get('修复及验证')
+
     return_dict = None
     check_result_dict = {
         'rule name': 'check_rule_3',
@@ -134,9 +173,12 @@ def amd_check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     if os.path.isdir(pass_dir) == False:
         return return_dict
 
-    col = 'CPU0 CORES CORE0 Freq Eff'
-    fail_col_data, fail_file_data = get_amd_file_col_data_by_dir(fail_dir, col)
-    pass_col_data, pass_file_data = get_amd_file_col_data_by_dir(pass_dir, col)
+    col_dict = amd_rule_dict.get('check_rule_3', None)
+    col_1 = 'CPU0 CORES CORE0 Freq Eff'
+    col_1 = col_dict.get('col_1', col_1)
+
+    fail_col_data, fail_file_data = get_amd_file_col_data_by_dir(fail_dir, col_1)
+    pass_col_data, pass_file_data = get_amd_file_col_data_by_dir(pass_dir, col_1)
 
     average_fail = get_list_average(fail_col_data, False)
     logger.info(f"average_fail: {average_fail}")

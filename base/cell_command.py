@@ -21,22 +21,27 @@ from base.read_csv_with_csv import *
 
 path_dir = os.path.dirname(__file__)
 
-file = os.path.join(path_dir, 'intel_check_rule.yaml')
+file = os.path.join(CONFIG_PATH, 'intel_check_rule.yaml')
 intel_rule_dict = read_file_dict(file)
+# logger.info(f'intel_rule_dict={intel_rule_dict}')
 
-file = os.path.join(path_dir, 'gpu_check_rule.yaml')
+file = os.path.join(CONFIG_PATH, 'gpu_check_rule.yaml')
 gpu_rule_dict = read_file_dict(file)
 
 def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_1')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_1',
-        'Root cause': 'CPU sample difference',
-        'Component': 'EE',
-        'Solution': 'Please EE confirm, if the gap is acceptable by Sample difference',
-        '修复及验证': '硬件不需要修复，更换硬件',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get('check_rule_1', None)
+
+    check_result_dict['rule name'] = 'check_rule_1'
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -53,8 +58,7 @@ def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
 
     for item in col_list:
         col_2 = 'Power-Package Power(Watts)'
-        col_dict = intel_rule_dict.get('check_rule_1', None)
-        col_2 = col_dict.get('col_2', col_2)
+        col_2 = rule_dict.get('col_2', col_2)
 
         logger.info(f"col_2:{col_2}")
         pearson_corr = df[item].corr(df[col_2], method='pearson')
@@ -69,13 +73,17 @@ def check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
 def check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_2')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_2',
-        'Root cause': 'Power prochot',
-        'Component': 'Power',
-        'Solution': 'Please power check prochot reason further',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get('check_rule_2', None)
+
+    check_result_dict['rule name'] = 'check_rule_2'
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -100,8 +108,7 @@ def check_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
             break
 
     col_2 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_2', None)
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     
     if lower_index is not None:
         check_list = []
@@ -126,20 +133,23 @@ Processor_Base_Core_Frequency = 2400
 def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'check_rule_3')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_3',
-        'Root cause': 'Thermal prochot',
-        'Component': 'Thermal',
-        'Solution': 'Please power Thermal prochot reason further.',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get('check_rule_3', None)
+
+    check_result_dict['rule name'] = 'check_rule_3'
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
     col_1 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_3', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
 
     target_index_list = get_list_target_text_index_list(fail_col_data, 'prochot')
@@ -158,14 +168,13 @@ def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     # logger.info(f"col_list: {col_list}")
 
     col_2 = 'Miscellaneous-MSR Package Temperature(Degree C)'
-    # col_dict = intel_rule_dict.get('check_rule_3', None)
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
 
     col_3 = 'Miscellaneous-TJMAX Temperature(Degree C)'
-    col_3 = col_dict.get('col_3', col_3)
+    col_3 = rule_dict.get('col_3', col_3)
 
     col_4 = 'Miscellaneous-TCC Offset Temperature(Degree C)'
-    col_4 = col_dict.get('col_4', col_4)
+    col_4 = rule_dict.get('col_4', col_4)
 
     col_2_list = df.get(col_2, None)
 
@@ -206,14 +215,19 @@ def check_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
+    logger.info(f'check_rule_4')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_4',
-        'Root cause': 'Thermal prochot',
-        'Component': 'Thermal',
-        'Solution': 'Please power Thermal prochot reason further.',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get('check_rule_4', None)
+
+    check_result_dict['rule name'] = 'check_rule_4'
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -239,14 +253,21 @@ def check_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
+    rule_name = f'check_rule_5'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_5',
-        'Root cause': 'Max Frequency Wrong',
-        'Component': 'BIOS',
-        'Solution': 'further check Intel code base',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get('check_rule_5', None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -303,14 +324,21 @@ def check_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
+    rule_name = f'check_rule_6'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_6',
-        'Root cause': 'Rest power higher',
-        'Component': 'Power',
-        'Solution': 'check any other function behvior calls CPU power during benchmark',
-        '修复及验证': 'change Tcc offset value to pass, verify',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get('check_rule_6', None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -319,8 +347,7 @@ def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
         return return_dict
 
     col_1 = 'Power-Package Power(Watts)'
-    col_dict = intel_rule_dict.get('check_rule_6', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
     pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_1)
@@ -343,8 +370,7 @@ def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
     #
     # Power-Rest of Package Power
     col_2 = 'Power-Rest of Package Power(Watts)'
-    col_dict = intel_rule_dict.get('check_rule_6', None)
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_2)
     pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
 
@@ -366,14 +392,21 @@ def check_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
+    rule_name = f'check_rule_7'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_7',
-        'Root cause': 'Idle power higher',
-        'Component': 'EE',
-        'Solution': 'PHM logs check idle power high reason',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -382,8 +415,7 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
         return return_dict
 
     col_1 = 'Power-Package Power(Watts)'
-    col_dict = intel_rule_dict.get('check_rule_7', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
     pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_1)
@@ -406,7 +438,7 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     #
     #
     col_2 = 'Power-MSR EWMA Package Power(Watts)'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_2)
     pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
 
@@ -427,14 +459,21 @@ def check_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
+    rule_name = f'check_rule_8'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_8',
-        'Root cause': 'GT power higher',
-        'Component': '',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -443,8 +482,7 @@ def check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
         return return_dict
 
     col_1 = 'Power-Package Power(Watts)'
-    col_dict = intel_rule_dict.get('check_rule_8', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col_1)
     pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_1)
 
@@ -460,13 +498,21 @@ def check_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
-    check_result_dict = {
-        'rule name': 'check_rule_9',
-        'Root cause': 'VR thermal alert-thermal',
-        'Component': 'Thermal',
-        'Solution': 'Please check if VR temperature over spec during benchmark',
-        '修复及验证': '',
-    }
+    rule_name = f'check_rule_9'
+    logger.info(f'{rule_name}')
+    return_dict = None
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -475,8 +521,7 @@ def check_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
 
     df = read_csv_with_pandas(fail_tat_file)
     col_1 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_9', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     logger.info(f"col_1: {col_1}")
 
@@ -495,14 +540,21 @@ def check_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
+    rule_name = f'check_rule_10'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_10',
-        'Root cause': 'VR TDC Clip-Power',
-        'Component': 'Power',
-        'Solution': 'Please power check  if VR TDC meet sepc',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -510,8 +562,7 @@ def check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
     fail_tat_file = get_tat_file_with_dir(fail_dir)
     df = read_csv_with_pandas(fail_tat_file)
     col_1 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_10', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     data_list = df.get(col_1)
 
@@ -528,17 +579,25 @@ def check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
 
 
 def check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
+    rule_name = f'check_rule_11'
+    logger.info(f'{rule_name}')
+    return_dict = None
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     # PL1_value and PL2_value come from spec
     PL1_value = 100
     PL2_value = 200
-    return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_11',
-        'Root cause': 'Tau abnormal',
-        'Component': 'Thermal',
-        'Solution': '',
-        '修复及验证': '',
-    }
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -549,15 +608,14 @@ def check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
     col_1 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_11', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     col_data = get_csv_file_col_data_by_file(fail_tat_file, col_1)
     count = get_list_text_count(col_data, text='PL1')
     logger.info(f"count: {count}")
     if count:
         col_2 = 'Power-Package Power(Watts)'
-        col_2 = col_dict.get('col_2', col_2)
+        col_2 = rule_dict.get('col_2', col_2)
         logger.info(f"col_2: {col_2}")
 
         head_list = get_intel_file_head_list_by_dir(fail_dir)
@@ -589,16 +647,20 @@ def check_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f"check_rule_12")
-
+    rule_name = f'check_rule_12'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_12',
-        'Root cause': 'TCC offset abnormal',
-        'Component': 'Thermal',
-        'Solution': '',
-        '修复及验证': 'change Tcc offset value to pass, verify',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
 
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
@@ -610,15 +672,14 @@ def check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
     fail_tat_file = get_tat_file_with_dir(fail_dir)
 
     col_1 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_12', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     col_data = get_csv_file_col_data_by_file(fail_tat_file, col_1)
     count = get_list_text_count(col_data, text='Thermal Event')
     logger.info(f"count: {count}")
     if count:
         col_2 = 'Miscellaneous-TCC Offset Temperature(Degree C)'
-        col_2 = col_dict.get('col_2', col_2)
+        col_2 = rule_dict.get('col_2', col_2)
 
         fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_2)
         pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
@@ -641,15 +702,21 @@ def check_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_13')
+    rule_name = f'check_rule_13'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_13',
-        'Root cause': 'PL1/PL2 abnormal',
-        'Component': 'Thermal',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     detail_list = []
 
     if parent_dir is not None:
@@ -660,8 +727,7 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
         return return_dict
 
     col_1 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_13', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
 
     count = get_list_text_count(fail_col_data, 'Thermal Event')
@@ -675,20 +741,16 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     col_list = []
 
     col_2 = 'Turbo Parameters-MMIO Power Limit_1 Power(Watts)'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     col_list.append(col_2)
 
     col_3 = 'Turbo Parameters-MMIO Power Limit_2 Power(Watts)'
-    col_3 = col_dict.get('col_3', col_3)
+    col_3 = rule_dict.get('col_3', col_3)
     col_list.append(col_3)
 
     col_4 = 'Turbo Parameters-MSR Power Limit_4 Power(Watts)'
-    col_4 = col_dict.get('col_4', col_4)
+    col_4 = rule_dict.get('col_4', col_4)
     col_list.append(col_4)
-
-    # col_list = ['Turbo Parameters-MMIO Power Limit_1 Power(Watts)',
-    #             'Turbo Parameters-MMIO Power Limit_2 Power(Watts)',
-    #             'Turbo Parameters-MSR Power Limit_4 Power(Watts)']
 
     for col in col_list:
         fail_col_data = fail_file_data.get(col, None)
@@ -718,15 +780,21 @@ def check_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_14')
+    rule_name = f'check_rule_14'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_14',
-        'Root cause': 'Al Chip issue',
-        'Component': 'EE',
-        'Solution': 'Please EE confirm AI FW further',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -748,15 +816,21 @@ def check_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_15')
+    rule_name = f'check_rule_15'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_15',
-        'Root cause': 'Enviroment issue',
-        'Component': 'Thermal',
-        'Solution': 'Please retest with the same Enviorment',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -773,8 +847,7 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
     df_fail = read_csv_with_pandas(fail_tat_file)
 
     col_1 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_15', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     head_list = get_intel_file_head_list_by_dir(fail_dir)
@@ -800,7 +873,7 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
         df_fail = read_csv_with_pandas(fail_PerformanceLog_file)
 
         col_2 = 'Environment Sensor Temp'
-        col_2 = col_dict.get('col_2', col_2)
+        col_2 = rule_dict.get('col_2', col_2)
 
         col_data = df_pass.get(col_2, None)
         # logger.info(f'col_data:{col_data}')
@@ -821,15 +894,21 @@ def check_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_16')
+    rule_name = f'check_rule_16'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_16',
-        'Root cause': 'Enviroment issue',
-        'Component': 'Thermal',
-        'Solution': 'Please retest with the same Enviorment',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -838,8 +917,7 @@ def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
         return return_dict
 
     col_1 = 'Miscellaneous-MSR Package Temperature(Degree C)'
-    col_dict = intel_rule_dict.get('check_rule_16', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col_1)
     pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_1)
@@ -854,7 +932,7 @@ def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
             return return_dict
 
     col_2 = 'Miscellaneous-MMO Package Temperature(Degree C)'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     fail_col_data = get_intel_tat_file_col_data_by_dir(fail_dir, col_2)
     pass_col_data = get_intel_tat_file_col_data_by_dir(pass_dir, col_2)
 
@@ -869,15 +947,21 @@ def check_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_17')
+    rule_name = f'check_rule_17'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_17',
-        'Root cause': 'EPP value abnormal',
-        'Component': 'OS',
-        'Solution': '',
-        '修复及验证': 'change to pass EPP value to verify, furhter check PPM version',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -892,8 +976,7 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
     df_pass = read_csv_with_pandas(pass_tat_file)
 
     col_1 = 'HWP-pCore OSPM Requested Energy Performance Preference'
-    col_dict = intel_rule_dict.get('check_rule_17', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     data_list = df_fail.get(col_1, None)
     if data_list is None:
@@ -907,7 +990,7 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
         # return return_dict
 
     col_2 = 'HWP-eCore OSPM Requested Energy Performance Preference'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     logger.info(f'col_2:{col_2}')
 
     data_list = df_fail.get(col_2, None)
@@ -920,7 +1003,7 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
 
     # average part
     col_1 = 'HWP-pCore OSPM Requested Energy Performance Preference'
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
 
     fail_data_list = df_fail.get(col_1, None)
     pass_data_list = df_pass.get(col_1, None)
@@ -933,10 +1016,10 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
     if fail_average != pass_average:
         return_dict = check_result_dict
         logger.info(return_dict)
-        # return return_dict
+        return return_dict
 
     col_2 = 'HWP-eCore OSPM Requested Energy Performance Preference'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
 
     fail_data_list = df_fail.get(col_2, None)
     pass_data_list = df_pass.get(col_2, None)
@@ -946,20 +1029,26 @@ def check_rule_17(parent_dir=None, fail_dir=None, pass_dir=None):
     if fail_average != pass_average:
         return_dict = check_result_dict
         logger.info(return_dict)
-        # return return_dict
+        return return_dict
 
     return return_dict
 
 def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'check_rule_18')
+    rule_name = f'check_rule_18'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'check_rule_18',
-        'Root cause': 'VR_TDC',
-        'Component': 'power',
-        'Solution': 'please reteset with temperature 0C envrioment',
-        '修复及验证': '0度环境下复测',
-    }
+    check_result_dict = {}
+    rule_dict = intel_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -969,8 +1058,7 @@ def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
         return None
 
     col_1 = 'Turbo Parameters-IA Clip Reason'
-    col_dict = intel_rule_dict.get('check_rule_18', None)
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     fail_col_data, fail_file_data = get_intel_tat_file_col_data_by_dir_ex(fail_dir, col_1)
@@ -985,15 +1073,21 @@ def check_rule_18(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_1')
+    rule_name = f'gpu_rule_1'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_1',
-        'Root cause': 'GPU sample difference',
-        'Component': 'EE',
-        'Solution': 'Please EE check ,if the gap is acceptable by Sample difference',
-        '修复及验证': 'change to pass EPP value to verify, furhter check PPM version',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -1004,10 +1098,7 @@ def gpu_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     head_list = get_gpu_file_head_list_by_dir(fail_dir)
 
     col_1 = '1:GPC Clock (MHz)'
-    col_dict = gpu_rule_dict.get('check_rule_1', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     fail_col_data_gpu, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
@@ -1023,7 +1114,7 @@ def gpu_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
             return return_dict
 
     col_2 = '1:TGP (W)'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     logger.info(f'col_1:{col_2}')
 
     fail_col_data_gpu, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_2)
@@ -1041,15 +1132,21 @@ def gpu_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_2')
+    rule_name = f'gpu_rule_2'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_2',
-        'Root cause': 'GPU prochot',
-        'Component': 'EC',
-        'Solution': 'EC log first check the prochot reason',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -1061,16 +1158,13 @@ def gpu_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
     write_to_csv(new_file, new_list, headers)
 
     col_1 = '1:GPC Clock (MHz)'
-    col_dict = gpu_rule_dict.get('check_rule_2', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     col_data_1 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col_1, headers)
 
     col_2 = '1:GPC Slowdown Factor (%)'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     logger.info(f'col_2:{col_2}')
 
     col_data_pass = get_csv_file_col_data_by_file_gpu(gpu_log_file, col_2, headers)
@@ -1097,15 +1191,21 @@ def gpu_rule_2(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_3')
+    rule_name = f'gpu_rule_3'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_3',
-        'Root cause': 'NV Graphic driver',
-        'Component': 'NV driver',
-        'Solution': 'need confirm if current driver lock CPU clk',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -1117,10 +1217,7 @@ def gpu_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     write_to_csv(new_file, new_list, headers)
 
     col_1 = '1:GPC Clock (MHz)'
-    col_dict = gpu_rule_dict.get('check_rule_3', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     col_data_1 = get_csv_file_col_data_by_file_gpu(gpu_log_file, col_1, headers)
@@ -1137,7 +1234,7 @@ def gpu_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
 
     if min_value == max_value:
         col_2 = '1:GPU Utilization (%)'
-        col_2 = col_dict.get('col_2', col_2)
+        col_2 = rule_dict.get('col_2', col_2)
         logger.info(f'col_2:{col_2}')
 
         col_data_pass = get_csv_file_col_data_by_file_gpu(gpu_log_file, col_2, headers)
@@ -1147,24 +1244,27 @@ def gpu_rule_3(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_4')
+    rule_name = f'gpu_rule_4'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_4',
-        'Root cause': 'GPU OC related',
-        'Component': 'BIOS',
-        'Solution': 'Retest with the same OC settings',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
     col_1 = '1:Memory Clock (MHz)'
-    col_dict = gpu_rule_dict.get('check_rule_4', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col_1)
@@ -1186,15 +1286,21 @@ def gpu_rule_4(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_5')
+    rule_name = f'gpu_rule_5'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_5',
-        'Root cause': 'Max TGP',
-        'Component': 'BIOS',
-        'Solution': 'Please BIOS check if max TGP configuration meet Fn+Q spec',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+    
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -1202,24 +1308,26 @@ def gpu_rule_5(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_6')
+    rule_name = f'gpu_rule_6'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_6',
-        'Root cause': '1:NVVDD Power (W) abnormal',
-        'Component': 'EE',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
     col_1 = '1:NVVDD Power (W)'
-    col_dict = gpu_rule_dict.get('check_rule_6', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
@@ -1230,7 +1338,7 @@ def gpu_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
 
     # 1:TGP (W)
     col_2 = '1:TGP (W)'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     logger.info(f'col_2:{col_2}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_2)
@@ -1241,7 +1349,7 @@ def gpu_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
 
     # 1:FBVDD Power (W)
     col_3 = '1:FBVDD Power (W)'
-    col_3 = col_dict.get('col_3', col_3)
+    col_3 = rule_dict.get('col_3', col_3)
     logger.info(f'col_3:{col_3}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_3)
@@ -1257,24 +1365,26 @@ def gpu_rule_6(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_7')
+    rule_name = f'gpu_rule_7'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_7',
-        'Root cause': '1:FBVDD Power (W) abnormal',
-        'Component': 'EE',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
     col_1 = '1:NVVDD Power (W)'
-    col_dict = gpu_rule_dict.get('check_rule_7', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
@@ -1285,7 +1395,7 @@ def gpu_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'is_larger_than_threshold_NVVDD_Power: {is_larger_than_threshold_NVVDD_Power}')
 
     col_2 = '1:TGP (W)'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     logger.info(f'col_2:{col_2}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_2)
@@ -1296,7 +1406,7 @@ def gpu_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     logger.info(f'is_larger_than_threshold_TGP: {is_larger_than_threshold_TGP}')
 
     col_3 = '1:FBVDD Power (W)'
-    col_3 = col_dict.get('col_3', col_3)
+    col_3 = rule_dict.get('col_3', col_3)
     logger.info(f'col_3:{col_3}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_3)
@@ -1314,15 +1424,20 @@ def gpu_rule_7(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_8')
+    rule_name = f'gpu_rule_8'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_8',
-        'Root cause': 'enviroment issue',
-        'Component': 'Thermal',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -1330,10 +1445,7 @@ def gpu_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
     # 1:NVVDD Power (W)
     is_delta_larger_than_stand = False
     col_1 = '1:Capping Reason'
-    col_dict = gpu_rule_dict.get('check_rule_2', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
@@ -1347,7 +1459,7 @@ def gpu_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
 
     if is_performance_ec_file_exist_by_dir(fail_dir):
         col_2 = 'Environment Sensor Temp'
-        col_2 = col_dict.get('col_2', col_2)
+        col_2 = rule_dict.get('col_2', col_2)
         logger.info(f'col_2:{col_2}')
 
         fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col_2)
@@ -1365,15 +1477,20 @@ def gpu_rule_8(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_9')
+    rule_name = f'gpu_rule_9'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_9',
-        'Root cause': 'thermal module',
-        'Component': 'Please themal check module differrence',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -1385,10 +1502,7 @@ def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
     head_list = get_gpu_file_head_list_by_dir(fail_dir)
 
     col_1 = '1:t_gpu'
-    col_dict = gpu_rule_dict.get('check_rule_9', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     col_1 = get_match_col_name(head_list, col_1)
@@ -1404,7 +1518,7 @@ def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
             break
 
     col_2 = 'GPU Sensor Temp'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     logger.info(f'col_2:{col_2}')
 
     fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col_2)
@@ -1422,7 +1536,7 @@ def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
         return return_dict
     #
     col_3 = '1:t_gpu'
-    col_3 = col_dict.get('col_3', col_3)
+    col_3 = rule_dict.get('col_3', col_3)
     logger.info(f'col_3:{col_3}')
 
     col_3 = get_match_col_name(head_list, col_3)
@@ -1436,7 +1550,7 @@ def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
             break
 
     col_4 = 'GPU Sensor Temp'
-    col_4 = col_dict.get('col_4', col_4)
+    col_4 = rule_dict.get('col_4', col_4)
     logger.info(f'col_4:{col_4}')
 
     pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col_4)
@@ -1455,24 +1569,26 @@ def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
 
 
 def gpu_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_10')
+    rule_name = f'gpu_rule_10'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_10',
-        'Root cause': 'D-notifier',
-        'Component': 'EC',
-        'Solution': 'Please EC check D-notifer first',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
     col_1 = 'Power Supply Mode'
-    col_dict = gpu_rule_dict.get('check_rule_10', None)
-    # logger.info(f'col_dict:{col_dict}')
-
-    col_1 = col_dict.get('col_1', col_1)
+    col_1 = rule_dict.get('col_1', col_1)
     logger.info(f'col_1:{col_1}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
@@ -1493,7 +1609,7 @@ def gpu_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
     is_ac = True
 
     col_2 = '1:D-Notifier Limit'
-    col_2 = col_dict.get('col_2', col_2)
+    col_2 = rule_dict.get('col_2', col_2)
     logger.info(f'col_2:{col_2}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_2)
@@ -1518,21 +1634,29 @@ def gpu_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_11')
+    rule_name = f'gpu_rule_11'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_11',
-        'Root cause': 'PPAB issue',
-        'Component': 'Driver',
-        'Solution': 'Need driver confirm if current PPAB behvior is normal',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    col = '1:PPAB State'
-    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    col_1 = '1:PPAB State'
+    col_1 = rule_dict.get('col_1', col_1)
+    logger.info(f'col_1:{col_1}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
 
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
     logger.info(f'fail_col_data: {fail_col_data}')
@@ -1546,9 +1670,12 @@ def gpu_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     head_list = get_gpu_file_head_list_by_dir(fail_dir)
     # logger.info(f'head_list:{head_list}')
 
-    col = '1:pwr_tgp'
-    col = get_match_col_name(head_list, col)
-    logger.info(f'col:{col}')
+    col_2 = '1:pwr_tgp'
+    col_2 = rule_dict.get('col_2', col_2)
+    logger.info(f'col_2:{col_2}')
+
+    col = get_match_col_name(head_list, col_2)
+    logger.info(f'col_2:{col_2}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
 
@@ -1558,8 +1685,11 @@ def gpu_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     loading_index = get_loading_index(fail_col_data, average_fail, 0.5)
     logger.info(f"loading_index: {loading_index}")
 
-    col = '1:Capping Reason'
-    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    col_3 = '1:Capping Reason'
+    col_3 = rule_dict.get('col_3', col_3)
+    logger.info(f'col_3:{col_3}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_3)
 
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
     logger.info(f'fail_col_data: {fail_col_data}')
@@ -1575,12 +1705,15 @@ def gpu_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     head_list = get_gpu_file_head_list_by_dir(fail_dir)
     # logger.info(f'head_list:{head_list}')
 
-    col = '1:AC_Target_TPP_Limit'
-    col = get_match_col_name(head_list, col)
-    logger.info(f'col:{col}')
+    col_4 = '1:AC_Target_TPP_Limit'
+    col_4 = rule_dict.get('col_4', col_4)
+    logger.info(f'col_4:{col_4}')
 
-    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+    col = get_match_col_name(head_list, col_4)
+    logger.info(f'col_4:{col_4}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_4)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col_4)
 
     average_fail = get_list_average(fail_col_data, False)
     logger.info(f"average_fail: {average_fail}")
@@ -1591,8 +1724,11 @@ def gpu_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     if average_fail != average_pass:
         return return_dict
 
-    col = '1:pwr_tgp'
-    col = get_match_col_name(head_list, col)
+    col_5 = '1:pwr_tgp'
+    col_5 = rule_dict.get('col_5', col_5)
+    logger.info(f'col_5:{col_5}')
+
+    col = get_match_col_name(head_list, col_5)
     logger.info(f'col:{col}')
 
     fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
@@ -1612,21 +1748,28 @@ def gpu_rule_11(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_12')
+    rule_name = f'gpu_rule_12'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_12',
-        'Root cause': '1:GPC Slowdown Factor (%)',
-        'Component': 'Thermal',
-        'Solution': 'further thermal protect behavior',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    col = '1:GPC Slowdown Factor (%)'
-    col_data, file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    col_1 = '1:GPC Slowdown Factor (%)'
+    col_1 = rule_dict.get('col_1', col_1)
+    logger.info(f'col_1:{col_1}')
+    col_data, file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
     has_match = is_col_data_has_data_match_range(col_data, 25, 97)
 
     if has_match:
@@ -1636,15 +1779,20 @@ def gpu_rule_12(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_13')
+    rule_name = f'gpu_rule_13'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_13',
-        'Root cause': 'VBIOS',
-        'Component': 'EE',
-        'Solution': 'please EE check VBIOS version',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if True:
         return return_dict
 
@@ -1652,9 +1800,11 @@ def gpu_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    col = '1:TGP (W)'
-    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+    col_1 = '1:TGP (W)'
+    col_1 = rule_dict.get('col_1', col_1)
+    logger.info(f'col_1:{col_1}')
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col_1)
     # logger.info(f'fail_col_data: {fail_col_data}')
     which_type = type(fail_col_data)
     # logger.info(f'which_type: {which_type}')
@@ -1672,9 +1822,12 @@ def gpu_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     if fail_average_TGP < pass_average_TGP:
         small_TGP = True
 
-    col = '1:FBVDD Power (W)'
-    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+    col_2 = '1:FBVDD Power (W)'
+    col_2 = rule_dict.get('col_2', col_2)
+    logger.info(f'col_2:{col_2}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_2)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col_2)
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
     pass_col_data = remove_list_na(pass_col_data, 'N/A')
 
@@ -1684,9 +1837,12 @@ def gpu_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     if fail_average_FBVDD < pass_average_FBVDD:
         small_FBVDD = True
 
-    col = '1:NVVDD Power (W)'
-    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+    col_3 = '1:NVVDD Power (W)'
+    col_3 = rule_dict.get('col_3', col_3)
+    logger.info(f'col_3:{col_3}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_3)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col_3)
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
     pass_col_data = remove_list_na(pass_col_data, 'N/A')
 
@@ -1696,9 +1852,12 @@ def gpu_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     if fail_average_NVVDD_P < pass_average_NVVDD_P:
         small_NVVDD_P = True
 
-    col = '1:NVVDD Voltage (uV)'
-    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
-    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col)
+    col_4 = '1:NVVDD Voltage (uV)'
+    col_4 = rule_dict.get('col_4', col_4)
+    logger.info(f'col_4:{col_4}')
+
+    fail_col_data, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_4)
+    pass_col_data, pass_file_data = get_gpu_file_col_data_by_dir(pass_dir, col_4)
     fail_col_data = remove_list_na(fail_col_data, 'N/A')
     pass_col_data = remove_list_na(pass_col_data, 'N/A')
 
@@ -1715,15 +1874,20 @@ def gpu_rule_13(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_14')
+    rule_name = f'gpu_rule_14'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_14',
-        'Root cause': 'Vram vendor',
-        'Component': 'EE',
-        'Solution': 'Please EE check Vram vendor difference',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
@@ -1745,27 +1909,37 @@ def gpu_rule_14(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_15')
+    rule_name = f'gpu_rule_15'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_15',
-        'Root cause': 'Whisper mode',
-        'Component': 'Driver',
-        'Solution': 'check why non-quiet AC mode, Whisper mode is on',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
 
-    col = '1:WM2 Platform Enabled'
-    fail_col_data_platform, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    col_1 = '1:WM2 Platform Enabled'
+    col_1 = rule_dict.get('col_1', col_1)
+    logger.info(f'col_1:{col_1}')
+
+    fail_col_data_platform, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_1)
     cell_data_platform = None
     if fail_col_data_platform is not None:
         cell_data_platform = fail_col_data_platform[0]
 
-    col = '1:WM2 Driver Enabled'
-    fail_col_data_driver, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col)
+    col_2 = '1:WM2 Driver Enabled'
+    col_2 = rule_dict.get('col_2', col_2)
+    logger.info(f'col_2:{col_2}')
+    fail_col_data_driver, fail_file_data = get_gpu_file_col_data_by_dir(fail_dir, col_2)
     cell_data_driver = None
     if fail_col_data_driver is not None:
         cell_data_driver = fail_col_data_driver[0]
@@ -1777,15 +1951,20 @@ def gpu_rule_15(parent_dir=None, fail_dir=None, pass_dir=None):
     return return_dict
 
 def gpu_rule_16(parent_dir=None, fail_dir=None, pass_dir=None):
-    logger.info(f'gpu_rule_16')
+    rule_name = f'gpu_rule_16'
+    logger.info(f'{rule_name}')
     return_dict = None
-    check_result_dict = {
-        'rule name': 'gpu_rule_16',
-        'Root cause': '从AMDZlog中取',
-        'Component': 'EE',
-        'Solution': '',
-        '修复及验证': '',
-    }
+    check_result_dict = {}
+    rule_dict = gpu_rule_dict.get(rule_name, None)
+
+    check_result_dict['rule name'] = rule_name
+    check_result_dict['Root cause'] = rule_dict.get('Root cause')
+    check_result_dict['Component'] = rule_dict.get('Component')
+    check_result_dict['Solution'] = rule_dict.get('Solution')
+    check_result_dict['修复及验证'] = rule_dict.get('修复及验证')
+    check_result_dict['判断标准'] = rule_dict.get('判断标准')
+    check_result_dict['对比规则'] = rule_dict.get('对比规则')
+
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')

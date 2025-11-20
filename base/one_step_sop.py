@@ -4,6 +4,7 @@ from base.helper import *
 from base.cell_command import *
 from base.amd_cell_command import *
 from base.fileOP import *
+from base.folder_file import *
 
 
 def intel_check_run(parent_dir,fail_dir=None, pass_dir=None):
@@ -78,6 +79,8 @@ def one_process_run(parent_dir=None, fail_dir=None, pass_dir=None):
 
     if AMD_Case in case_type:
         amd_check_run(parent_dir, fail_dir, pass_dir)
+
+    file_walk_delete_file(file_format='.csv')
     return
 
 def one_process_run_tmp(parent_dir=None, fail_dir=None, pass_dir=None):
