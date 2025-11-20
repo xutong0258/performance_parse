@@ -1,4 +1,4 @@
-check_rule_1: 
+amd_check_rule_1:
   col_1: 'CPU0 CORES CORE0 Freq Eff'
   col_2: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
   col_3: 'CPU0 MISC PROCHOT'
@@ -20,7 +20,7 @@ check_rule_1:
   'Solution': ''
   '修复及验证': ''
 
-check_rule_2:
+amd_check_rule_2:
   col_1: 'CPU0 CORES CORE0 Freq Eff'
   col_2: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
   col_3: 'CPU0 MISC PROCHOT'
@@ -42,7 +42,7 @@ check_rule_2:
   'Solution': ''
   '修复及验证': ''
 
-check_rule_3:
+amd_check_rule_3:
   col_1: 'CPU0 CORES CORE0 Freq Eff'
   logic:
     - { 'CPU0 CORES CORE0 Freq Eff ≤ CPU base freq': 'check_point_1' }
@@ -50,12 +50,12 @@ check_rule_3:
               CPU0 CORES CORE0 Freq Eff ≤ CPU base freq'
   '对比规则': '最大频率值不超过base频率：CPU0 CORES CORE0 Freq Eff ≤ CPU base freq
               有一个开了  就算开了'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': 'CPU-Turbo Disabled'
+  'Component': 'BIOS'
+  'Solution': '更新BIOS开启Turbo重新测试'
   '修复及验证': ''
 
-check_rule_4:
+amd_check_rule_4:
   col_1: 'CPU0 CORES CORE0 EPP'
   logic:
     - { 'CPU0 CORES CORE0 EPP: pass fail 对比, delta: 0.1': 'check_point_1' }
@@ -64,12 +64,12 @@ check_rule_4:
   '对比规则': 'HWP-pCore OSPM Requested Energy Performance Preference取平均值与pass的平均值对比
               HWP-eCore OSPM Requested Energy Performance Preference取平均值与pass的平均值对比
               在loading过程中值恒定(设定值 是不是全过程恒定？)'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': 'EPP value abnormal（power mode不一致）'
+  'Component': 'SDE'
+  'Solution': '将EPP更改成一样值后重新测试'
   '修复及验证': ''
 
-check_rule_5:
+amd_check_rule_5:
   col_1: 'CPU0 MISC STAPM Time Constant'
   col_2: 'CPU0 MISC Slow PPT Time Constant'
   col_3: 'CPU0 INFRASTRUCTURE Limit STAPM'
@@ -91,12 +91,12 @@ check_rule_5:
   '对比规则': '获取pass/fail两份log日志中的SPL/SPPT/FPPT Limit，对比平均值（以pass机器的平均值为标准，计算相对误差2%之内）
               根据DPTC中SPL/SPPT/FPPT 三个参数确定机器的性能mode模式，如果是在相同模式下，再比较两台机器的SPL/SPPT/FPPT
               SPPT time'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': 'PowerSetting(SPL/SPPT/FPPT Limit) abnormal'
+  'Component': 'SDE'
+  'Solution': '将Power Setting更新成一样值后重新测试'
   '修复及验证': ''
 
-check_rule_6:
+amd_check_rule_6:
   col_1: 'CPU0 MISC STAPM Time Constant'
   col_2: 'CPU0 MISC Slow PPT Time Constant'
   logic:
@@ -108,12 +108,12 @@ check_rule_6:
               CPU0 MISC Slow PPT Time Constant'
   '对比规则': '对比pass和fail的机器log中的constant值是否一致。
               （以pass机器的平均值为标准，计算相对误差2%之内）'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': 'TimeConstant abnormal'
+  'Component': 'SDE'
+  'Solution': '将TimeConstant值更新成一样后重新测试'
   '修复及验证': ''
 
-check_rule_7:
+amd_check_rule_7:
   col_1: 'CPU0 Power Correlation SOCKET Power'
   logic:
     - { 'CPU0 Power Correlation SOCKET Power: pass fail 对比, delta: 0.2': 'check_point_1' }
@@ -123,12 +123,12 @@ check_rule_7:
             Idel阶段：SOCKET Power增长幅度突然增大
             增长幅度 = (本期数据 - 上期数据)/ 上期数据 ×100%
             增长幅度 > 200%'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': 'Idle  Power 高'
+  'Component': 'EE'
+  'Solution': 'check idle场景'
   '修复及验证': ''
 
-check_rule_8:
+amd_check_rule_8:
   col_1: 'CPU0 INFRASTRUCTURE Limit TDC VDD'
   col_2: 'CPU0 INFRASTRUCTURE Value TDC VDD'
   col_3: 'CPU0 INFRASTRUCTURE Limit TDC SOC'
@@ -156,12 +156,12 @@ check_rule_8:
               2.  EDC VDD和 EDC SOC limt平均值，恒定
               3. 如果limit平均值不一致，TDC/EDC异常
               输出过程数据'
-  'Root cause': ''
-  'Component': ''
+  'Root cause': 'TDC/EDC异常'
+  'Component': 'Power'
   'Solution': ''
   '修复及验证': ''
 
-check_rule_9:
+amd_check_rule_9:
   col_1: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
   col_2: 'CPU0 INFRASTRUCTURE2 Value STT APU'
   col_3: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
@@ -189,12 +189,12 @@ check_rule_9:
               1. 查看5个条件是否都满足
               如果满足以上条件，再看Enviroment sensor temp>30°
               判断结束后，需要对比pass.log，展示所有数据'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': '环温高'
+  'Component': 'TESTER'
+  'Solution': '降低环境温度/增加Idle时间/出风口是否被阻挡'
   '修复及验证': ''
 
-check_rule_10:
+amd_check_rule_10:
   col_1: 'CPU0 CORES CORE0 Freq Eff'
   col_2: 'CPU0 CORES CORE0 CPPC MAX Freq'
   col_3: 'CPU0 INFRASTRUCTURE Value THM'
@@ -212,12 +212,12 @@ check_rule_10:
               2. 达不到最大频率要求：Freq Eff <MAX Freq
               3. 并且温度没有顶到限制：Value THM<Limit THM ，且 Value THM ＜ Tdie，tdp
               （Tdie，tdp：Thermal Design Guide中获取的值）'
-  'Root cause': ''
-  'Component': ''
+  'Root cause': 'CPU本体可能异常'
+  'Component': 'EE'
   'Solution': ''
-  '修复及验证': ''
+  '修复及验证': '使用相同sku机台复制验证'
 
-check_rule_11:
+amd_check_rule_11:
   col_1: 'CPU0 CORES CORE0 Freq Eff'
   col_2: 'CPU0 CORES CORE0 CPPC MAX Freq'
   col_3: 'CPU0 INFRASTRUCTURE Value THM'
@@ -235,21 +235,20 @@ check_rule_11:
               2. 达不到最大频率要求：Freq Eff <MAX Freq
               3. 并且温度顶到限制：Value THM>Limit THM ，且 Value THM >= Tdie，tdp
               （Tdie，tdp：Thermal Design Guide中获取的值）'
-  'Root cause': ''
-  'Component': ''
+  'Root cause': 'CPU Ttie.lmt被触发(触发Tdie,lmt)'
+  'Component': 'Thermal'
   'Solution': ''
-  '修复及验证': ''
+  '修复及验证': '使用相同sku机台复制验证'
 
-check_rule_12:
+amd_check_rule_12:
   col_1: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
   col_2: 'CPU0 INFRASTRUCTURE2 Value STT APU'
-  col_3: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
-  col_4: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
-  col_5: 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
-  col_6: 'CPU0 INFRASTRUCTURE2 Value THM GFX'
-  col_7: 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
-  col_8: 'CPU0 INFRASTRUCTURE2 Value THM SOC'
-  col_9: 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
+  col_3: 'CPU0 INFRASTRUCTURE2 Value THM CORE'
+  col_4: 'CPU0 INFRASTRUCTURE2 Limit THM CORE'
+  col_5: 'CPU0 INFRASTRUCTURE2 Value THM GFX'
+  col_6: 'CPU0 INFRASTRUCTURE2 Limit THM GFX'
+  col_7: 'CPU0 INFRASTRUCTURE2 Value THM SOC'
+  col_8: 'CPU0 INFRASTRUCTURE2 Limit THM SOC'
   logic:
     - { '条件关系': 'check_point_1 or check_point_2 or check_point_3 or check_point_4 or check_point_5' }
     - { 'CPU0 INFRASTRUCTURE2 Limit STT APU ≠0': 'check_point_1' }
@@ -258,18 +257,19 @@ check_rule_12:
     - { 'CPU0 INFRASTRUCTURE2 Value THM GFX ＞ CPU0 INFRASTRUCTURE2 Limit THM GFX': 'check_point_4' }
     - { 'CPU0 INFRASTRUCTURE2 Value THM SOC ＞ CPU0 INFRASTRUCTURE2 Limit THM SOC': 'check_point_5' }
   '判断标准': '支持STT方案的机台上：Pass vs fail机台的STT温度触发limit，相同sku机台如果有的顶到，表示这台机器的散热模组可能异常；同时还要确认测试时环温在25°左右
-              CPU0 INFRASTRUCTURE2 Limit STT APU ≠0
-              CPU0 INFRASTRUCTURE2 Value STT APU ≥ CPU0 INFRASTRUCTURE2 Limit STT APU
-              CPU0 INFRASTRUCTURE2 Value THM CORE ＞ CPU0 INFRASTRUCTURE2 Limit THM CORE
-              CPU0 INFRASTRUCTURE2 Value THM GFX ＞ CPU0 INFRASTRUCTURE2 Limit THM GFX
-              CPU0 INFRASTRUCTURE2 Value THM SOC ＞ CPU0 INFRASTRUCTURE2 Limit THM SOC'
+            CPU0 INFRASTRUCTURE2 Limit STT APU ≠0
+            CPU0 INFRASTRUCTURE2 Value STT APU ≥ CPU0 INFRASTRUCTURE2 Limit STT APU
+            CPU0 INFRASTRUCTURE2 Value THM CORE ＞ CPU0 INFRASTRUCTURE2 Limit THM CORE
+            CPU0 INFRASTRUCTURE2 Value THM GFX ＞ CPU0 INFRASTRUCTURE2 Limit THM GFX
+            CPU0 INFRASTRUCTURE2 Value THM SOC ＞ CPU0 INFRASTRUCTURE2 Limit THM SOC
+            '
   '对比规则': '只要有一个就报温度'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': 'thermal module（STT）'
+  'Component': 'Thermal'
+  'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常'
   '修复及验证': ''
 
-check_rule_13:
+amd_check_rule_13:
   col_1: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
   col_2: 'CPU0 INFRASTRUCTURE2 Value STT APU'
   col_3: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
@@ -293,12 +293,12 @@ check_rule_13:
               6.  判断散热模组热量是否超限制：Value STT HS2 >= Limit STT HS2 
               如果满足以上条件，再看Enviroment sensor temp ≈ 25°。如果环境温度正常，则散热模组异常
               判断结束后，需要对比pass.log，展示所有数据'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': 'thermal module（STT）'
+  'Component': 'Thermal'
+  'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常'
   '修复及验证': ''
 
-check_rule_14:
+amd_check_rule_14:
   col_1: 'CPU0 INFRASTRUCTURE2 Limit STT APU'
   col_2: 'CPU0 INFRASTRUCTURE2 Value STT APU'
   col_3: 'CPU0 INFRASTRUCTURE2 Value THM CORE '
@@ -321,12 +321,12 @@ check_rule_14:
               6.  判断散热模组热量是否为0：Value STT HS2 =0， Limit STT HS2 = 0
               如果满足以上条件，再看Enviroment sensor temp ≈ 25°。如果环境温度正常，则散热模组异常
               判断结束后，需要对比pass.log，展示所有数据'
-  'Root cause': ''
-  'Component': ''
-  'Solution': ''
+  'Root cause': 'thermal module（STAPM）'
+  'Component': 'Thermal'
+  'Solution': '1、降低环境温度/增加Idle时间/出风口是否被阻挡；2、Thermal模组组装或散热膏涂抹异常'
   '修复及验证': ''
 
-check_rule_15:
+amd_check_rule_15:
   col_1: 'CPU0 INFRASTRUCTURE Limit STAPM'
   col_2: 'CPU0 INFRASTRUCTURE Limit PPT FAST'
   col_2: 'CPU0 INFRASTRUCTURE Limit PPT SLOW'
@@ -345,12 +345,12 @@ check_rule_15:
               2. SPPT
               3. FPPT
               （以pass机器的平均值为标准，计算相对误差2%之内）'
-  'Root cause': ''
-  'Component': ''
+  'Root cause': 'Al Chip issue'
+  'Component': 'SDE'
   'Solution': ''
-  '修复及验证': ''
+  '修复及验证': '分别Disable/Enable AI chip功能验证结果'
 
-check_rule_16:
+amd_check_rule_16:
   col_1: 'Controller0-ChannelA-DIMM1'
   col_2: 'Controller0-ChannelB-DIMM1'
   logic:
@@ -363,7 +363,7 @@ check_rule_16:
               1. 对比内存大小 size
               2. 对比单双通道 内存条行数
               3. 对比厂商 ]   K  之间的厂商品牌'
-  'Root cause': ''
-  'Component': ''
+  'Root cause': '从AMDZlog中取'
+  'Component': 'EE'
   'Solution': ''
   '修复及验证': ''

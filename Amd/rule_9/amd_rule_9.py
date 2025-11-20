@@ -8,7 +8,6 @@ from base.amd_cell_command import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    fail_dir = r'D:\AMD_FAIL'
-    pass_dir = r'D:\AMD_PASS'
-    amd_check_rule_9(fail_dir, pass_dir)
+    parent_dir = r'D:\0_AMD\rule7——与pass机器比较Idle场景CPU Power高'
+    amd_check_rule_9(parent_dir=parent_dir)
     pass

@@ -8,6 +8,6 @@ from base.amd_cell_command import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    parent_dir = r'D:\0_AMDLog1027\rule10&11\case_2'
+    parent_dir = r'D:\0_AMD\rule10&11-NG\case_1'
     amd_check_rule_11(parent_dir=parent_dir)
     pass

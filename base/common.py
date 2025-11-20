@@ -156,11 +156,13 @@ def get_gpu_file_target_map_by_dir(input_dir, target_str):
     return target_map
 
 def get_performance_file_col_data_by_dir(input_dir, col_name):
-    col_data = []
+    col_data = None
+    file_data = None
     performance_log_file = get_performance_file_with_dir(input_dir)
 
-    file_data = read_csv_with_pandas(performance_log_file)
-    col_data = file_data.get(col_name)
+    if performance_log_file is not None:
+        file_data = read_csv_with_pandas(performance_log_file)
+        col_data = file_data.get(col_name)
     return col_data, file_data
 
 def is_performance_ec_file_exist_by_dir(input_dir):

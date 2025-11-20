@@ -8,6 +8,6 @@ from base.amd_cell_command import *
 path_dir = os.path.dirname(__file__)
 
 if __name__ == '__main__':
-    parent_dir = r'D:\0_AMD_1028\rule3——CPU频率一直keep Base频率'
+    parent_dir = r'D:\0_AMD\rule3——CPU频率一直keep Base频率'
     amd_check_rule_3(parent_dir=parent_dir)
     pass
