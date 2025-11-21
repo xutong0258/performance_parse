@@ -40,9 +40,14 @@ def gpu_check_run(parent_dir,fail_dir=None, pass_dir=None):
             check_result_list.append(return_dict)
             pass
             # break
-    dir_name = './'
     result_yaml_file = 'result.yaml'
-    result_yaml_file = os.path.join(parent_dir, result_yaml_file)
+    result_dir = None
+    if parent_dir is not None:
+        result_dir = parent_dir
+    else:
+        result_dir = fail_dir
+    result_yaml_file = os.path.join(result_dir, result_yaml_file)
+
     dump_file(result_yaml_file, check_result_list)
     logger.info(f'check_result_list:{check_result_list}')
     return
@@ -57,9 +62,14 @@ def amd_check_run(parent_dir,fail_dir=None, pass_dir=None):
             check_result_list.append(return_dict)
             pass
             # break
-    dir_name = './'
     result_yaml_file = 'result.yaml'
-    result_yaml_file = os.path.join(parent_dir, result_yaml_file)
+    result_dir = None
+    if parent_dir is not None:
+        result_dir = parent_dir
+    else:
+        result_dir = fail_dir
+    result_yaml_file = os.path.join(result_dir, result_yaml_file)
+
     dump_file(result_yaml_file, check_result_list)
     logger.info(f'check_result_list:{check_result_list}')
     return
@@ -83,7 +93,22 @@ def one_process_run(parent_dir=None, fail_dir=None, pass_dir=None):
     file_walk_delete_file(file_format='.csv')
     return
 
-def one_process_run_tmp(parent_dir=None, fail_dir=None, pass_dir=None):
-    intel_check_run(fail_dir, pass_dir)
-    # gpu_check_run(fail_dir, pass_dir)
+
+def one_process_run_auto_log(case_path_config_file):
+    table_dict = read_file_dict(case_path_config_file)
+    performance_dict = table_dict.get('02_performance')
+
+    # intel_path_pass = performance_dict.get('Intel').get('PATH_PASS')
+    # intel_path_fail = performance_dict.get('Intel').get('PATH_FAIL')
+    # intel_check_run(parent_dir=None, fail_dir=intel_path_fail, pass_dir=intel_path_pass)
+
+    # gpu_path_pass = performance_dict.get('GPU').get('PATH_PASS')
+    # gpu_path_fail = performance_dict.get('GPU').get('PATH_FAIL')
+    # gpu_check_run(parent_dir=None, fail_dir=gpu_path_fail, pass_dir=gpu_path_pass)
+    #
+    amd_path_pass = performance_dict.get('AMD').get('PATH_PASS')
+    amd_path_fail = performance_dict.get('AMD').get('PATH_FAIL')
+    amd_check_run(parent_dir=None, fail_dir=amd_path_fail, pass_dir=amd_path_pass)
+
+    file_walk_delete_file(file_format='.csv')
     return

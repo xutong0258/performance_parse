@@ -81,7 +81,7 @@ def get_gpu_file_head_list_by_dir(input_dir):
     logger.info(f'gpu_log_file:{gpu_log_file}')
 
     headers, new_list = get_gpu_data_with_csv(gpu_log_file)
-    logger.info(f'headers:{headers}')
+    # logger.info(f'headers:{headers}')
     # new_file = os.path.join(input_dir, 'GPU_New.csv')
     # write_to_csv(new_file, new_list, headers)
     return headers

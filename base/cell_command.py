@@ -528,7 +528,7 @@ def check_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
     data_list = df.get(col_1)
 
     data_list = remove_list_na(data_list, target_str='nan')
-    logger.info(f"data_list: {data_list}")
+    # logger.info(f"data_list: {data_list}")
 
     count = get_list_text_count(data_list, 'VR thermal alert')
 
@@ -567,7 +567,7 @@ def check_rule_10(parent_dir=None, fail_dir=None, pass_dir=None):
     data_list = df.get(col_1)
 
     data_list = remove_list_na(data_list, target_str='nan')
-    logger.info(f"data_list: {data_list}")
+    # logger.info(f"data_list: {data_list}")
 
     count = get_list_text_count(data_list, 'VR_TDC')
 
@@ -1523,6 +1523,10 @@ def gpu_rule_9(parent_dir=None, fail_dir=None, pass_dir=None):
 
     fail_col_data, fail_file_data = get_performance_file_col_data_by_dir(fail_dir, col_2)
     logger.info(f'fail_col_data:{fail_col_data}')
+
+    if fail_col_data is None:
+        logger.info(f'return_dict:{return_dict}')
+        return return_dict
 
     continue_flag_2 = False
     for idx, value in enumerate(fail_col_data):
