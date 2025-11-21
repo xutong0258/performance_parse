@@ -98,14 +98,14 @@ def one_process_run_auto_log(case_path_config_file):
     table_dict = read_file_dict(case_path_config_file)
     performance_dict = table_dict.get('02_performance')
 
-    # intel_path_pass = performance_dict.get('Intel').get('PATH_PASS')
-    # intel_path_fail = performance_dict.get('Intel').get('PATH_FAIL')
-    # intel_check_run(parent_dir=None, fail_dir=intel_path_fail, pass_dir=intel_path_pass)
+    intel_path_pass = performance_dict.get('Intel').get('PATH_PASS')
+    intel_path_fail = performance_dict.get('Intel').get('PATH_FAIL')
+    intel_check_run(parent_dir=None, fail_dir=intel_path_fail, pass_dir=intel_path_pass)
 
-    # gpu_path_pass = performance_dict.get('GPU').get('PATH_PASS')
-    # gpu_path_fail = performance_dict.get('GPU').get('PATH_FAIL')
-    # gpu_check_run(parent_dir=None, fail_dir=gpu_path_fail, pass_dir=gpu_path_pass)
-    #
+    gpu_path_pass = performance_dict.get('GPU').get('PATH_PASS')
+    gpu_path_fail = performance_dict.get('GPU').get('PATH_FAIL')
+    gpu_check_run(parent_dir=None, fail_dir=gpu_path_fail, pass_dir=gpu_path_pass)
+
     amd_path_pass = performance_dict.get('AMD').get('PATH_PASS')
     amd_path_fail = performance_dict.get('AMD').get('PATH_FAIL')
     amd_check_run(parent_dir=None, fail_dir=amd_path_fail, pass_dir=amd_path_pass)

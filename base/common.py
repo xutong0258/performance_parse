@@ -28,7 +28,7 @@ def get_log_case(input_dir):
     if tat_file:
         case_type.append(Intel_Case)
 
-    amd_file = get_amd_file_exact_with_dir(input_dir)
+    amd_file = get_amd_file_with_dir(input_dir)
     if amd_file:
         case_type.append(AMD_Case)
 
@@ -40,7 +40,7 @@ def get_log_case(input_dir):
 
 def check_gpu_case(input_dir):
     is_gpu_case = False
-    gpu_file = get_gpu_file_exact_with_dir(input_dir)
+    gpu_file = get_gpu_file_with_dir(input_dir)
     if gpu_file is None:
         gpu_file = get_performance_file_with_dir(input_dir)
     if gpu_file:

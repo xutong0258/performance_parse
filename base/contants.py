@@ -13,7 +13,6 @@ print(ROOT_DIR)
 
 
 CONFIG_PATH = os.path.join(path_dir, '../config')
-base_name = os.path.basename(path_dir)
 
 sys.path.append(path_dir)
 
