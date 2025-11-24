@@ -2,13 +2,10 @@ import shutil
 import os
 from base.fileOP import *
 from base.logger import *
-from base.contants import *
 
 BASEDIR = os.path.dirname(__file__)
 
-def file_walk_delete_file(file_format='.csv'):
-    # 要遍历的文件夹路径
-    folder_path = ROOT_DIR
+def file_walk_delete_file(folder_path, file_format='.csv'):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             file_path = os.path.join(root, file)
@@ -210,8 +207,9 @@ def get_latest_file_path_by_dir(folder_path, target_file, target_file_p2=None):
             latest_file = key
     logger.info(f"latest_file: {latest_file}")
     return latest_file
-
-
+# 使用示例
 if __name__ == "__main__":
     # 要删除的文件夹路径
-    file_walk_delete_file(file_format='.csv')
+    folder_path = r'D:\hello\DumpFile\ApplicationDumps'
+    target_file = '.dmp'
+    get_latest_file_path_by_dir(folder_path, target_file)

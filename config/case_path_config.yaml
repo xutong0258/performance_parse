@@ -6,8 +6,8 @@
       'PATH_PASS': 'D:\0_intelcpu_case\cpu Sample_rule1\pass'
       'PATH_FAIL': 'D:\0_intelcpu_case\cpu Sample_rule1\fail'
     'AMD':
-      'PATH_PASS': 'D:\0_AMD\rule1——CinebenchR20跑分低-拉prochot温度有顶到\pass'
-      'PATH_FAIL': 'D:\0_AMD\rule1——CinebenchR20跑分低-拉prochot温度有顶到\fail'
+      'PATH_PASS': 'D:\0_AMD\rule1——CinebenchR20跑分低-拉prochot温度有顶到\pass - 副本'
+      'PATH_FAIL': 'D:\0_AMD\rule1——CinebenchR20跑分低-拉prochot温度有顶到\fail - 副本'
     'GPU':
       'PATH_PASS': 'D:\0_GPU_case\GPU_Dnotify_rule10_OK\pass'
       'PATH_FAIL': 'D:\0_GPU_case\GPU_Dnotify_rule10_OK\fail'

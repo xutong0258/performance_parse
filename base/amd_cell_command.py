@@ -39,7 +39,10 @@ def amd_check_rule_1(parent_dir=None, fail_dir=None, pass_dir=None):
     if parent_dir is not None:
         fail_dir = os.path.join(parent_dir, 'fail')
         pass_dir = os.path.join(parent_dir, 'pass')
-        
+
+    logger.info(f'fail_dir:{fail_dir}')
+    logger.info(f'pass_dir:{pass_dir}')
+
     data_frame_fail = get_amd_performance_file_data_frame_by_dir(fail_dir)
 
     col_1 = 'CPU0 CORES CORE0 Freq Eff'
